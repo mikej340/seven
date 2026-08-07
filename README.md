@@ -30,3 +30,19 @@ npm run dev
 The deployment build targets the Sites/Cloudflare Worker runtime. Its bundled
 build wrapper expects GNU `timeout`, so it is designed for the Linux deployment
 environment rather than native macOS.
+
+## GitHub Pages
+
+The game can also be built as a static site for the repository Pages URL:
+
+<https://mikej340.github.io/seven/>
+
+```sh
+npm run build:pages
+npm run test:pages
+```
+
+The static files are written to `out/`, with asset URLs based at `/seven`.
+`.github/workflows/pages.yml` builds and deploys that directory whenever a
+change reaches `main`, or when the workflow is run manually. In the repository
+settings, Pages must use **GitHub Actions** as its source.
