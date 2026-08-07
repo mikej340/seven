@@ -11,8 +11,9 @@
     "build": "bash scripts/build-verified.sh",
     "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/seven next build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
-    "test:pages": "npm run build:pages && node --test tests/static-export.test.mjs",
+    "test": "npm run test:storage && npm run build && node --test tests/rendered-html.test.mjs",
+    "test:pages": "npm run test:storage && npm run build:pages && node --test tests/static-export.test.mjs",
+    "test:storage": "node --experimental-strip-types --test tests/game-save.test.ts",
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
