@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  clearGameProgress,
+  loadGameProgress,
+  saveGameProgress,
+} from "@/lib/game-save";
 
 const outerSlots = [
   { position: "top", tone: "sage", rotation: "4deg" },
@@ -13,6 +18,8 @@ const outerSlots = [
 
 const centreLetter = "M";
 const startingLetters = ["A", "B", "H", "O", "R", "T"];
+const puzzleId = [...startingLetters, centreLetter].sort().join("").toLowerCase()
+  + `:${centreLetter.toLowerCase()}`;
 
 // Hardcoded puzzle data while the generated catalogue is being integrated.
 const solutionWords = [
@@ -104,9 +111,35 @@ export default function Home() {
   const [currentWord, setCurrentWord] = useState("");
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
-  const [gameComplete, setGameComplete] = useState(false);
+  const [saveLoaded, setSaveLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      if (cancelled) return;
+
+      setFoundWords(loadGameProgress(localStorage, puzzleId, solutionWordSet));
+      setSaveLoaded(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!saveLoaded) return;
+
+    if (foundWords.length === 0) {
+      clearGameProgress(localStorage);
+    } else {
+      saveGameProgress(localStorage, puzzleId, foundWords, solutionWordSet);
+    }
+  }, [foundWords, saveLoaded]);
 
   const score = foundWords.reduce((total, word) => total + scoreWord(word), 0);
+  const gameComplete = foundWords.length === solutionWords.length;
   const progress = gameComplete ? 1 : Math.min(score / maximumScore, 0.99);
   const currentRank = [...ranks].reverse().find((rank) => progress >= rank.threshold) ?? ranks[0];
   const currentRankIndex = ranks.findIndex((rank) => rank.name === currentRank.name);
@@ -163,7 +196,6 @@ export default function Home() {
       vibrate([16, 28, 16]);
 
       if (nextFoundWords.length === solutionWords.length) {
-        setGameComplete(true);
         vibrate([25, 40, 25, 40, 80]);
       }
     } else {
@@ -179,7 +211,7 @@ export default function Home() {
     setCurrentWord("");
     setFoundWords([]);
     setFeedback(null);
-    setGameComplete(false);
+    clearGameProgress(localStorage);
     vibrate(14);
   };
 

@@ -12,7 +12,7 @@ Puzzle dictionary generation and candidate curation live in the separate
 - React and TypeScript interface built with Vinext
 - one hardcoded M-centred `ABHMORT` puzzle
 - client-side scoring, ranks, pangram detection and completion summary
-- no persistent saved-game state yet
+- versioned, validated device-local saved-game progress
 - Sites project binding retained in `.openai/hosting.json`
 
 Open product decisions are recorded in `TODO.md`. Original Site import details
