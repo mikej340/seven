@@ -13,11 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Starter Project",
-  description: "A clean starting point for building your site.",
-  other: {
-    "codex-preview": "development",
-  },
+  title: "Seven Word Puzzle",
+  description: "Find words using seven letters and one required centre letter.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

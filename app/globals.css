@@ -426,15 +426,15 @@ h1 {
   outline-offset: 3px;
 }
 
-.garden {
-  --garden-size: min(91vw, 58svh, 510px);
+.letter-wheel {
+  --letter-wheel-size: min(91vw, 58svh, 510px);
   position: relative;
-  width: var(--garden-size);
+  width: var(--letter-wheel-size);
   aspect-ratio: 1;
   isolation: isolate;
 }
 
-.garden::before {
+.letter-wheel::before {
   content: "";
   position: absolute;
   inset: 12%;
@@ -443,7 +443,7 @@ h1 {
   background: radial-gradient(circle, rgba(212, 216, 187, 0.2), transparent 68%);
 }
 
-.garden-halo {
+.letter-wheel-halo {
   position: absolute;
   inset: 27%;
   z-index: -1;
@@ -636,7 +636,7 @@ h1 {
   .game-card { gap: 8px; }
   .interaction-area { gap: 4px; }
   .word-panel { min-height: 78px; padding-block: 6px; }
-  .garden { --garden-size: min(90vw, 47svh, 390px); }
+  .letter-wheel { --letter-wheel-size: min(90vw, 47svh, 390px); }
   .game-controls button { min-height: 45px; }
   .found-words { min-height: 56px; padding-block: 8px; }
 }
@@ -656,7 +656,7 @@ h1 {
 
   .game-heading { text-align: left; }
   .interaction-area { gap: 3px; }
-  .garden { --garden-size: min(55vw, 62svh, 390px); }
+  .letter-wheel { --letter-wheel-size: min(55vw, 62svh, 390px); }
   .word-panel { min-height: 72px; padding-block: 5px; }
   .found-words { display: none; }
 }

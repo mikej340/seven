@@ -1,9 +1,7 @@
 # Prototype source provenance
 
-This directory is a temporary local copy of the **Garden Word Game Proof of
-Concept** Site:
+This directory is a temporary local copy of the original Site prototype:
 
-- Site: <https://garden-word-game.mikej-mk3.chatgpt.site>
 - Sites project: `appgprj_6a74ab878240819186798794d1543cde`
 - Saved version: 11
 - Source commit: `8c14b3ad925a59fb237953c26798e133671f1250`

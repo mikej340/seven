@@ -203,7 +203,7 @@ export default function Home() {
 
         {gameComplete ? (
           <section className="game-summary" aria-labelledby="summary-title">
-            <p className="summary-kicker">Garden complete</p>
+            <p className="summary-kicker">Puzzle complete</p>
             <h2 id="summary-title">Every word found</h2>
 
             <div className="summary-stats" aria-label="Game summary">
@@ -256,7 +256,7 @@ export default function Home() {
 
           <div className="word-panel" aria-live="polite" aria-atomic="true">
             <span className={`current-word ${currentWord ? "has-word" : ""}`}>
-              {currentWord || "Tap a leaf"}
+              {currentWord || "Tap a letter"}
             </span>
             <span
               className={`feedback ${feedback ? feedback.kind : ""}`}
@@ -267,8 +267,8 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="garden" aria-label="Letter garden">
-            <div className="garden-halo" aria-hidden="true" />
+          <div className="letter-wheel" aria-label="Letter wheel">
+            <div className="letter-wheel-halo" aria-hidden="true" />
 
             {outerSlots.map(({ position, tone, rotation }, index) => {
               const letter = outerLetters[index];
