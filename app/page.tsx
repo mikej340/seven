@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   clearGameProgress,
   loadGameProgress,
@@ -84,7 +84,7 @@ const ranks = [
 
 type Feedback = {
   id: number;
-  kind: "accepted" | "rejected" | "prompt";
+  kind: "accepted" | "pangram" | "rejected" | "prompt";
   message: string;
 };
 
@@ -94,9 +94,13 @@ const vibrate = (pattern: number | number[]) => {
   }
 };
 
-const scoreWord = (word: string) => {
+const isPangramWord = (word: string) => {
   const letters = new Set(word);
-  const isPangram = [centreLetter, ...startingLetters].every((letter) => letters.has(letter));
+  return [centreLetter, ...startingLetters].every((letter) => letters.has(letter));
+};
+
+const scoreWord = (word: string) => {
+  const isPangram = isPangramWord(word);
   const baseScore = word.length <= 4 ? 1 : word.length;
   return baseScore + (isPangram ? 7 : 0);
 };
@@ -112,6 +116,9 @@ export default function Home() {
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [saveLoaded, setSaveLoaded] = useState(false);
+  const [foundWordsOpen, setFoundWordsOpen] = useState(false);
+  const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
+  const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -137,6 +144,24 @@ export default function Home() {
       saveGameProgress(localStorage, puzzleId, foundWords, solutionWordSet);
     }
   }, [foundWords, saveLoaded]);
+
+  useEffect(() => {
+    if (!foundWordsOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setFoundWordsOpen(false);
+        queueMicrotask(() => foundWordsButtonRef.current?.focus());
+      } else if (event.key === "Tab") {
+        event.preventDefault();
+        closeFoundWordsButtonRef.current?.focus();
+      }
+    };
+
+    closeFoundWordsButtonRef.current?.focus();
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [foundWordsOpen]);
 
   const score = foundWords.reduce((total, word) => total + scoreWord(word), 0);
   const gameComplete = foundWords.length === solutionWords.length;
@@ -191,9 +216,16 @@ export default function Home() {
     } else if (solutionWordSet.has(submittedWord)) {
       const nextFoundWords = [submittedWord, ...foundWords];
       setFoundWords(nextFoundWords);
-      const isPangram = scoreWord(submittedWord) === submittedWord.length + 7;
-      setFeedback({ id: Date.now(), kind: "accepted", message: isPangram ? "Pangram!" : "Accepted" });
-      vibrate([16, 28, 16]);
+      const isPangram = isPangramWord(submittedWord);
+      const wordScore = scoreWord(submittedWord);
+      setFeedback({
+        id: Date.now(),
+        kind: isPangram ? "pangram" : "accepted",
+        message: isPangram
+          ? `Pangram! ${submittedWord} · +${wordScore} points`
+          : `${submittedWord} is correct · +${wordScore} ${wordScore === 1 ? "point" : "points"}`,
+      });
+      vibrate(isPangram ? [22, 28, 22, 28, 55] : [16, 28, 16]);
 
       if (nextFoundWords.length === solutionWords.length) {
         vibrate([25, 40, 25, 40, 80]);
@@ -215,6 +247,11 @@ export default function Home() {
     vibrate(14);
   };
 
+  const closeFoundWords = () => {
+    setFoundWordsOpen(false);
+    queueMicrotask(() => foundWordsButtonRef.current?.focus());
+  };
+
   return (
     <main className="page-shell">
       <div className="ambient-leaves ambient-leaves-left" aria-hidden="true">
@@ -228,7 +265,10 @@ export default function Home() {
         <i />
       </div>
 
-      <section className="game-card" aria-labelledby="game-title">
+      <section
+        className={`game-card ${gameComplete ? "is-complete" : ""}`}
+        aria-labelledby="game-title"
+      >
         <header className="game-heading">
           <h1 id="game-title">Seven</h1>
         </header>
@@ -247,7 +287,11 @@ export default function Home() {
             <div className="answer-list">
               <h3>All words</h3>
               <div className="answer-chips">
-                {solutionWords.map((word) => <span key={word}>{word}</span>)}
+                {solutionWords.map((word) => (
+                  <span className={isPangramWord(word) ? "pangram-word" : ""} key={word}>
+                    {isPangramWord(word) ? "✦ " : ""}{word}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -286,7 +330,11 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="word-panel" aria-live="polite" aria-atomic="true">
+          <div
+            className={`word-panel ${feedback?.kind === "accepted" ? "is-correct" : ""} ${feedback?.kind === "pangram" ? "is-pangram" : ""}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <span className={`current-word ${currentWord ? "has-word" : ""}`}>
               {currentWord || "Tap a letter"}
             </span>
@@ -295,6 +343,8 @@ export default function Home() {
               key={feedback?.id ?? "empty"}
               role="status"
             >
+              {feedback?.kind === "accepted" ? <span aria-hidden="true">✓</span> : null}
+              {feedback?.kind === "pangram" ? <span aria-hidden="true">✦</span> : null}
               {feedback?.message ?? "\u00a0"}
             </span>
           </div>
@@ -346,24 +396,76 @@ export default function Home() {
             </button>
           </div>
 
-          <section className="found-words" aria-labelledby="found-heading">
-            <div className="found-heading-row">
-              <h2 id="found-heading">Found words</h2>
-              <span>{foundWords.length}</span>
-            </div>
-            {foundWords.length ? (
-              <div className="word-chips">
-                {foundWords.map((word, index) => (
-                  <span key={`${word}-${index}`}>{word}</span>
-                ))}
-              </div>
-            ) : (
-              <p>Accepted words will appear here.</p>
-            )}
+          <section className="found-words" aria-label="Found words">
+            <button
+              className="found-words-button"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded={foundWordsOpen}
+              disabled={foundWords.length === 0}
+              onClick={() => setFoundWordsOpen(true)}
+              ref={foundWordsButtonRef}
+            >
+              <span>
+                <strong>Found words</strong>
+                <small>{foundWords.length ? "View your list" : "None yet"}</small>
+              </span>
+              <span className="found-count" aria-label={`${foundWords.length} found`}>
+                {foundWords.length}
+              </span>
+            </button>
           </section>
         </div>
         )}
       </section>
+
+      {foundWordsOpen ? (
+        <div className="found-words-modal-layer">
+          <button
+            className="found-words-backdrop"
+            type="button"
+            aria-label="Close found words"
+            tabIndex={-1}
+            onClick={closeFoundWords}
+          />
+          <section
+            className="found-words-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="found-words-dialog-title"
+          >
+            <header className="found-words-dialog-header">
+              <div>
+                <p>Your progress</p>
+                <h2 id="found-words-dialog-title">Found words</h2>
+              </div>
+              <button
+                type="button"
+                onClick={closeFoundWords}
+                ref={closeFoundWordsButtonRef}
+              >
+                Close
+              </button>
+            </header>
+            <p className="found-words-dialog-count">
+              {foundWords.length} {foundWords.length === 1 ? "word" : "words"}
+            </p>
+            <div className="found-words-list" role="list">
+              {[...foundWords].sort().map((word) => (
+                <div
+                  className={isPangramWord(word) ? "pangram-word" : ""}
+                  role="listitem"
+                  aria-label={isPangramWord(word) ? `${word}, pangram` : word}
+                  key={word}
+                >
+                  <span>{word}</span>
+                  {isPangramWord(word) ? <strong>Pangram ✦</strong> : null}
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
