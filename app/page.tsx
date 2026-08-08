@@ -86,6 +86,8 @@ type Feedback = {
   id: number;
   kind: "accepted" | "pangram" | "rejected" | "prompt";
   message: string;
+  word?: string;
+  points?: number;
 };
 
 const vibrate = (pattern: number | number[]) => {
@@ -205,13 +207,18 @@ export default function Home() {
     const submittedWord = currentWord.toUpperCase();
 
     if (submittedWord.length < 4) {
-      setFeedback({ id: Date.now(), kind: "rejected", message: "Too short" });
+      setFeedback({ id: Date.now(), kind: "rejected", message: "Too short", word: submittedWord });
       vibrate(45);
     } else if (!submittedWord.includes(centreLetter)) {
-      setFeedback({ id: Date.now(), kind: "rejected", message: `Must include ${centreLetter}` });
+      setFeedback({
+        id: Date.now(),
+        kind: "rejected",
+        message: `Must include ${centreLetter}`,
+        word: submittedWord,
+      });
       vibrate(45);
     } else if (foundWords.includes(submittedWord)) {
-      setFeedback({ id: Date.now(), kind: "prompt", message: "Already found" });
+      setFeedback({ id: Date.now(), kind: "prompt", message: "Already found", word: submittedWord });
       vibrate([10, 30, 10]);
     } else if (solutionWordSet.has(submittedWord)) {
       const nextFoundWords = [submittedWord, ...foundWords];
@@ -221,6 +228,8 @@ export default function Home() {
       setFeedback({
         id: Date.now(),
         kind: isPangram ? "pangram" : "accepted",
+        word: submittedWord,
+        points: wordScore,
         message: isPangram
           ? `Pangram! ${submittedWord} · +${wordScore} points`
           : `${submittedWord} is correct · +${wordScore} ${wordScore === 1 ? "point" : "points"}`,
@@ -231,7 +240,7 @@ export default function Home() {
         vibrate([25, 40, 25, 40, 80]);
       }
     } else {
-      setFeedback({ id: Date.now(), kind: "rejected", message: "Not accepted" });
+      setFeedback({ id: Date.now(), kind: "rejected", message: "Not accepted", word: submittedWord });
       vibrate(70);
     }
 
@@ -331,22 +340,42 @@ export default function Home() {
           </div>
 
           <div
-            className={`word-panel ${feedback?.kind === "accepted" ? "is-correct" : ""} ${feedback?.kind === "pangram" ? "is-pangram" : ""}`}
+            className={`word-panel ${feedback ? `is-${feedback.kind}` : ""}`}
             aria-live="polite"
             aria-atomic="true"
           >
-            <span className={`current-word ${currentWord ? "has-word" : ""}`}>
-              {currentWord || "Tap a letter"}
-            </span>
-            <span
-              className={`feedback ${feedback ? feedback.kind : ""}`}
-              key={feedback?.id ?? "empty"}
-              role="status"
-            >
-              {feedback?.kind === "accepted" ? <span aria-hidden="true">✓</span> : null}
-              {feedback?.kind === "pangram" ? <span aria-hidden="true">✦</span> : null}
-              {feedback?.message ?? "\u00a0"}
-            </span>
+            <div className="word-display">
+              {currentWord || feedback?.word ? (
+                <span className={`current-word ${currentWord ? "has-word" : ""}`}>
+                  {currentWord || feedback?.word}
+                </span>
+              ) : null}
+              {feedback ? (
+                <span
+                  className={`feedback ${feedback.kind}`}
+                  key={feedback.id}
+                  role="status"
+                >
+                  {feedback.kind === "accepted" ? (
+                    <>
+                      <span className="sr-only">{feedback.message}</span>
+                      <span className="feedback-icon" aria-hidden="true">✓</span>
+                      <span aria-hidden="true">+{feedback.points} {feedback.points === 1 ? "point" : "points"}</span>
+                    </>
+                  ) : null}
+                  {feedback.kind === "pangram" ? (
+                    <>
+                      <span className="sr-only">{feedback.message}</span>
+                      <span className="feedback-icon" aria-hidden="true">✦</span>
+                      <span aria-hidden="true">Pangram · +{feedback.points}</span>
+                    </>
+                  ) : null}
+                  {feedback.kind === "rejected" || feedback.kind === "prompt"
+                    ? feedback.message
+                    : null}
+                </span>
+              ) : null}
+            </div>
           </div>
 
           <div className="letter-wheel" aria-label="Letter wheel">
@@ -380,7 +409,6 @@ export default function Home() {
             >
               <span className="leaf-surface seed" aria-hidden="true" />
               <span className="letter" aria-hidden="true">{centreLetter}</span>
-              <span className="required-dot" aria-hidden="true" />
             </button>
           </div>
 
