@@ -171,10 +171,9 @@ h1 {
 
 .word-panel {
   width: min(100%, 410px);
-  min-height: 91px;
+  height: 91px;
   display: grid;
-  justify-items: center;
-  align-content: center;
+  place-items: center;
   gap: 2px;
   padding: 9px 18px 7px;
   border: 1px solid rgba(91, 101, 75, 0.24);
@@ -185,10 +184,10 @@ h1 {
   transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
-.word-panel.is-correct {
+.word-panel.is-accepted {
   border-color: rgba(72, 112, 56, 0.58);
-  background: rgba(238, 247, 225, 0.94);
-  box-shadow: 0 8px 30px rgba(69, 105, 53, 0.18);
+  background: rgba(244, 249, 235, 0.94);
+  box-shadow: 0 8px 30px rgba(69, 105, 53, 0.13);
   animation: correct-panel-pop 420ms ease-out;
 }
 
@@ -202,28 +201,37 @@ h1 {
   animation: pangram-panel-pop 650ms cubic-bezier(0.2, 0.9, 0.25, 1.2);
 }
 
-.current-word {
+.word-display {
   max-width: 100%;
-  min-height: 33px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2.5vw, 14px);
+}
+
+.current-word {
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
-  color: #929786;
+  color: var(--ink);
   font-size: clamp(1.45rem, 6vw, 2rem);
-  font-weight: 600;
+  font-weight: 750;
   letter-spacing: 0.08em;
-  line-height: 1.35;
+  line-height: 1.15;
   text-align: center;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.current-word.has-word {
-  color: var(--ink);
-  font-weight: 750;
-}
+.word-panel.is-accepted .current-word { color: #426a38; }
+.word-panel.is-rejected .current-word { color: var(--plum); animation: rejected-word-shake 320ms ease-out; }
+.word-panel.is-prompt .current-word { color: #775827; }
+.word-panel.is-pangram .current-word { color: #8a5b0f; }
 
 .feedback {
-  min-height: 16px;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -237,7 +245,7 @@ h1 {
   font-size: 0.82rem;
   font-weight: 800;
 }
-.feedback.accepted > span {
+.feedback.accepted .feedback-icon {
   display: inline-grid;
   width: 18px;
   aspect-ratio: 1;
@@ -254,7 +262,7 @@ h1 {
   letter-spacing: 0.015em;
   text-transform: uppercase;
 }
-.feedback.pangram > span {
+.feedback.pangram .feedback-icon {
   color: #b16c12;
   font-size: 1rem;
   animation: pangram-spark 700ms ease-out;
@@ -771,18 +779,6 @@ h1 {
   text-shadow: none;
 }
 
-.required-dot {
-  position: absolute;
-  left: 50%;
-  bottom: 12%;
-  z-index: 4;
-  width: 5px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--terracotta);
-  transform: translateX(-50%);
-}
-
 .letter-button:hover .leaf-surface {
   filter: brightness(1.08) saturate(1.05);
 }
@@ -846,11 +842,31 @@ h1 {
   100% { transform: scale(1) rotate(0); }
 }
 
+@keyframes rejected-word-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  55% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .word-panel.is-correct,
+  .word-panel.is-accepted,
   .word-panel.is-pangram,
+  .word-panel.is-rejected .current-word,
   .feedback,
-  .feedback.pangram > span {
+  .feedback.pangram .feedback-icon {
     animation: none;
   }
 }
@@ -859,7 +875,7 @@ h1 {
   .page-shell { align-items: start; }
   .game-card { gap: 8px; }
   .interaction-area { gap: 4px; }
-  .word-panel { min-height: 78px; padding-block: 6px; }
+  .word-panel { height: 78px; padding-block: 6px; }
   .letter-wheel { --letter-wheel-size: min(90vw, 47svh, 390px); }
   .game-controls button { min-height: 45px; }
   .found-words-button { min-height: 52px; padding-block: 6px; }
@@ -880,7 +896,7 @@ h1 {
   .game-heading { text-align: left; }
   .interaction-area { gap: 3px; }
   .letter-wheel { --letter-wheel-size: min(55vw, 62svh, 390px); }
-  .word-panel { min-height: 72px; padding-block: 5px; }
+  .word-panel { height: 72px; padding-block: 5px; }
   .found-words { display: none; }
 }
 
