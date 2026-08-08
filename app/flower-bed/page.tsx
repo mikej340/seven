@@ -44,11 +44,8 @@ const variation = (index: number, salt: number) => {
   return value - Math.floor(value);
 };
 
-const flowerHeight = (score: number) => {
-  const cappedScore = Math.min(20, Math.max(1, score));
-  const progress = Math.sqrt((cappedScore - 1) / 19);
-  return Math.round(44 + progress * 78);
-};
+const flowerHeight = (index: number) =>
+  Math.round(44 * (0.92 + variation(index, 5) * 0.16));
 
 const makeFlower = (kind: FlowerKind, id: number): Flower => {
   if (kind === "four") return { id, kind, score: 1, wordLength: 4 };
@@ -137,7 +134,7 @@ export default function FlowerBedPrototype() {
         <header className={styles.intro}>
           <p>Seven experiment</p>
           <h1>Flower-bed progress</h1>
-          <span>Prototype the density, scoring scale and growth behaviour.</span>
+          <span>Prototype the density, spacing and growth behaviour.</span>
         </header>
 
         <section className={styles.preview} aria-label="Game progress preview">
@@ -166,7 +163,7 @@ export default function FlowerBedPrototype() {
                 "--baseline": `${slot.baseline.toFixed(2)}px`,
                 "--depth": slot.depth + 2,
                 "--seedling-height": `${slot.seedlingHeight}px`,
-                "--flower-height": flower ? `${flowerHeight(flower.score)}px` : "0px",
+                "--flower-height": flower ? `${flowerHeight(slot.index)}px` : "0px",
               } as React.CSSProperties;
 
               return (
