@@ -88,7 +88,7 @@ export default function FlowerBedPrototype() {
           lean: -5 + variation(index, 1) * 10,
           baseline: -2 + variation(index, 2) * 5,
           depth: Math.floor(variation(index, 3) * 3),
-          seedlingHeight: 15 + Math.round(variation(index, 4) * 11),
+          seedlingHeight: 62 + Math.round(variation(index, 4) * 18),
         };
       }),
     [totalWords],
@@ -179,7 +179,14 @@ export default function FlowerBedPrototype() {
                       key={flower.id}
                     />
                   ) : (
-                    <i className={styles.seedling} aria-hidden="true" />
+                    <Image
+                      className={styles.seedling}
+                      src={`${assetBasePath}/flowers/flower-seedling.svg`}
+                      width={120}
+                      height={180}
+                      alt=""
+                      draggable={false}
+                    />
                   )}
                 </span>
               );

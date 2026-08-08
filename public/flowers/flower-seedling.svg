@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 180" role="img" aria-labelledby="title desc">
+  <title id="title">Unfound-word seedling</title>
+  <desc id="desc">A small, restrained two-leaf seedling representing a word not yet found.</desc>
+  <defs>
+    <linearGradient id="left-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a8b18a"/>
+      <stop offset="1" stop-color="#78835f"/>
+    </linearGradient>
+    <linearGradient id="right-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b4bc96"/>
+      <stop offset="1" stop-color="#829064"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M60 166 C60 157 60 148 60 139" fill="none" stroke="#718056" stroke-width="3" stroke-linecap="round"/>
+
+  <path d="M60 151 C52 139 42 137 35 142 C40 153 50 157 60 154Z" fill="url(#left-leaf)"/>
+  <path d="M60 147 C68 136 78 134 85 139 C80 150 70 154 60 151Z" fill="url(#right-leaf)"/>
+
+  <path d="M59 153 C52 148 46 145 39 143" fill="none" stroke="#697456" stroke-width="1.25" stroke-linecap="round" opacity=".6"/>
+  <path d="M61 150 C68 145 75 142 82 140" fill="none" stroke="#707c58" stroke-width="1.25" stroke-linecap="round" opacity=".58"/>
+
+  <path d="M60 141 C58 137 58 133 60 130 C63 133 63 137 60 141Z" fill="#909b72"/>
+</svg>
