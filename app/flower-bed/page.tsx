@@ -88,7 +88,7 @@ export default function FlowerBedPrototype() {
           lean: -5 + variation(index, 1) * 10,
           baseline: -2 + variation(index, 2) * 5,
           depth: Math.floor(variation(index, 3) * 3),
-          seedlingHeight: 62 + Math.round(variation(index, 4) * 18),
+          seedlingHeight: 21 + Math.round(variation(index, 4) * 6),
         };
       }),
     [totalWords],
