@@ -71,6 +71,46 @@ button {
   text-align: center;
 }
 
+.puzzle-navigation {
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.puzzle-navigation a {
+  color: var(--plum);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.puzzle-navigation span {
+  font-weight: 650;
+}
+
+.puzzle-notice {
+  max-width: 410px;
+  margin: 7px auto 0;
+  color: #7b6134;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.load-card {
+  align-content: center;
+  min-height: min(360px, 70dvh);
+  color: var(--muted);
+  text-align: center;
+}
+
+.load-card p {
+  margin: 0;
+}
+
 h1 {
   margin: 0;
   color: var(--plum);

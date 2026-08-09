@@ -35,3 +35,26 @@ test("renders neutral product metadata", async () => {
   assert.match(html, siteDescription);
   assert.doesNotMatch(html, developmentPreviewMeta);
 });
+
+test("renders the puzzle archive route", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("archive-test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/puzzles", {
+      headers: { accept: "text/html" },
+    }),
+    {
+      ASSETS: {
+        fetch: async () => new Response("Not found", { status: 404 }),
+      },
+    },
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /All puzzles/i);
+});

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "timeZone": "UTC",
+  "startDate": "2026-08-08",
+  "endDate": "2026-08-09",
+  "source": {
+    "dictionarySha256": "e2e548bcf66a858a832714478f4d6a7e7e85f1718807d6856ef7bc9aa801f41d",
+    "scowlRelease": "rel-2026.02.25",
+    "frequencySource": "wordfreq 3.1.1, English large wordlist"
+  },
+  "entries": [
+    {
+      "id": "2026-08-08",
+      "date": "2026-08-08",
+      "month": "2026-08",
+      "letters": "abhmort",
+      "centre": "m",
+      "wordCount": 42,
+      "pangramCount": 1,
+      "maximumScore": 150
+    },
+    {
+      "id": "2026-08-09",
+      "date": "2026-08-09",
+      "month": "2026-08",
+      "letters": "cehiknt",
+      "centre": "k",
+      "wordCount": 35,
+      "pangramCount": 3,
+      "maximumScore": 154
+    }
+  ]
+}

@@ -11,3 +11,8 @@ The initial files were imported from the exact source commit attached to saved
 version 11. Moving the source into this repository did not modify or redeploy
 the live Site. Dictionary and candidate generation live separately at
 <https://github.com/mikej340/Spelling-Bee>.
+
+Daily puzzle files in `public/puzzles/` are reproducibly exported from that
+generator repository. Their dictionary provenance and licences are copied into
+`docs/SCOWL-LICENSE.txt` and `docs/WORDFREQ-NOTICE.md` so a deployed game keeps
+the relevant notices alongside its source.
