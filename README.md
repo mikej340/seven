@@ -10,10 +10,17 @@ Puzzle dictionary generation and candidate curation live in the separate
 ## Current state
 
 - React and TypeScript interface built with Vinext
-- one hardcoded M-centred `ABHMORT` puzzle
+- static, UTC-dated puzzle schedule with a two-day initial archive
+- dedicated all-puzzles page with progress and rank previews
 - client-side scoring, ranks, pangram detection and completion summary
-- versioned, validated device-local saved-game progress
+- versioned, validated per-puzzle device-local progress with legacy migration
 - Sites project binding retained in `.openai/hosting.json`
+
+The app fetches `public/puzzles/manifest.json` first, then the relevant monthly
+shard (for example `public/puzzles/2026-08.json`). The root URL selects today in
+UTC, while `/?date=YYYY-MM-DD` opens a released historic puzzle. Returning to a
+foregrounded root page after midnight refreshes the selected puzzle; no service
+worker or server is required.
 
 Open product decisions are recorded in `TODO.md`. Original Site import details
 are recorded in `SOURCE.md`.
@@ -25,6 +32,7 @@ Requires Node.js 22.13 or newer.
 ```sh
 npm install
 npm run dev
+npm run test:pages
 ```
 
 The deployment build targets the Sites/Cloudflare Worker runtime. Its bundled

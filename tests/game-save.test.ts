@@ -3,7 +3,9 @@ import test from "node:test";
 import {
   clearGameProgress,
   GAME_SAVE_KEY,
+  LEGACY_GAME_SAVE_KEY,
   loadGameProgress,
+  loadProgressSummaries,
   saveGameProgress,
   type StorageAdapter,
 } from "../lib/game-save.ts";
@@ -24,60 +26,85 @@ class MemoryStorage implements StorageAdapter {
   }
 }
 
-const puzzleId = "abhmort:m";
 const acceptedWords = new Set(["MOTH", "ROOM", "MOTOR"]);
+const scoreWord = (word: string) => (word.length === 4 ? 1 : word.length);
+const timestamp = "2026-08-09T12:00:00.000Z";
 
-test("saves and restores validated progress", () => {
+test("saves and restores independent validated puzzle progress", () => {
   const storage = new MemoryStorage();
-
   assert.equal(
     saveGameProgress(
       storage,
-      puzzleId,
+      "2026-08-08",
       ["MOTH", "room", "MOTH", "NOT-A-WORD"],
       acceptedWords,
+      scoreWord,
+      timestamp,
     ),
     true,
   );
-  assert.deepEqual(
-    loadGameProgress(storage, puzzleId, acceptedWords),
-    ["MOTH", "ROOM"],
+  assert.equal(
+    saveGameProgress(storage, "2026-08-09", ["MOTOR"], acceptedWords, scoreWord, timestamp),
+    true,
   );
-  assert.deepEqual(JSON.parse(storage.getItem(GAME_SAVE_KEY) ?? ""), {
-    version: 1,
-    puzzleId,
-    foundWords: ["MOTH", "ROOM"],
+
+  assert.deepEqual(
+    loadGameProgress(storage, "2026-08-08", acceptedWords, scoreWord, timestamp),
+    { foundWords: ["MOTH", "ROOM"], score: 2, updatedAt: timestamp },
+  );
+  assert.deepEqual(loadProgressSummaries(storage)["2026-08-09"], {
+    foundWords: ["MOTOR"],
+    score: 5,
+    updatedAt: timestamp,
   });
 });
 
-test("ignores malformed, unsupported and stale saves", () => {
+test("migrates the original ABHMORT save into 8 August", () => {
   const storage = new MemoryStorage();
+  storage.setItem(
+    LEGACY_GAME_SAVE_KEY,
+    JSON.stringify({
+      version: 1,
+      puzzleId: "abhmort:m",
+      foundWords: ["MOTH", "room", "INVALID"],
+    }),
+  );
 
+  assert.deepEqual(
+    loadGameProgress(storage, "2026-08-08", acceptedWords, scoreWord, timestamp),
+    { foundWords: ["MOTH", "ROOM"], score: 2, updatedAt: timestamp },
+  );
+  assert.equal(storage.getItem(LEGACY_GAME_SAVE_KEY), null);
+  assert.ok(storage.getItem(GAME_SAVE_KEY));
+});
+
+test("does not migrate legacy progress to another date", () => {
+  const storage = new MemoryStorage();
+  storage.setItem(
+    LEGACY_GAME_SAVE_KEY,
+    JSON.stringify({ version: 1, puzzleId: "abhmort:m", foundWords: ["MOTH"] }),
+  );
+  assert.deepEqual(
+    loadGameProgress(storage, "2026-08-09", acceptedWords, scoreWord, timestamp),
+    { foundWords: [], score: 0, updatedAt: timestamp },
+  );
+});
+
+test("clears only the selected puzzle", () => {
+  const storage = new MemoryStorage();
+  saveGameProgress(storage, "2026-08-08", ["MOTH"], acceptedWords, scoreWord, timestamp);
+  saveGameProgress(storage, "2026-08-09", ["ROOM"], acceptedWords, scoreWord, timestamp);
+
+  assert.equal(clearGameProgress(storage, "2026-08-08"), true);
+  assert.equal(loadProgressSummaries(storage)["2026-08-08"], undefined);
+  assert.deepEqual(loadProgressSummaries(storage)["2026-08-09"]?.foundWords, ["ROOM"]);
+});
+
+test("ignores malformed saves and continues when storage is unavailable", () => {
+  const storage = new MemoryStorage();
   storage.setItem(GAME_SAVE_KEY, "not json");
-  assert.deepEqual(loadGameProgress(storage, puzzleId, acceptedWords), []);
+  assert.deepEqual(loadProgressSummaries(storage), {});
 
-  storage.setItem(
-    GAME_SAVE_KEY,
-    JSON.stringify({ version: 2, puzzleId, foundWords: ["MOTH"] }),
-  );
-  assert.deepEqual(loadGameProgress(storage, puzzleId, acceptedWords), []);
-
-  storage.setItem(
-    GAME_SAVE_KEY,
-    JSON.stringify({ version: 1, puzzleId: "different:m", foundWords: ["MOTH"] }),
-  );
-  assert.deepEqual(loadGameProgress(storage, puzzleId, acceptedWords), []);
-});
-
-test("clears saved progress", () => {
-  const storage = new MemoryStorage();
-  storage.setItem(GAME_SAVE_KEY, "saved");
-
-  assert.equal(clearGameProgress(storage), true);
-  assert.equal(storage.getItem(GAME_SAVE_KEY), null);
-});
-
-test("continues safely when browser storage is unavailable", () => {
   const unavailableStorage: StorageAdapter = {
     getItem() {
       throw new Error("unavailable");
@@ -89,14 +116,20 @@ test("continues safely when browser storage is unavailable", () => {
       throw new Error("unavailable");
     },
   };
-
   assert.deepEqual(
-    loadGameProgress(unavailableStorage, puzzleId, acceptedWords),
-    [],
+    loadGameProgress(unavailableStorage, "2026-08-08", acceptedWords, scoreWord, timestamp),
+    { foundWords: [], score: 0, updatedAt: timestamp },
   );
   assert.equal(
-    saveGameProgress(unavailableStorage, puzzleId, ["MOTH"], acceptedWords),
+    saveGameProgress(
+      unavailableStorage,
+      "2026-08-08",
+      ["MOTH"],
+      acceptedWords,
+      scoreWord,
+      timestamp,
+    ),
     false,
   );
-  assert.equal(clearGameProgress(unavailableStorage), false);
+  assert.equal(clearGameProgress(unavailableStorage, "2026-08-08"), false);
 });
