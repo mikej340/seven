@@ -929,8 +929,26 @@ h1 {
 }
 
 @media (min-width: 760px) and (min-height: 800px) {
-  .game-card { gap: 20px; }
   .ambient-leaves { opacity: 0.5; transform: scale(1.35); }
+}
+
+@media (min-width: 760px) and (min-height: 600px) and (max-height: 979px) {
+  .page-shell {
+    padding-block: 12px;
+  }
+
+  .game-card { gap: 8px; }
+  .interaction-area { gap: 4px; }
+  .word-panel { height: 78px; padding-block: 6px; }
+  .letter-wheel {
+    --letter-wheel-size: min(91vw, 58svh, 510px, calc(100dvh - 373px));
+  }
+  .game-controls button { min-height: 45px; }
+  .found-words-button { min-height: 52px; padding-block: 6px; }
+}
+
+@media (min-width: 760px) and (min-height: 980px) {
+  .game-card { gap: 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
