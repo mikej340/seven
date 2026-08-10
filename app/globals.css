@@ -42,12 +42,19 @@ button {
   position: relative;
   display: grid;
   place-items: start center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   padding:
     max(22px, env(safe-area-inset-top))
     max(18px, env(safe-area-inset-right))
     max(22px, env(safe-area-inset-bottom))
     max(18px, env(safe-area-inset-left));
+}
+
+.page-shell.has-modal {
+  overflow-y: hidden;
 }
 
 .game-card {
@@ -837,7 +844,7 @@ h1 {
 }
 
 .ambient-leaves {
-  position: absolute;
+  position: fixed;
   z-index: 0;
   opacity: 0.38;
   pointer-events: none;
@@ -919,25 +926,6 @@ h1 {
   .letter-wheel { --letter-wheel-size: min(90vw, 47svh, 390px); }
   .game-controls button { min-height: 45px; }
   .found-words-button { min-height: 52px; padding-block: 6px; }
-}
-
-@media (orientation: landscape) and (max-height: 600px) {
-  .page-shell {
-    padding-block: max(12px, env(safe-area-inset-top));
-  }
-
-  .game-card {
-    width: min(100%, 920px);
-    grid-template-columns: minmax(220px, 0.8fr) minmax(280px, 1.2fr);
-    align-items: center;
-    gap: clamp(20px, 5vw, 58px);
-  }
-
-  .game-heading { text-align: left; }
-  .interaction-area { gap: 3px; }
-  .letter-wheel { --letter-wheel-size: min(55vw, 62svh, 390px); }
-  .word-panel { height: 72px; padding-block: 5px; }
-  .found-words { display: none; }
 }
 
 @media (min-width: 760px) and (min-height: 800px) {
