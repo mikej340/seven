@@ -302,7 +302,7 @@ export default function Home() {
   };
 
   return (
-    <main className="page-shell">
+    <main className={`page-shell${foundWordsOpen ? " has-modal" : ""}`}>
       <div className="ambient-leaves ambient-leaves-left" aria-hidden="true">
         <i /><i /><i />
       </div>

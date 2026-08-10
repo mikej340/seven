@@ -25,3 +25,9 @@ Released dates must remain immutable so saved games and shared links stay valid.
 Daily switching currently needs no service worker: the app uses UTC on load and
 when it returns to the foreground. Add one only if installable offline play and
 cached future puzzle data become explicit requirements.
+
+## Design a dedicated landscape layout
+
+The game currently retains its complete stacked layout in landscape and scrolls
+when the viewport is too short. Revisit whether a purpose-designed landscape
+composition can use the available width without hiding controls or Found words.
