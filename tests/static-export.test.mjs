@@ -39,7 +39,8 @@ test("exports the archive route and daily puzzle data", async () => {
 });
 
 test("exports standalone web-app metadata", async () => {
-  assert.match(html, /content="width=device-width, initial-scale=1, viewport-fit=cover"/);
+  assert.match(html, /content="width=device-width, initial-scale=1"/);
+  assert.doesNotMatch(html, /viewport-fit=cover/);
   assert.match(html, /href="\/seven\/manifest\.webmanifest"/);
 
   const manifest = JSON.parse(
