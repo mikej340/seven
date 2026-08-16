@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "timeZone": "UTC",
   "startDate": "2026-08-08",
-  "endDate": "2026-08-16",
+  "endDate": "2026-08-23",
   "source": {
-    "dictionarySha256": "e2e548bcf66a858a832714478f4d6a7e7e85f1718807d6856ef7bc9aa801f41d",
+    "dictionarySha256": "0089b56e4ea2133902ac27e2c1a8b452ed1e2884c6bf525616a01e7e62a26293",
     "scowlRelease": "rel-2026.02.25",
     "frequencySource": "wordfreq 3.1.1, English large wordlist"
   },
@@ -98,6 +98,76 @@
       "wordCount": 41,
       "pangramCount": 1,
       "maximumScore": 130
+    },
+    {
+      "id": "2026-08-17",
+      "date": "2026-08-17",
+      "month": "2026-08",
+      "letters": "ceilmop",
+      "centre": "c",
+      "wordCount": 42,
+      "pangramCount": 3,
+      "maximumScore": 172
+    },
+    {
+      "id": "2026-08-18",
+      "date": "2026-08-18",
+      "month": "2026-08",
+      "letters": "akmnorw",
+      "centre": "r",
+      "wordCount": 39,
+      "pangramCount": 1,
+      "maximumScore": 135
+    },
+    {
+      "id": "2026-08-19",
+      "date": "2026-08-19",
+      "month": "2026-08",
+      "letters": "ailotvy",
+      "centre": "a",
+      "wordCount": 43,
+      "pangramCount": 1,
+      "maximumScore": 170
+    },
+    {
+      "id": "2026-08-20",
+      "date": "2026-08-20",
+      "month": "2026-08",
+      "letters": "eiklnru",
+      "centre": "n",
+      "wordCount": 49,
+      "pangramCount": 1,
+      "maximumScore": 202
+    },
+    {
+      "id": "2026-08-21",
+      "date": "2026-08-21",
+      "month": "2026-08",
+      "letters": "cdehklo",
+      "centre": "k",
+      "wordCount": 45,
+      "pangramCount": 2,
+      "maximumScore": 196
+    },
+    {
+      "id": "2026-08-22",
+      "date": "2026-08-22",
+      "month": "2026-08",
+      "letters": "abejluy",
+      "centre": "l",
+      "wordCount": 46,
+      "pangramCount": 1,
+      "maximumScore": 175
+    },
+    {
+      "id": "2026-08-23",
+      "date": "2026-08-23",
+      "month": "2026-08",
+      "letters": "fnoprtu",
+      "centre": "u",
+      "wordCount": 41,
+      "pangramCount": 1,
+      "maximumScore": 146
     }
   ]
 }
