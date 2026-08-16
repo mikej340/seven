@@ -28,3 +28,10 @@ test("responsive rules never hide the found-words control", () => {
     /\.found-words\s*\{[^}]*display:\s*none;[^}]*\}/,
   );
 });
+
+test("short desktop layouts budget the letter wheel from viewport height", () => {
+  assert.match(
+    stylesheet,
+    /@media \(min-width: 760px\) and \(min-height: 600px\) and \(max-height: 979px\)[\s\S]*?--letter-wheel-size:[^;]*calc\(100dvh - 373px\)/,
+  );
+});
