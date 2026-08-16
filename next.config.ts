@@ -2,15 +2,15 @@ import type { NextConfig } from "next";
 
 const isGitHubPages = process.env.GITHUB_PAGES === "true";
 
-const nextConfig: NextConfig = isGitHubPages
-  ? {
-      output: "export",
-      trailingSlash: true,
-      basePath: "/seven",
-      typescript: {
-        tsconfigPath: "tsconfig.pages.json",
-      },
-    }
-  : {};
+const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.*"],
+  ...(isGitHubPages
+    ? {
+        output: "export" as const,
+        trailingSlash: true,
+        basePath: "/seven",
+      }
+    : {}),
+};
 
 export default nextConfig;
