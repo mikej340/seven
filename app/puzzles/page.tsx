@@ -12,6 +12,7 @@ import {
   type PuzzleManifest,
   type PuzzleManifestEntry,
 } from "@/lib/puzzles";
+import NavigationMenu from "../navigation-menu";
 import styles from "./puzzles.module.css";
 
 type MonthGroup = {
@@ -83,7 +84,7 @@ export default function PuzzlesPage() {
     <main className={styles.page}>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <a href={`${PUZZLE_BASE_PATH}/`}>← Today</a>
+          <NavigationMenu current="puzzles" />
           <p>Seven</p>
           <h1>All puzzles</h1>
           <span>Return to any released puzzle and continue where you left off.</span>
