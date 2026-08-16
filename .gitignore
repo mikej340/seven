@@ -35,8 +35,6 @@ yarn-error.log*
 
 # typescript
 next-env.d.ts
-/dist/
-/.wrangler/
+
+# local package cache used by the development environment
 /.sites-runtime/
-/outputs/
-/work/
