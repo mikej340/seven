@@ -56,5 +56,8 @@ test("renders the puzzle archive route", async () => {
   );
 
   assert.equal(response.status, 200);
-  assert.match(await response.text(), /All puzzles/i);
+  const html = await response.text();
+  assert.match(html, /All puzzles/i);
+  assert.match(html, /Open navigation menu/i);
+  assert.doesNotMatch(html, /← Today/i);
 });

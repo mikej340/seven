@@ -1,0 +1,93 @@
+.root {
+  position: absolute;
+  top: -5px;
+  right: 0;
+  z-index: 10;
+}
+
+.button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(91, 101, 75, 0.28);
+  border-radius: 15px;
+  background: rgba(255, 252, 245, 0.82);
+  box-shadow: 0 6px 18px rgba(63, 66, 48, 0.08);
+  color: #4a563e;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.button:focus-visible,
+.menu a:focus-visible {
+  outline: 3px solid #67283d;
+  outline-offset: 2px;
+}
+
+.icon {
+  width: 20px;
+  display: grid;
+  gap: 4px;
+}
+
+.icon i {
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  width: 190px;
+  overflow: hidden;
+  padding: 5px;
+  border: 1px solid rgba(91, 101, 75, 0.28);
+  border-radius: 17px;
+  background: #fffaf1;
+  box-shadow: 0 16px 42px rgba(39, 43, 31, 0.2);
+  text-align: left;
+}
+
+.menu a {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #283520;
+  font-size: 0.86rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.menu a:hover {
+  background: #f1ecdf;
+}
+
+.menu a[aria-current="page"] {
+  background: #ecebdc;
+  color: #67283d;
+}
+
+.menu a i {
+  color: #6e7663;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .menu a {
+    transition: none;
+  }
+}

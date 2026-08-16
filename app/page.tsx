@@ -10,7 +10,6 @@ import {
   formatPuzzleDate,
   loadDailyPuzzle,
   loadPuzzleManifest,
-  PUZZLE_BASE_PATH,
   rankForScore,
   resolvePuzzleSelection,
   RANKS,
@@ -18,6 +17,7 @@ import {
   type DailyPuzzle,
   type PuzzleSelection,
 } from "@/lib/puzzles";
+import NavigationMenu from "./navigation-menu";
 
 const outerSlots = [
   { position: "top", tone: "sage", rotation: "4deg" },
@@ -39,7 +39,6 @@ type Feedback = {
 type LoadedGame = {
   puzzle: DailyPuzzle;
   selection: PuzzleSelection;
-  isHistorical: boolean;
 };
 
 const vibrate = (pattern: number | number[]) => {
@@ -113,7 +112,7 @@ export default function Home() {
         scoreLoadedWord,
       );
 
-      setGame({ puzzle, selection, isHistorical: requestedDate !== null });
+      setGame({ puzzle, selection });
       setOuterLetters(
         puzzle.letters
           .toUpperCase()
@@ -204,7 +203,7 @@ export default function Home() {
     );
   }
 
-  const { puzzle, selection, isHistorical } = game;
+  const { puzzle, selection } = game;
   const maximumScore = puzzle.maximumScore;
   const score = foundWords.reduce((total, word) => total + scoreWord(word), 0);
   const gameComplete = foundWords.length === solutionWords.length;
@@ -315,14 +314,11 @@ export default function Home() {
         aria-labelledby="game-title"
       >
         <header className="game-heading">
+          <NavigationMenu current={selection.isToday ? "today" : undefined} />
           <h1 id="game-title">Seven</h1>
-          <nav className="puzzle-navigation" aria-label="Puzzle navigation">
-            <a href={`${PUZZLE_BASE_PATH}/puzzles/`}>All puzzles</a>
-            <span>
-              {selection.isToday ? "Today" : formatPuzzleDate(puzzle.date, false)}
-            </span>
-            {isHistorical ? <a href={`${PUZZLE_BASE_PATH}/`}>Today</a> : null}
-          </nav>
+          <p className="puzzle-date">
+            {selection.isToday ? "Today" : formatPuzzleDate(puzzle.date, false)}
+          </p>
           {selection.notice ? (
             <p className="puzzle-notice" role="status">{selection.notice}</p>
           ) : null}
@@ -378,11 +374,30 @@ export default function Home() {
                 <span className="rank-fill" style={{ width: `${progress * 100}%` }} />
                 <i className="rank-sprout" style={{ left: `${progress * 100}%` }} aria-hidden="true" />
               </div>
-              <p className="rank-next">
-                {nextRank && nextRankScore !== null
-                  ? `${Math.max(0, nextRankScore - score)} points to ${nextRank.name}`
-                  : "Every word found"}
-              </p>
+              <div className="rank-footer">
+                <p className="rank-next">
+                  {nextRank && nextRankScore !== null
+                    ? `${Math.max(0, nextRankScore - score)} points to ${nextRank.name}`
+                    : "Every word found"}
+                </p>
+                <section className="found-words" aria-label="Found words">
+                  <button
+                    className="found-words-button"
+                    type="button"
+                    aria-label={foundWords.length
+                      ? `View ${foundWords.length} found ${foundWords.length === 1 ? "word" : "words"}`
+                      : "No words found yet"}
+                    aria-haspopup="dialog"
+                    aria-expanded={foundWordsOpen}
+                    disabled={foundWords.length === 0}
+                    onClick={() => setFoundWordsOpen(true)}
+                    ref={foundWordsButtonRef}
+                  >
+                    <span>Found words</span>
+                    <span className="found-count" aria-hidden="true">{foundWords.length}</span>
+                  </button>
+                </section>
+              </div>
             </div>
 
             <div
@@ -424,38 +439,40 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="letter-wheel" aria-label="Letter wheel">
-              <div className="letter-wheel-halo" aria-hidden="true" />
+            <div className="letter-wheel-stage">
+              <div className="letter-wheel" aria-label="Letter wheel">
+                <div className="letter-wheel-halo" aria-hidden="true" />
 
-              {outerSlots.map(({ position, tone, rotation }, index) => {
-                const letter = outerLetters[index];
-                return (
-                  <button
-                    className={`letter-button ${position}`}
-                    style={{ "--leaf-rotation": rotation } as React.CSSProperties}
-                    type="button"
-                    aria-label={`Add ${letter}`}
-                    onClick={() => addLetter(letter ?? "")}
-                    key={position}
-                  >
-                    <span className={`leaf-surface ${tone}`} aria-hidden="true">
-                      <span className="leaf-vein" />
-                    </span>
-                    <span className="letter" aria-hidden="true">{letter}</span>
-                  </button>
-                );
-              })}
+                {outerSlots.map(({ position, tone, rotation }, index) => {
+                  const letter = outerLetters[index];
+                  return (
+                    <button
+                      className={`letter-button ${position}`}
+                      style={{ "--leaf-rotation": rotation } as React.CSSProperties}
+                      type="button"
+                      aria-label={`Add ${letter}`}
+                      onClick={() => addLetter(letter ?? "")}
+                      key={position}
+                    >
+                      <span className={`leaf-surface ${tone}`} aria-hidden="true">
+                        <span className="leaf-vein" />
+                      </span>
+                      <span className="letter" aria-hidden="true">{letter}</span>
+                    </button>
+                  );
+                })}
 
-              <button
-                className="letter-button centre required"
-                style={{ "--leaf-rotation": "0deg" } as React.CSSProperties}
-                type="button"
-                aria-label={`Add ${centreLetter}, required letter`}
-                onClick={() => addLetter(centreLetter)}
-              >
-                <span className="leaf-surface seed" aria-hidden="true" />
-                <span className="letter" aria-hidden="true">{centreLetter}</span>
-              </button>
+                <button
+                  className="letter-button centre required"
+                  style={{ "--leaf-rotation": "0deg" } as React.CSSProperties}
+                  type="button"
+                  aria-label={`Add ${centreLetter}, required letter`}
+                  onClick={() => addLetter(centreLetter)}
+                >
+                  <span className="leaf-surface seed" aria-hidden="true" />
+                  <span className="letter" aria-hidden="true">{centreLetter}</span>
+                </button>
+              </div>
             </div>
 
             <div className="game-controls" aria-label="Word controls">
@@ -468,25 +485,6 @@ export default function Home() {
               </button>
             </div>
 
-            <section className="found-words" aria-label="Found words">
-              <button
-                className="found-words-button"
-                type="button"
-                aria-haspopup="dialog"
-                aria-expanded={foundWordsOpen}
-                disabled={foundWords.length === 0}
-                onClick={() => setFoundWordsOpen(true)}
-                ref={foundWordsButtonRef}
-              >
-                <span>
-                  <strong>Found words</strong>
-                  <small>{foundWords.length ? "View your list" : "None yet"}</small>
-                </span>
-                <span className="found-count" aria-label={`${foundWords.length} found`}>
-                  {foundWords.length}
-                </span>
-              </button>
-            </section>
           </div>
         )}
       </section>

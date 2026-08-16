@@ -47,6 +47,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <aside className="portrait-only-guard" aria-label="Portrait orientation required">
+          <span className="portrait-only-icon" aria-hidden="true">↻</span>
+          <strong>Please rotate your device</strong>
+          <span>Seven is currently designed for portrait mode.</span>
+        </aside>
       </body>
     </html>
   );

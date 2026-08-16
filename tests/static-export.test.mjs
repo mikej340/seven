@@ -27,12 +27,15 @@ test("exports the archive route and daily puzzle data", async () => {
   const manifest = JSON.parse(
     await readFile(new URL("../out/puzzles/manifest.json", import.meta.url), "utf8"),
   );
+  const sourceManifest = JSON.parse(
+    await readFile(new URL("../public/puzzles/manifest.json", import.meta.url), "utf8"),
+  );
   const august = JSON.parse(
     await readFile(new URL("../out/puzzles/2026-08.json", import.meta.url), "utf8"),
   );
   assert.deepEqual(
     manifest.entries.map((entry) => entry.date),
-    ["2026-08-08", "2026-08-09"],
+    sourceManifest.entries.map((entry) => entry.date),
   );
   assert.equal(august.puzzles[0].answers.length, 42);
   assert.equal(august.puzzles[1].answers.length, 35);
@@ -47,6 +50,7 @@ test("exports standalone web-app metadata", async () => {
     await readFile(new URL("../out/manifest.webmanifest", import.meta.url), "utf8"),
   );
   assert.equal(manifest.display, "standalone");
+  assert.equal(manifest.orientation, "portrait");
   assert.equal(manifest.start_url, "/seven/");
   assert.equal(manifest.scope, "/seven/");
 });
