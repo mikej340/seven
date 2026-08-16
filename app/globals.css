@@ -126,6 +126,12 @@ h1 {
   padding-bottom: clamp(44px, 7dvh, 58px);
 }
 
+@media (display-mode: browser) and (hover: none) and (pointer: coarse) {
+  .interaction-area {
+    padding-bottom: 0;
+  }
+}
+
 .rank-panel {
   width: min(100%, 410px);
   display: grid;

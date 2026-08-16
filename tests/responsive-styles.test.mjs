@@ -48,11 +48,16 @@ test("found words is separated from the word controls by the game board", () => 
   );
 });
 
-test("the controls retain a non-interactive bottom comfort zone", () => {
+test("the controls use browser chrome space without changing the default comfort zone", () => {
   assert.match(
     stylesheet,
     /\.interaction-area\s*\{[\s\S]*?padding-bottom:\s*clamp\(44px, 7dvh, 58px\);/,
   );
+  assert.match(
+    stylesheet,
+    /@media \(display-mode: browser\) and \(hover: none\) and \(pointer: coarse\)\s*\{[\s\S]*?\.interaction-area\s*\{[\s\S]*?padding-bottom:\s*0;/,
+  );
+  assert.match(stylesheet, /env\(safe-area-inset-bottom\)/);
 });
 
 test("found words is centred beneath the rank details", () => {
