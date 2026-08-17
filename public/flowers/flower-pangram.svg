@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 180" role="img" aria-labelledby="title desc">
+  <title id="title">Pangram flower</title>
+  <desc id="desc">A distinctive golden eight-petal sun bloom with a burgundy centre.</desc>
+  <defs>
+    <radialGradient id="gold" cx="35%" cy="28%" r="75%">
+      <stop offset="0" stop-color="#f3d36d"/>
+      <stop offset=".58" stop-color="#d9a92f"/>
+      <stop offset="1" stop-color="#bb7f16"/>
+    </radialGradient>
+    <filter id="gold-shadow" x="-40%" y="-40%" width="180%" height="185%">
+      <feDropShadow dx="0" dy="2.4" stdDeviation="1.8" flood-color="#5b3a12" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <path d="M60 166 C61 127 59 82 60 43" fill="none" stroke="#5c7042" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M60 116 C71 103 82 105 87 112 C79 125 70 128 60 124Z" fill="#7d8f55"/>
+  <path d="M60 141 C49 131 40 133 36 140 C44 149 52 151 60 148Z" fill="#70834e" opacity=".9"/>
+  <g transform="translate(60 40)">
+    <ellipse rx="9.5" ry="22" transform="rotate(0) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(45) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(90) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(135) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(180) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(225) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(270) translate(0 -17)" fill="url(#gold)"/>
+    <ellipse rx="9.5" ry="22" transform="rotate(315) translate(0 -17)" fill="url(#gold)"/>
+    <circle r="14" fill="#752a47"/>
+    <circle r="8" fill="#8c3a50"/>
+    <circle cx="-3" cy="-4" r="3" fill="#f2d26b" opacity=".8"/>
+  </g>
+</svg>

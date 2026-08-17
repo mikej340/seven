@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 180" role="img" aria-labelledby="title desc">
+  <title id="title">Four-letter flower</title>
+  <desc id="desc">A tiny, restrained cream bud on a short green stem.</desc>
+  <defs>
+    <linearGradient id="bud" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eee8cf"/>
+      <stop offset="1" stop-color="#cfc6a7"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.2" flood-color="#3c462f" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <path d="M60 166 C60 150 60 134 59 117" fill="none" stroke="#718056" stroke-width="3" stroke-linecap="round"/>
+  <g>
+    <path d="M59 120 C49 116 46 106 50 98 C53 92 57 89 60 86 C63 89 68 93 70 99 C73 108 68 117 59 120Z" fill="url(#bud)"/>
+    <path d="M51 101 C55 105 58 108 60 117 C61 108 65 104 69 100" fill="none" stroke="#b8ae8e" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>
+  </g>
+</svg>
