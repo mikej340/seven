@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   rankForScore,
+  ranksReachedBetween,
   resolvePuzzleSelection,
   utcDateString,
   type PuzzleManifest,
@@ -73,4 +74,16 @@ test("rejects unavailable dates and handles schedule expiry", () => {
 test("derives rank from saved score and completion", () => {
   assert.equal(rankForScore(77, 154).rank.name, "Amazing");
   assert.equal(rankForScore(154, 154, true).rank.name, "Queen Bee");
+});
+
+test("reports every newly reached rank without replaying saved progress", () => {
+  assert.deepEqual(
+    ranksReachedBetween(0, 9, 100).map((rank) => rank.name),
+    ["Good Start", "Moving Up", "Good"],
+  );
+  assert.deepEqual(ranksReachedBetween(9, 14, 100), []);
+  assert.deepEqual(
+    ranksReachedBetween(70, 100, 100, true).map((rank) => rank.name),
+    ["Queen Bee"],
+  );
 });
