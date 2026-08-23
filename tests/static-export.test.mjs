@@ -16,6 +16,14 @@ test("exports the game landing page", () => {
   );
 });
 
+test("includes anonymous Umami analytics", () => {
+  assert.match(html, /src="https:\/\/cloud\.umami\.is\/script\.js"/);
+  assert.match(
+    html,
+    /data-website-id="37db4623-e4fa-4e9a-9c91-f2fcdad09529"/,
+  );
+});
+
 test("uses repository-relative GitHub Pages asset paths", () => {
   assert.match(html, /(?:href|src)="\/seven\/_next\//);
   assert.match(html, /href="\/seven\/favicon\.svg"/);
