@@ -18,9 +18,16 @@ export const metadata: Metadata = {
   title: "Seven Word Puzzle",
   description: "Find words using seven letters and one required centre letter.",
   icons: {
-    icon: `${basePath}/favicon.svg`,
-    shortcut: `${basePath}/favicon.svg`,
-    apple: `${basePath}/favicon.svg`,
+    icon: [
+      { url: `${basePath}/icons/icon-32.png`, sizes: "32x32", type: "image/png" },
+      { url: `${basePath}/icons/icon-192.png`, sizes: "192x192", type: "image/png" },
+    ],
+    shortcut: `${basePath}/icons/icon-32.png`,
+    apple: {
+      url: `${basePath}/icons/apple-touch-icon.png`,
+      sizes: "180x180",
+      type: "image/png",
+    },
   },
   manifest: `${basePath}/manifest.webmanifest`,
   appleWebApp: {

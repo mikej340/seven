@@ -27,7 +27,8 @@ test("includes anonymous Umami analytics", () => {
 
 test("uses repository-relative GitHub Pages asset paths", () => {
   assert.match(html, /(?:href|src)="\/seven\/_next\//);
-  assert.match(html, /href="\/seven\/favicon\.svg"/);
+  assert.match(html, /href="\/seven\/icons\/icon-32\.png"/);
+  assert.match(html, /href="\/seven\/icons\/apple-touch-icon\.png"/);
   assert.doesNotMatch(html, /(?:href|src)="\/_next\//);
 });
 
@@ -62,4 +63,12 @@ test("exports standalone web-app metadata", async () => {
   assert.equal(manifest.orientation, "portrait");
   assert.equal(manifest.start_url, "/seven/");
   assert.equal(manifest.scope, "/seven/");
+  assert.deepEqual(
+    manifest.icons.map(({ sizes, purpose }) => ({ sizes, purpose })),
+    [
+      { sizes: "192x192", purpose: "any" },
+      { sizes: "512x512", purpose: "any" },
+      { sizes: "512x512", purpose: "maskable" },
+    ],
+  );
 });
