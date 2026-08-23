@@ -6,11 +6,13 @@ import {
   loadGameProgress,
   saveGameProgress,
 } from "@/lib/game-save";
+import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
 import {
   formatPuzzleDate,
   loadDailyPuzzle,
   loadPuzzleManifest,
   rankForScore,
+  ranksReachedBetween,
   resolvePuzzleSelection,
   RANKS,
   utcDateString,
@@ -60,6 +62,7 @@ export default function Home() {
   const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const loadedUtcDateRef = useRef<string | null>(null);
+  const engagedPuzzleIdsRef = useRef(new Set<string>());
 
   const centreLetter = game?.puzzle.centre.toUpperCase() ?? "";
   const puzzleLetters = useMemo(
@@ -261,9 +264,37 @@ export default function Home() {
       vibrate([10, 30, 10]);
     } else if (solutionWordSet.has(submittedWord)) {
       const nextFoundWords = [submittedWord, ...foundWords];
-      setFoundWords(nextFoundWords);
       const isPangram = isPangramWord(submittedWord);
       const wordScore = scoreWord(submittedWord);
+      const nextScore = score + wordScore;
+      const completesPuzzle = nextFoundWords.length === solutionWords.length;
+
+      setFoundWords(nextFoundWords);
+
+      if (!engagedPuzzleIdsRef.current.has(puzzle.id)) {
+        const tracked = trackGameEvent(GAME_EVENTS.puzzleEngaged, {
+          puzzle: puzzle.id,
+        });
+        if (tracked) engagedPuzzleIdsRef.current.add(puzzle.id);
+      }
+      if (isPangram) {
+        trackGameEvent(GAME_EVENTS.pangramFound, { puzzle: puzzle.id });
+      }
+      for (const reachedRank of ranksReachedBetween(
+        score,
+        nextScore,
+        maximumScore,
+        completesPuzzle,
+      )) {
+        trackGameEvent(GAME_EVENTS.rankReached, {
+          puzzle: puzzle.id,
+          rank: reachedRank.name,
+        });
+      }
+      if (completesPuzzle) {
+        trackGameEvent(GAME_EVENTS.puzzleCompleted, { puzzle: puzzle.id });
+      }
+
       setFeedback({
         id: Date.now(),
         kind: isPangram ? "pangram" : "accepted",
@@ -275,7 +306,7 @@ export default function Home() {
       });
       vibrate(isPangram ? [22, 28, 22, 28, 55] : [16, 28, 16]);
 
-      if (nextFoundWords.length === solutionWords.length) {
+      if (completesPuzzle) {
         vibrate([25, 40, 25, 40, 80]);
       }
     } else {

@@ -147,3 +147,17 @@ export const rankForScore = (
   const rank = [...RANKS].reverse().find((candidate) => progress >= candidate.threshold) ?? RANKS[0];
   return { rank, progress };
 };
+
+export const ranksReachedBetween = (
+  previousScore: number,
+  nextScore: number,
+  maximumScore: number,
+  nextComplete = false,
+) => {
+  const previousRank = rankForScore(previousScore, maximumScore).rank;
+  const nextRank = rankForScore(nextScore, maximumScore, nextComplete).rank;
+  const previousIndex = RANKS.findIndex((rank) => rank.name === previousRank.name);
+  const nextIndex = RANKS.findIndex((rank) => rank.name === nextRank.name);
+
+  return RANKS.slice(Math.max(1, previousIndex + 1), nextIndex + 1);
+};

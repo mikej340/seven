@@ -22,6 +22,7 @@ test("includes anonymous Umami analytics", () => {
     html,
     /data-website-id="37db4623-e4fa-4e9a-9c91-f2fcdad09529"/,
   );
+  assert.match(html, /data-domains="mikej340.github.io"/);
 });
 
 test("uses repository-relative GitHub Pages asset paths", () => {
