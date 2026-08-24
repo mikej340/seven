@@ -7,6 +7,10 @@ const archiveHtml = await readFile(
   new URL("../out/puzzles/index.html", import.meta.url),
   "utf8",
 );
+const feedbackHtml = await readFile(
+  new URL("../out/feedback/index.html", import.meta.url),
+  "utf8",
+);
 
 test("exports the game landing page", () => {
   assert.match(html, /<title>Seven Word Puzzle<\/title>/);
@@ -49,6 +53,12 @@ test("exports the archive route and daily puzzle data", async () => {
   );
   assert.equal(august.puzzles[0].answers.length, 42);
   assert.equal(august.puzzles[1].answers.length, 35);
+});
+
+test("exports the feedback route and base-path-safe navigation", () => {
+  assert.match(feedbackHtml, /Feedback/);
+  assert.match(feedbackHtml, /href="\/seven\/feedback\/"/);
+  assert.match(archiveHtml, /href="\/seven\/feedback\/"/);
 });
 
 test("exports standalone web-app metadata", async () => {

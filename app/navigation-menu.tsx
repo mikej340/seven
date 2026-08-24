@@ -5,10 +5,11 @@ import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import styles from "./navigation-menu.module.css";
 
 type NavigationMenuProps = {
-  current?: "today" | "puzzles";
+  current?: "today" | "puzzles" | "feedback";
+  feedbackPuzzleDate?: string;
 };
 
-export default function NavigationMenu({ current }: NavigationMenuProps) {
+export default function NavigationMenu({ current, feedbackPuzzleDate }: NavigationMenuProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -52,21 +53,31 @@ export default function NavigationMenu({ current }: NavigationMenuProps) {
         </span>
       </button>
 
-      {open ? (
-        <nav className={styles.menu} id="site-navigation-menu" aria-label="Site navigation">
-          <a href={`${PUZZLE_BASE_PATH}/`} aria-current={current === "today" ? "page" : undefined}>
-            <span>Today</span>
-            {current === "today" ? <i aria-hidden="true">Current</i> : null}
-          </a>
-          <a
-            href={`${PUZZLE_BASE_PATH}/puzzles/`}
-            aria-current={current === "puzzles" ? "page" : undefined}
-          >
-            <span>All puzzles</span>
-            {current === "puzzles" ? <i aria-hidden="true">Current</i> : null}
-          </a>
-        </nav>
-      ) : null}
+      <nav
+        className={styles.menu}
+        id="site-navigation-menu"
+        aria-label="Site navigation"
+        hidden={!open}
+      >
+        <a href={`${PUZZLE_BASE_PATH}/`} aria-current={current === "today" ? "page" : undefined}>
+          <span>Today</span>
+          {current === "today" ? <i aria-hidden="true">Current</i> : null}
+        </a>
+        <a
+          href={`${PUZZLE_BASE_PATH}/puzzles/`}
+          aria-current={current === "puzzles" ? "page" : undefined}
+        >
+          <span>All puzzles</span>
+          {current === "puzzles" ? <i aria-hidden="true">Current</i> : null}
+        </a>
+        <a
+          href={`${PUZZLE_BASE_PATH}/feedback/${feedbackPuzzleDate ? `?puzzle=${feedbackPuzzleDate}` : ""}`}
+          aria-current={current === "feedback" ? "page" : undefined}
+        >
+          <span>Feedback</span>
+          {current === "feedback" ? <i aria-hidden="true">Current</i> : null}
+        </a>
+      </nav>
     </div>
   );
 }

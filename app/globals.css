@@ -220,7 +220,7 @@ h1 {
 
 .word-panel {
   width: min(100%, 410px);
-  height: clamp(72px, 12dvh, 91px);
+  height: clamp(86px, 13dvh, 104px);
   display: grid;
   place-items: center;
   gap: 2px;
@@ -251,12 +251,13 @@ h1 {
 }
 
 .word-display {
+  position: relative;
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 2.5vw, 14px);
+  display: grid;
+  place-items: center;
 }
 
 .current-word {
@@ -278,6 +279,15 @@ h1 {
 .word-panel.is-rejected .current-word { color: var(--plum); animation: rejected-word-shake 320ms ease-out; }
 .word-panel.is-prompt .current-word { color: #775827; }
 .word-panel.is-pangram .current-word { color: #8a5b0f; }
+
+.feedback-line {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+}
 
 .feedback {
   flex: 0 0 auto;
@@ -318,6 +328,20 @@ h1 {
 }
 .feedback.rejected { color: var(--plum); }
 .feedback.prompt { color: #8b6a32; }
+
+.suggest-word-link {
+  margin-left: 3px;
+  color: var(--plum);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-underline-offset: 3px;
+}
+
+.suggest-word-link:focus-visible {
+  border-radius: 3px;
+  outline: 3px solid var(--plum);
+  outline-offset: 2px;
+}
 
 .game-controls {
   width: min(100%, 410px);

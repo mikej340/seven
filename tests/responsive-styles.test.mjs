@@ -77,6 +77,23 @@ test("past puzzles can reveal answers without adding them to found words", () =>
   );
 });
 
+test("rejected unknown words offer a puzzle-aware suggestion link", () => {
+  assert.match(pageSource, /Suggest this word/);
+  assert.match(pageSource, /type=word&puzzle=\$\{puzzle\.date\}&word=/);
+});
+
+test("submission feedback sits below an independently centred word", () => {
+  assert.match(pageSource, /className="feedback-line"/);
+  assert.match(
+    stylesheet,
+    /\.word-display\s*\{[\s\S]*?position:\s*relative;[\s\S]*?height:\s*100%;[\s\S]*?place-items:\s*center;/,
+  );
+  assert.match(
+    stylesheet,
+    /\.feedback-line\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:\s*0;/,
+  );
+});
+
 test("landscape touch devices show the portrait-only guard", () => {
   assert.match(
     stylesheet,

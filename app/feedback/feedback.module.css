@@ -1,0 +1,320 @@
+.page {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  padding:
+    max(24px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right))
+    max(36px, env(safe-area-inset-bottom))
+    max(18px, env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.92), transparent 38%),
+    linear-gradient(145deg, #faf6ed, #f2ebdd);
+}
+
+.shell {
+  width: min(100%, 680px);
+  margin: 0 auto;
+  display: grid;
+  gap: 22px;
+}
+
+.header {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+.header p {
+  margin: 0;
+  color: #8a6f58;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: #67283d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.header > span,
+.help {
+  color: #6e7663;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.state,
+.success,
+.form {
+  border: 1px solid rgba(91, 101, 75, 0.22);
+  border-radius: 24px;
+  background: rgba(255, 252, 245, 0.82);
+  box-shadow: 0 12px 34px rgba(75, 62, 42, 0.08);
+}
+
+.state {
+  margin: 0;
+  padding: 24px;
+  color: #6e7663;
+  text-align: center;
+}
+
+.state p { margin: 0; }
+
+.state button,
+.success button {
+  margin-top: 12px;
+}
+
+.form {
+  display: grid;
+  gap: 20px;
+  padding: clamp(18px, 5vw, 30px);
+}
+
+.kindPicker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.kindPicker legend {
+  margin-bottom: 9px;
+  color: #3c4933;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.kindPicker > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kindPicker label {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 9px 12px;
+  border: 1px solid rgba(91, 101, 75, 0.28);
+  border-radius: 15px;
+  background: #fffdf8;
+  color: #4a563e;
+  font-size: 0.82rem;
+  font-weight: 750;
+  text-align: center;
+  cursor: pointer;
+}
+
+.kindPicker label.selectedKind {
+  border-color: rgba(103, 40, 61, 0.58);
+  background: #f2e8e3;
+  color: #67283d;
+}
+
+.kindPicker input {
+  position: absolute;
+  opacity: 0;
+}
+
+.kindPicker label:has(input:focus-visible),
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible,
+.footer a:focus-visible,
+.success a:focus-visible {
+  outline: 3px solid #67283d;
+  outline-offset: 2px;
+}
+
+.field {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.field > label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: #3c4933;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.field label strong,
+.field label span {
+  color: #777f6d;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(69, 82, 55, 0.32);
+  border-radius: 14px;
+  background: #fffdf8;
+  color: #283520;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.field input,
+.field select {
+  min-height: 48px;
+  padding: 10px 12px;
+}
+
+.field textarea {
+  min-height: 104px;
+  resize: vertical;
+  padding: 12px;
+  line-height: 1.5;
+}
+
+.field [aria-invalid="true"] {
+  border-color: #9b3e4f;
+  background: #fff8f7;
+}
+
+.contactFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.error {
+  color: #8c3045;
+  font-size: 0.73rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.formError {
+  padding: 10px 12px;
+  border: 1px solid rgba(140, 48, 69, 0.35);
+  border-radius: 12px;
+  background: #fff3f3;
+  color: #8c3045;
+  font-size: 0.78rem;
+}
+
+.formError p { margin: 0; }
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.footer {
+  display: grid;
+  gap: 14px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(91, 101, 75, 0.16);
+}
+
+.footer p {
+  margin: 0;
+  color: #6e7663;
+  font-size: 0.69rem;
+  line-height: 1.45;
+}
+
+.footer > div,
+.successActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.footer a,
+.success a {
+  color: #58654d;
+  font-size: 0.8rem;
+  font-weight: 750;
+  text-underline-offset: 3px;
+}
+
+.footer button,
+.state button,
+.success button {
+  min-height: 46px;
+  padding: 9px 18px;
+  border: 1px solid #67283d;
+  border-radius: 15px;
+  background: #67283d;
+  color: #fffaf1;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.footer button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.success {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: clamp(28px, 8vw, 48px);
+  text-align: center;
+}
+
+.success > span {
+  width: 48px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #597846;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.success h2 {
+  margin: 0;
+  color: #67283d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.success p {
+  max-width: 420px;
+  margin: 0;
+  color: #6e7663;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .contactFields { grid-template-columns: 1fr; }
+  .kindPicker label { font-size: 0.76rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field textarea { scroll-behavior: auto; }
+}
