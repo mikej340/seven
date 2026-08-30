@@ -1284,6 +1284,62 @@
         "uneventful"
       ],
       "maximumScore": 163
+    },
+    {
+      "id": "2026-08-31",
+      "date": "2026-08-31",
+      "letters": "aehmopt",
+      "centre": "a",
+      "answers": [
+        "ahem",
+        "ammo",
+        "atom",
+        "atop",
+        "attempt",
+        "haem",
+        "haematoma",
+        "hame",
+        "hate",
+        "heap",
+        "heat",
+        "heath",
+        "homeopath",
+        "mahatma",
+        "mama",
+        "mamma",
+        "mammoth",
+        "mate",
+        "matt",
+        "matte",
+        "meat",
+        "meta",
+        "moat",
+        "oath",
+        "pampa",
+        "papa",
+        "pate",
+        "path",
+        "peat",
+        "phat",
+        "poppa",
+        "potato",
+        "tame",
+        "tamp",
+        "tape",
+        "tappet",
+        "tattoo",
+        "team",
+        "teammate",
+        "teapot",
+        "teat",
+        "that",
+        "theta",
+        "tomato"
+      ],
+      "pangrams": [
+        "homeopath"
+      ],
+      "maximumScore": 141
     }
   ]
 }
