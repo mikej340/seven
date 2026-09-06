@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timeZone": "UTC",
   "startDate": "2026-08-08",
-  "endDate": "2026-09-06",
+  "endDate": "2026-09-13",
   "source": {
     "dictionarySha256": "0089b56e4ea2133902ac27e2c1a8b452ed1e2884c6bf525616a01e7e62a26293",
     "scowlRelease": "rel-2026.02.25",
@@ -308,6 +308,76 @@
       "wordCount": 55,
       "pangramCount": 5,
       "maximumScore": 345
+    },
+    {
+      "id": "2026-09-07",
+      "date": "2026-09-07",
+      "month": "2026-09",
+      "letters": "belortx",
+      "centre": "b",
+      "wordCount": 46,
+      "pangramCount": 1,
+      "maximumScore": 198
+    },
+    {
+      "id": "2026-09-08",
+      "date": "2026-09-08",
+      "month": "2026-09",
+      "letters": "acehikp",
+      "centre": "e",
+      "wordCount": 38,
+      "pangramCount": 1,
+      "maximumScore": 125
+    },
+    {
+      "id": "2026-09-09",
+      "date": "2026-09-09",
+      "month": "2026-09",
+      "letters": "efloruv",
+      "centre": "o",
+      "wordCount": 43,
+      "pangramCount": 1,
+      "maximumScore": 189
+    },
+    {
+      "id": "2026-09-10",
+      "date": "2026-09-10",
+      "month": "2026-09",
+      "letters": "acejltu",
+      "centre": "t",
+      "wordCount": 41,
+      "pangramCount": 1,
+      "maximumScore": 178
+    },
+    {
+      "id": "2026-09-11",
+      "date": "2026-09-11",
+      "month": "2026-09",
+      "letters": "cfilnot",
+      "centre": "c",
+      "wordCount": 39,
+      "pangramCount": 2,
+      "maximumScore": 194
+    },
+    {
+      "id": "2026-09-12",
+      "date": "2026-09-12",
+      "month": "2026-09",
+      "letters": "abdgnow",
+      "centre": "n",
+      "wordCount": 40,
+      "pangramCount": 1,
+      "maximumScore": 137
+    },
+    {
+      "id": "2026-09-13",
+      "date": "2026-09-13",
+      "month": "2026-09",
+      "letters": "afimnry",
+      "centre": "m",
+      "wordCount": 37,
+      "pangramCount": 1,
+      "maximumScore": 146
     }
   ]
 }
