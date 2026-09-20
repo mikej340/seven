@@ -223,8 +223,8 @@ h1 {
   height: clamp(86px, 13dvh, 104px);
   display: grid;
   place-items: center;
-  gap: 2px;
-  padding: 9px 18px 7px;
+  overflow: hidden;
+  padding: 0;
   border: 1px solid rgba(91, 101, 75, 0.24);
   border-radius: 25px;
   background: rgba(255, 252, 245, 0.72);
@@ -251,13 +251,13 @@ h1 {
 }
 
 .word-display {
-  position: relative;
   width: 100%;
   height: 100%;
   max-width: 100%;
   min-width: 0;
   display: grid;
-  place-items: center;
+  grid-template-rows: minmax(0, 1fr) clamp(30px, 4.5dvh, 36px);
+  justify-items: center;
 }
 
 .current-word {
@@ -273,6 +273,7 @@ h1 {
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
+  align-self: center;
 }
 
 .word-panel.is-accepted .current-word { color: #426a38; }
@@ -281,13 +282,19 @@ h1 {
 .word-panel.is-pangram .current-word { color: #8a5b0f; }
 
 .feedback-line {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
+  padding: 0 14px;
+  border-top: 1px solid rgba(91, 101, 75, 0.18);
 }
+
+.word-panel.is-accepted .feedback-line { border-top-color: rgba(72, 112, 56, 0.26); }
+.word-panel.is-pangram .feedback-line { border-top-color: rgba(174, 116, 23, 0.3); }
+.word-panel.is-rejected .feedback-line { border-top-color: rgba(103, 40, 61, 0.2); }
+.word-panel.is-prompt .feedback-line { border-top-color: rgba(139, 106, 50, 0.22); }
 
 .feedback {
   flex: 0 0 auto;

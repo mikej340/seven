@@ -476,9 +476,13 @@ export default function Home() {
                     {currentWord || feedback?.word}
                   </span>
                 ) : null}
-                {feedback ? (
-                  <span className="feedback-line" key={feedback.id}>
-                    <span className={`feedback ${feedback.kind}`} role="status">
+                <span className="feedback-line">
+                  {feedback ? (
+                    <span
+                      className={`feedback ${feedback.kind}`}
+                      key={feedback.id}
+                      role="status"
+                    >
                       {feedback.kind === "accepted" ? (
                         <>
                           <span className="sr-only">{feedback.message}</span>
@@ -507,8 +511,8 @@ export default function Home() {
                         </>
                       ) : null}
                     </span>
-                  </span>
-                ) : null}
+                  ) : null}
+                </span>
               </div>
             </div>
 

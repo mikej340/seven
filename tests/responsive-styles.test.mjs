@@ -82,16 +82,22 @@ test("rejected unknown words offer a puzzle-aware suggestion link", () => {
   assert.match(pageSource, /type=word&puzzle=\$\{puzzle\.date\}&word=/);
 });
 
-test("submission feedback sits below an independently centred word", () => {
+test("the fixed-height word panel always reserves a divided feedback strip", () => {
+  const feedbackLineRule = stylesheet.match(
+    /\.feedback-line\s*\{(?<rules>[\s\S]*?)\n\}/,
+  )?.groups?.rules;
+
   assert.match(pageSource, /className="feedback-line"/);
   assert.match(
     stylesheet,
-    /\.word-display\s*\{[\s\S]*?position:\s*relative;[\s\S]*?height:\s*100%;[\s\S]*?place-items:\s*center;/,
+    /\.word-panel\s*\{[\s\S]*?height:\s*clamp\(86px, 13dvh, 104px\);/,
   );
   assert.match(
     stylesheet,
-    /\.feedback-line\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:\s*0;/,
+    /\.word-display\s*\{[\s\S]*?grid-template-rows:\s*minmax\(0, 1fr\) clamp\(30px, 4\.5dvh, 36px\);/,
   );
+  assert.ok(feedbackLineRule);
+  assert.match(feedbackLineRule, /border-top:\s*1px solid/);
 });
 
 test("landscape touch devices show the portrait-only guard", () => {
