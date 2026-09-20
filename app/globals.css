@@ -436,7 +436,7 @@ h1 {
   height: min(92dvh, 780px);
   max-height: 100%;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid rgba(91, 101, 75, 0.3);
   border-radius: 30px;
@@ -491,6 +491,40 @@ h1 {
   font-weight: 700;
 }
 
+.found-words-reveal-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 22px;
+  border-bottom: 1px solid rgba(91, 101, 75, 0.2);
+  background: rgba(230, 229, 207, 0.28);
+}
+
+.found-words-reveal-control button {
+  min-height: 42px;
+  padding: 7px 13px;
+  border: 1px solid rgba(103, 40, 61, 0.3);
+  border-radius: 14px;
+  background: #fffaf1;
+  color: var(--plum);
+  font-size: 0.78rem;
+  font-weight: 750;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.found-words-reveal-control button[aria-pressed="true"] {
+  background: #eee3e4;
+}
+
+.found-words-reveal-control span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  text-align: right;
+}
+
 .found-words-list {
   min-height: 0;
   overflow-y: auto;
@@ -516,14 +550,46 @@ h1 {
   color: #7a421c;
 }
 
-.found-words-list div.pangram-word strong {
+.word-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.found-words-list div strong {
   padding: 4px 8px;
   border-radius: 999px;
-  background: #f2df9f;
-  color: #764318;
   font-size: 0.62rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
+}
+
+.found-words-list div strong.pangram-badge {
+  background: #f2df9f;
+  color: #764318;
+}
+
+.found-words-list div.revealed-word {
+  color: #78806f;
+  font-weight: 600;
+}
+
+.found-words-list div.revealed-word.pangram-word {
+  color: #8a684e;
+}
+
+.found-words-list div strong.revealed-badge {
+  background: #e6e5df;
+  color: #62695b;
+}
+
+.found-words-empty {
+  margin: 0;
+  padding: 28px 2px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
 }
 
 .found-words-list div:last-child {

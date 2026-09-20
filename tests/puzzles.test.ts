@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  isPuzzleRevealAvailable,
   rankForScore,
   ranksReachedBetween,
   resolvePuzzleSelection,
@@ -46,6 +47,12 @@ const manifest: PuzzleManifest = {
 test("uses UTC rather than local calendar boundaries", () => {
   assert.equal(utcDateString(new Date("2026-08-09T00:00:00.000Z")), "2026-08-09");
   assert.equal(utcDateString(new Date("2026-08-08T23:59:59.999Z")), "2026-08-08");
+});
+
+test("allows answer reveals only after the puzzle's UTC date", () => {
+  assert.equal(isPuzzleRevealAvailable("2026-08-08", "2026-08-09"), true);
+  assert.equal(isPuzzleRevealAvailable("2026-08-09", "2026-08-09"), false);
+  assert.equal(isPuzzleRevealAvailable("2026-08-10", "2026-08-09"), false);
 });
 
 test("selects today and released historical puzzles", () => {

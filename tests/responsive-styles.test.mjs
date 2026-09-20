@@ -65,6 +65,18 @@ test("found words is centred beneath the rank details", () => {
   assert.match(stylesheet, /\.found-words\s*\{[\s\S]*?justify-self:\s*center;/);
 });
 
+test("past puzzles can reveal answers without adding them to found words", () => {
+  assert.match(pageSource, /disabled=\{foundWords\.length === 0 && !canRevealAnswers\}/);
+  assert.match(pageSource, /aria-pressed=\{answersRevealed\}/);
+  assert.match(pageSource, /Reveal all words/);
+  assert.match(pageSource, /revealed-word/);
+  assert.doesNotMatch(pageSource, /setFoundWords\(solutionWords\)/);
+  assert.match(
+    stylesheet,
+    /\.found-words-list div\.revealed-word\s*\{[\s\S]*?color:/,
+  );
+});
+
 test("landscape touch devices show the portrait-only guard", () => {
   assert.match(
     stylesheet,
