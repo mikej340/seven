@@ -487,7 +487,7 @@ export default function Home() {
                         <>
                           <span className="sr-only">{feedback.message}</span>
                           <span className="feedback-icon" aria-hidden="true">✓</span>
-                          <span aria-hidden="true">+{feedback.points} {feedback.points === 1 ? "point" : "points"}</span>
+                          <span aria-hidden="true">Correct · +{feedback.points} {feedback.points === 1 ? "point" : "points"}</span>
                         </>
                       ) : null}
                       {feedback.kind === "pangram" ? (

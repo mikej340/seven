@@ -100,6 +100,20 @@ test("the fixed-height word panel always reserves a divided feedback strip", () 
   assert.match(feedbackLineRule, /border-top:\s*1px solid/);
 });
 
+test("accepted words get a restrained confirmation bloom", () => {
+  assert.match(pageSource, /Correct · \+\{feedback\.points\}/);
+  assert.match(stylesheet, /@keyframes accepted-word-lift/);
+  assert.match(stylesheet, /@keyframes accepted-check-pop/);
+  assert.match(
+    stylesheet,
+    /\.word-panel\.is-accepted \.current-word\s*\{[\s\S]*?animation:\s*accepted-word-lift/,
+  );
+  assert.match(
+    stylesheet,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.feedback\.accepted \.feedback-icon/,
+  );
+});
+
 test("landscape touch devices show the portrait-only guard", () => {
   assert.match(
     stylesheet,
