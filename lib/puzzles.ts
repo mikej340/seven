@@ -61,6 +61,11 @@ export type PuzzleSelection = {
 
 export const utcDateString = (date = new Date()) => date.toISOString().slice(0, 10);
 
+export const isPuzzleRevealAvailable = (
+  puzzleDate: string,
+  today = utcDateString(),
+) => puzzleDate < today;
+
 export const formatPuzzleDate = (date: string, includeWeekday = true) =>
   new Intl.DateTimeFormat("en-GB", {
     ...(includeWeekday ? { weekday: "long" as const } : {}),

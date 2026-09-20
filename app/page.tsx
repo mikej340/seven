@@ -9,6 +9,7 @@ import {
 import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
 import {
   formatPuzzleDate,
+  isPuzzleRevealAvailable,
   loadDailyPuzzle,
   loadPuzzleManifest,
   rankForScore,
@@ -59,8 +60,11 @@ export default function Home() {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [saveLoaded, setSaveLoaded] = useState(false);
   const [foundWordsOpen, setFoundWordsOpen] = useState(false);
+  const [answersRevealed, setAnswersRevealed] = useState(false);
+  const [currentUtcDate, setCurrentUtcDate] = useState(utcDateString);
   const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
+  const foundWordsDialogRef = useRef<HTMLElement>(null);
   const loadedUtcDateRef = useRef<string | null>(null);
   const engagedPuzzleIdsRef = useRef(new Set<string>());
 
@@ -126,6 +130,7 @@ export default function Home() {
       setFoundWords(progress.foundWords);
       setFeedback(null);
       setFoundWordsOpen(false);
+      setAnswersRevealed(false);
       setSaveLoaded(true);
       if (requestedDate === null) loadedUtcDateRef.current = utcDateString();
     } catch (error) {
@@ -140,10 +145,12 @@ export default function Home() {
     queueMicrotask(() => void loadSelectedGame());
 
     const handleVisibilityChange = () => {
+      const visibleUtcDate = utcDateString();
+      setCurrentUtcDate(visibleUtcDate);
       if (
         document.visibilityState === "visible" &&
         !new URLSearchParams(window.location.search).has("date") &&
-        loadedUtcDateRef.current !== utcDateString()
+        loadedUtcDateRef.current !== visibleUtcDate
       ) {
         void loadSelectedGame();
       }
@@ -174,10 +181,24 @@ export default function Home() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setFoundWordsOpen(false);
+        setAnswersRevealed(false);
         queueMicrotask(() => foundWordsButtonRef.current?.focus());
       } else if (event.key === "Tab") {
-        event.preventDefault();
-        closeFoundWordsButtonRef.current?.focus();
+        const focusable = Array.from(
+          foundWordsDialogRef.current?.querySelectorAll<HTMLButtonElement>(
+            "button:not([disabled])",
+          ) ?? [],
+        );
+        const first = focusable.at(0);
+        const last = focusable.at(-1);
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
       }
     };
 
@@ -210,6 +231,12 @@ export default function Home() {
   const maximumScore = puzzle.maximumScore;
   const score = foundWords.reduce((total, word) => total + scoreWord(word), 0);
   const gameComplete = foundWords.length === solutionWords.length;
+  const canRevealAnswers = isPuzzleRevealAvailable(puzzle.date, currentUtcDate);
+  const foundWordSet = new Set(foundWords);
+  const displayedWords = (answersRevealed ? solutionWords : foundWords).toSorted();
+  const revealedWordCount = answersRevealed
+    ? solutionWords.length - foundWords.length
+    : 0;
   const { rank: currentRank, progress } = rankForScore(score, maximumScore, gameComplete);
   const currentRankIndex = RANKS.findIndex((rank) => rank.name === currentRank.name);
   const nextRank = RANKS[currentRankIndex + 1];
@@ -328,6 +355,7 @@ export default function Home() {
 
   const closeFoundWords = () => {
     setFoundWordsOpen(false);
+    setAnswersRevealed(false);
     queueMicrotask(() => foundWordsButtonRef.current?.focus());
   };
 
@@ -417,10 +445,12 @@ export default function Home() {
                     type="button"
                     aria-label={foundWords.length
                       ? `View ${foundWords.length} found ${foundWords.length === 1 ? "word" : "words"}`
-                      : "No words found yet"}
+                      : canRevealAnswers
+                        ? "View words and reveal answers"
+                        : "No words found yet"}
                     aria-haspopup="dialog"
                     aria-expanded={foundWordsOpen}
-                    disabled={foundWords.length === 0}
+                    disabled={foundWords.length === 0 && !canRevealAnswers}
                     onClick={() => setFoundWordsOpen(true)}
                     ref={foundWordsButtonRef}
                   >
@@ -534,6 +564,7 @@ export default function Home() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="found-words-dialog-title"
+            ref={foundWordsDialogRef}
           >
             <header className="found-words-dialog-header">
               <div>
@@ -545,20 +576,52 @@ export default function Home() {
               </button>
             </header>
             <p className="found-words-dialog-count">
-              {foundWords.length} {foundWords.length === 1 ? "word" : "words"}
+              {answersRevealed ? (
+                <>
+                  {foundWords.length} found · {revealedWordCount} revealed · {solutionWords.length} total
+                </>
+              ) : (
+                <>{foundWords.length} {foundWords.length === 1 ? "word" : "words"} found</>
+              )}
             </p>
-            <div className="found-words-list" role="list">
-              {[...foundWords].sort().map((word) => (
-                <div
-                  className={isPangramWord(word) ? "pangram-word" : ""}
-                  role="listitem"
-                  aria-label={isPangramWord(word) ? `${word}, pangram` : word}
-                  key={word}
+            {canRevealAnswers ? (
+              <div className="found-words-reveal-control">
+                <button
+                  type="button"
+                  aria-pressed={answersRevealed}
+                  onClick={() => setAnswersRevealed((revealed) => !revealed)}
                 >
-                  <span>{word}</span>
-                  {isPangramWord(word) ? <strong>Pangram ✦</strong> : null}
-                </div>
-              ))}
+                  {answersRevealed ? "Hide revealed words" : "Reveal all words"}
+                </button>
+                <span>Available for past puzzles</span>
+              </div>
+            ) : null}
+            <div
+              className="found-words-list"
+              role={displayedWords.length > 0 ? "list" : undefined}
+            >
+              {displayedWords.length === 0 ? (
+                <p className="found-words-empty">No words found yet.</p>
+              ) : null}
+              {displayedWords.map((word) => {
+                const isRevealedWord = answersRevealed && !foundWordSet.has(word);
+                const isPangram = isPangramWord(word);
+
+                return (
+                  <div
+                    className={`${isPangram ? "pangram-word" : ""}${isRevealedWord ? " revealed-word" : ""}`}
+                    role="listitem"
+                    aria-label={`${word}${isPangram ? ", pangram" : ""}${isRevealedWord ? ", revealed" : ""}`}
+                    key={word}
+                  >
+                    <span>{word}</span>
+                    <span className="word-badges" aria-hidden="true">
+                      {isPangram ? <strong className="pangram-badge">Pangram ✦</strong> : null}
+                      {isRevealedWord ? <strong className="revealed-badge">Revealed</strong> : null}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
         </div>
