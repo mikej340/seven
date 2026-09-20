@@ -16,6 +16,7 @@ import {
   ranksReachedBetween,
   resolvePuzzleSelection,
   RANKS,
+  PUZZLE_BASE_PATH,
   utcDateString,
   type DailyPuzzle,
   type PuzzleSelection,
@@ -373,7 +374,10 @@ export default function Home() {
         aria-labelledby="game-title"
       >
         <header className="game-heading">
-          <NavigationMenu current={selection.isToday ? "today" : undefined} />
+          <NavigationMenu
+            current={selection.isToday ? "today" : undefined}
+            feedbackPuzzleDate={puzzle.date}
+          />
           <h1 id="game-title">Seven</h1>
           <p className="puzzle-date">
             {selection.isToday ? "Today" : formatPuzzleDate(puzzle.date, false)}
@@ -472,31 +476,43 @@ export default function Home() {
                     {currentWord || feedback?.word}
                   </span>
                 ) : null}
-                {feedback ? (
-                  <span
-                    className={`feedback ${feedback.kind}`}
-                    key={feedback.id}
-                    role="status"
-                  >
-                    {feedback.kind === "accepted" ? (
-                      <>
-                        <span className="sr-only">{feedback.message}</span>
-                        <span className="feedback-icon" aria-hidden="true">✓</span>
-                        <span aria-hidden="true">+{feedback.points} {feedback.points === 1 ? "point" : "points"}</span>
-                      </>
-                    ) : null}
-                    {feedback.kind === "pangram" ? (
-                      <>
-                        <span className="sr-only">{feedback.message}</span>
-                        <span className="feedback-icon" aria-hidden="true">✦</span>
-                        <span aria-hidden="true">Pangram · +{feedback.points}</span>
-                      </>
-                    ) : null}
-                    {feedback.kind === "rejected" || feedback.kind === "prompt"
-                      ? feedback.message
-                      : null}
-                  </span>
-                ) : null}
+                <span className="feedback-line">
+                  {feedback ? (
+                    <span
+                      className={`feedback ${feedback.kind}`}
+                      key={feedback.id}
+                      role="status"
+                    >
+                      {feedback.kind === "accepted" ? (
+                        <>
+                          <span className="sr-only">{feedback.message}</span>
+                          <span className="feedback-icon" aria-hidden="true">✓</span>
+                          <span aria-hidden="true">Correct · +{feedback.points} {feedback.points === 1 ? "point" : "points"}</span>
+                        </>
+                      ) : null}
+                      {feedback.kind === "pangram" ? (
+                        <>
+                          <span className="sr-only">{feedback.message}</span>
+                          <span className="feedback-icon" aria-hidden="true">✦</span>
+                          <span aria-hidden="true">Pangram · +{feedback.points}</span>
+                        </>
+                      ) : null}
+                      {feedback.kind === "rejected" || feedback.kind === "prompt" ? (
+                        <>
+                          {feedback.message}
+                          {feedback.kind === "rejected" && feedback.message === "Not accepted" && feedback.word ? (
+                            <a
+                              className="suggest-word-link"
+                              href={`${PUZZLE_BASE_PATH}/feedback/?type=word&puzzle=${puzzle.date}&word=${encodeURIComponent(feedback.word)}`}
+                            >
+                              Suggest this word
+                            </a>
+                          ) : null}
+                        </>
+                      ) : null}
+                    </span>
+                  ) : null}
+                </span>
               </div>
             </div>
 

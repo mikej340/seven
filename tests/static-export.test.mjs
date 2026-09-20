@@ -7,6 +7,10 @@ const archiveHtml = await readFile(
   new URL("../out/puzzles/index.html", import.meta.url),
   "utf8",
 );
+const feedbackHtml = await readFile(
+  new URL("../out/feedback/index.html", import.meta.url),
+  "utf8",
+);
 
 test("exports the game landing page", () => {
   assert.match(html, /<title>Seven Word Puzzle<\/title>/);
@@ -27,7 +31,8 @@ test("includes anonymous Umami analytics", () => {
 
 test("uses repository-relative GitHub Pages asset paths", () => {
   assert.match(html, /(?:href|src)="\/seven\/_next\//);
-  assert.match(html, /href="\/seven\/favicon\.svg"/);
+  assert.match(html, /href="\/seven\/icons\/icon-32\.png"/);
+  assert.match(html, /href="\/seven\/icons\/apple-touch-icon\.png"/);
   assert.doesNotMatch(html, /(?:href|src)="\/_next\//);
 });
 
@@ -50,6 +55,12 @@ test("exports the archive route and daily puzzle data", async () => {
   assert.equal(august.puzzles[1].answers.length, 35);
 });
 
+test("exports the feedback route and base-path-safe navigation", () => {
+  assert.match(feedbackHtml, /Feedback/);
+  assert.match(feedbackHtml, /href="\/seven\/feedback\/"/);
+  assert.match(archiveHtml, /href="\/seven\/feedback\/"/);
+});
+
 test("exports standalone web-app metadata", async () => {
   assert.match(html, /content="width=device-width, initial-scale=1"/);
   assert.doesNotMatch(html, /viewport-fit=cover/);
@@ -62,4 +73,12 @@ test("exports standalone web-app metadata", async () => {
   assert.equal(manifest.orientation, "portrait");
   assert.equal(manifest.start_url, "/seven/");
   assert.equal(manifest.scope, "/seven/");
+  assert.deepEqual(
+    manifest.icons.map(({ sizes, purpose }) => ({ sizes, purpose })),
+    [
+      { sizes: "192x192", purpose: "any" },
+      { sizes: "512x512", purpose: "any" },
+      { sizes: "512x512", purpose: "maskable" },
+    ],
+  );
 });

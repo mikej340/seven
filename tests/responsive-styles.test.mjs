@@ -77,6 +77,43 @@ test("past puzzles can reveal answers without adding them to found words", () =>
   );
 });
 
+test("rejected unknown words offer a puzzle-aware suggestion link", () => {
+  assert.match(pageSource, /Suggest this word/);
+  assert.match(pageSource, /type=word&puzzle=\$\{puzzle\.date\}&word=/);
+});
+
+test("the fixed-height word panel always reserves a divided feedback strip", () => {
+  const feedbackLineRule = stylesheet.match(
+    /\.feedback-line\s*\{(?<rules>[\s\S]*?)\n\}/,
+  )?.groups?.rules;
+
+  assert.match(pageSource, /className="feedback-line"/);
+  assert.match(
+    stylesheet,
+    /\.word-panel\s*\{[\s\S]*?height:\s*clamp\(86px, 13dvh, 104px\);/,
+  );
+  assert.match(
+    stylesheet,
+    /\.word-display\s*\{[\s\S]*?grid-template-rows:\s*minmax\(0, 1fr\) clamp\(30px, 4\.5dvh, 36px\);/,
+  );
+  assert.ok(feedbackLineRule);
+  assert.match(feedbackLineRule, /border-top:\s*1px solid/);
+});
+
+test("accepted words get a restrained confirmation bloom", () => {
+  assert.match(pageSource, /Correct · \+\{feedback\.points\}/);
+  assert.match(stylesheet, /@keyframes accepted-word-lift/);
+  assert.match(stylesheet, /@keyframes accepted-check-pop/);
+  assert.match(
+    stylesheet,
+    /\.word-panel\.is-accepted \.current-word\s*\{[\s\S]*?animation:\s*accepted-word-lift/,
+  );
+  assert.match(
+    stylesheet,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.feedback\.accepted \.feedback-icon/,
+  );
+});
+
 test("landscape touch devices show the portrait-only guard", () => {
   assert.match(
     stylesheet,

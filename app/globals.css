@@ -220,11 +220,11 @@ h1 {
 
 .word-panel {
   width: min(100%, 410px);
-  height: clamp(72px, 12dvh, 91px);
+  height: clamp(86px, 13dvh, 104px);
   display: grid;
   place-items: center;
-  gap: 2px;
-  padding: 9px 18px 7px;
+  overflow: hidden;
+  padding: 0;
   border: 1px solid rgba(91, 101, 75, 0.24);
   border-radius: 25px;
   background: rgba(255, 252, 245, 0.72);
@@ -251,12 +251,13 @@ h1 {
 }
 
 .word-display {
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 2.5vw, 14px);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) clamp(30px, 4.5dvh, 36px);
+  justify-items: center;
 }
 
 .current-word {
@@ -272,12 +273,31 @@ h1 {
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
+  align-self: center;
 }
 
-.word-panel.is-accepted .current-word { color: #426a38; }
+.word-panel.is-accepted .current-word {
+  color: #426a38;
+  animation: accepted-word-lift 420ms cubic-bezier(0.2, 0.8, 0.25, 1);
+}
 .word-panel.is-rejected .current-word { color: var(--plum); animation: rejected-word-shake 320ms ease-out; }
 .word-panel.is-prompt .current-word { color: #775827; }
 .word-panel.is-pangram .current-word { color: #8a5b0f; }
+
+.feedback-line {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-top: 1px solid rgba(91, 101, 75, 0.18);
+}
+
+.word-panel.is-accepted .feedback-line { border-top-color: rgba(72, 112, 56, 0.26); }
+.word-panel.is-pangram .feedback-line { border-top-color: rgba(174, 116, 23, 0.3); }
+.word-panel.is-rejected .feedback-line { border-top-color: rgba(103, 40, 61, 0.2); }
+.word-panel.is-prompt .feedback-line { border-top-color: rgba(139, 106, 50, 0.22); }
 
 .feedback {
   flex: 0 0 auto;
@@ -303,6 +323,7 @@ h1 {
   background: #4f7b3f;
   color: white;
   font-size: 0.68rem;
+  animation: accepted-check-pop 440ms cubic-bezier(0.2, 0.9, 0.25, 1.25);
 }
 .feedback.pangram {
   color: #713c1e;
@@ -318,6 +339,20 @@ h1 {
 }
 .feedback.rejected { color: var(--plum); }
 .feedback.prompt { color: #8b6a32; }
+
+.suggest-word-link {
+  margin-left: 3px;
+  color: var(--plum);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-underline-offset: 3px;
+}
+
+.suggest-word-link:focus-visible {
+  border-radius: 3px;
+  outline: 3px solid var(--plum);
+  outline-offset: 2px;
+}
 
 .game-controls {
   width: min(100%, 410px);
@@ -939,8 +974,35 @@ h1 {
 }
 
 @keyframes correct-panel-pop {
-  0% { transform: scale(0.97); }
-  55% { transform: scale(1.015); }
+  0% {
+    border-color: rgba(72, 112, 56, 0.42);
+    background: rgba(244, 249, 235, 0.82);
+    box-shadow: 0 8px 30px rgba(69, 105, 53, 0.08);
+    transform: scale(0.97);
+  }
+  52% {
+    border-color: rgba(72, 112, 56, 0.78);
+    background: rgba(235, 246, 220, 0.98);
+    box-shadow: 0 10px 32px rgba(69, 105, 53, 0.2);
+    transform: scale(1.012);
+  }
+  100% {
+    border-color: rgba(72, 112, 56, 0.58);
+    background: rgba(244, 249, 235, 0.94);
+    box-shadow: 0 8px 30px rgba(69, 105, 53, 0.13);
+    transform: scale(1);
+  }
+}
+
+@keyframes accepted-word-lift {
+  0% { transform: scale(0.985); }
+  55% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes accepted-check-pop {
+  0% { transform: scale(0.82); opacity: 0.4; }
+  62% { transform: scale(1.12); opacity: 1; }
   100% { transform: scale(1); }
 }
 
@@ -1023,8 +1085,10 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .word-panel.is-accepted,
   .word-panel.is-pangram,
+  .word-panel.is-accepted .current-word,
   .word-panel.is-rejected .current-word,
   .feedback,
+  .feedback.accepted .feedback-icon,
   .feedback.pangram .feedback-icon {
     animation: none;
   }
