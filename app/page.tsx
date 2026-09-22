@@ -7,6 +7,7 @@ import {
   saveGameProgress,
 } from "@/lib/game-save";
 import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
+import { createScoreCardPng, deliverScoreImage, scoreCardFileName } from "@/lib/share-score";
 import {
   formatPuzzleDate,
   isPuzzleRevealAvailable,
@@ -62,6 +63,7 @@ export default function Home() {
   const [saveLoaded, setSaveLoaded] = useState(false);
   const [foundWordsOpen, setFoundWordsOpen] = useState(false);
   const [answersRevealed, setAnswersRevealed] = useState(false);
+  const [shareStatus, setShareStatus] = useState<"idle" | "sharing" | "shared" | "copied" | "failed">("idle");
   const [currentUtcDate, setCurrentUtcDate] = useState(utcDateString);
   const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
@@ -132,6 +134,7 @@ export default function Home() {
       setFeedback(null);
       setFoundWordsOpen(false);
       setAnswersRevealed(false);
+      setShareStatus("idle");
       setSaveLoaded(true);
       if (requestedDate === null) loadedUtcDateRef.current = utcDateString();
     } catch (error) {
@@ -298,6 +301,7 @@ export default function Home() {
       const completesPuzzle = nextFoundWords.length === solutionWords.length;
 
       setFoundWords(nextFoundWords);
+      setShareStatus("idle");
 
       if (!engagedPuzzleIdsRef.current.has(puzzle.id)) {
         const tracked = trackGameEvent(GAME_EVENTS.puzzleEngaged, {
@@ -350,6 +354,7 @@ export default function Home() {
     setCurrentWord("");
     setFoundWords([]);
     setFeedback(null);
+    setShareStatus("idle");
     clearGameProgress(localStorage, puzzle.id);
     vibrate(14);
   };
@@ -359,6 +364,56 @@ export default function Home() {
     setAnswersRevealed(false);
     queueMicrotask(() => foundWordsButtonRef.current?.focus());
   };
+
+  const shareScore = async () => {
+    if (shareStatus === "sharing") return;
+    setShareStatus("sharing");
+
+    try {
+      const nextRankText = nextRank && nextRankScore !== null
+        ? `${Math.max(0, nextRankScore - score)} points to ${nextRank.name}`
+        : "Every word found";
+      const image = createScoreCardPng({
+        date: formatPuzzleDate(puzzle.date, false),
+        rank: currentRank.name,
+        score,
+        progress,
+        nextRankText,
+        foundWords: foundWords.length,
+      });
+      const result = await deliverScoreImage(
+        image,
+        scoreCardFileName(puzzle.date),
+      );
+
+      if (result === "cancelled") {
+        setShareStatus("idle");
+        return;
+      }
+      if (result === "failed") {
+        setShareStatus("failed");
+        return;
+      }
+
+      setShareStatus(result);
+      trackGameEvent(GAME_EVENTS.scoreShared, {
+        puzzle: puzzle.id,
+        method: result === "shared" ? "native" : "clipboard",
+      });
+    } catch {
+      setShareStatus("failed");
+    }
+  };
+
+  const shareButtonLabel = shareStatus === "sharing"
+    ? "Sharing…"
+    : shareStatus === "shared"
+      ? "Shared"
+      : shareStatus === "copied"
+        ? "Score copied"
+        : shareStatus === "failed"
+          ? "Couldn’t share"
+          : "Share score";
 
   return (
     <main className={`page-shell${foundWordsOpen ? " has-modal" : ""}`}>
@@ -379,9 +434,9 @@ export default function Home() {
             feedbackPuzzleDate={puzzle.date}
           />
           <h1 id="game-title">Seven</h1>
-          <p className="puzzle-date">
+          {gameComplete ? <p className="puzzle-date">
             {selection.isToday ? "Today" : formatPuzzleDate(puzzle.date, false)}
-          </p>
+          </p> : null}
           {selection.notice ? (
             <p className="puzzle-notice" role="status">{selection.notice}</p>
           ) : null}
@@ -397,6 +452,15 @@ export default function Home() {
               <div><strong>{foundWords.length}</strong><span>Found</span></div>
               <div><strong className="rank-stat">Queen Bee</strong><span>Rank</span></div>
             </div>
+
+            <button
+              className="score-share-summary"
+              type="button"
+              disabled={shareStatus === "sharing"}
+              onClick={() => void shareScore()}
+            >
+              <span aria-live="polite">{shareButtonLabel}</span>
+            </button>
 
             <div className="answer-list">
               <h3>All words</h3>
@@ -415,11 +479,14 @@ export default function Home() {
           </section>
         ) : (
           <div className="interaction-area">
-            <div className="rank-panel">
+            <fieldset className="rank-panel">
+              <legend className="scorecard-date">
+                <time dateTime={puzzle.date}>{formatPuzzleDate(puzzle.date, false)}</time>
+              </legend>
+              <div className="rank-content">
               <div className="rank-copy">
                 <div>
-                  <span>Rank</span>
-                  <strong>{currentRank.name}</strong>
+                  <strong><span className="sr-only">Rank: </span>{currentRank.name}</strong>
                 </div>
                 <div className="rank-score">
                   <strong>{score}</strong>
@@ -443,27 +510,44 @@ export default function Home() {
                     ? `${Math.max(0, nextRankScore - score)} points to ${nextRank.name}`
                     : "Every word found"}
                 </p>
-                <section className="found-words" aria-label="Found words">
+                <div className="rank-actions">
+                  <section className="found-words" aria-label="Found words">
+                    <button
+                      className="found-words-button"
+                      type="button"
+                      aria-label={foundWords.length
+                        ? `View ${foundWords.length} found ${foundWords.length === 1 ? "word" : "words"}`
+                        : canRevealAnswers
+                          ? "View words and reveal answers"
+                          : "No words found yet"}
+                      aria-haspopup="dialog"
+                      aria-expanded={foundWordsOpen}
+                      disabled={foundWords.length === 0 && !canRevealAnswers}
+                      onClick={() => setFoundWordsOpen(true)}
+                      ref={foundWordsButtonRef}
+                    >
+                      <span>{foundWords.length} {foundWords.length === 1 ? "word" : "words"} found</span>
+                      <svg className="found-words-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+                        <path d="m9 5 7 7-7 7" />
+                      </svg>
+                    </button>
+                  </section>
                   <button
-                    className="found-words-button"
+                    className="score-share-button"
                     type="button"
-                    aria-label={foundWords.length
-                      ? `View ${foundWords.length} found ${foundWords.length === 1 ? "word" : "words"}`
-                      : canRevealAnswers
-                        ? "View words and reveal answers"
-                        : "No words found yet"}
-                    aria-haspopup="dialog"
-                    aria-expanded={foundWordsOpen}
-                    disabled={foundWords.length === 0 && !canRevealAnswers}
-                    onClick={() => setFoundWordsOpen(true)}
-                    ref={foundWordsButtonRef}
+                    aria-label={shareStatus === "idle" ? "Share score" : shareButtonLabel}
+                    disabled={shareStatus === "sharing"}
+                    onClick={() => void shareScore()}
                   >
-                    <span>Found words</span>
-                    <span className="found-count" aria-hidden="true">{foundWords.length}</span>
+                    <svg className="score-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 15V3m-4 4 4-4 4 4M7 10H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2" />
+                    </svg>
+                    <span aria-live="polite">{shareStatus === "idle" ? "Share" : shareButtonLabel}</span>
                   </button>
-                </section>
+                </div>
               </div>
-            </div>
+              </div>
+            </fieldset>
 
             <div
               className={`word-panel ${feedback ? `is-${feedback.kind}` : ""}`}

@@ -46,3 +46,7 @@ test("silently skips analytics when the tracker is unavailable or fails", () => 
     false,
   );
 });
+
+test("exposes the score sharing event name", () => {
+  assert.equal(GAME_EVENTS.scoreShared, "score-shared");
+});

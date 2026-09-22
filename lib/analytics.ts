@@ -3,6 +3,7 @@ export const GAME_EVENTS = {
   pangramFound: "pangram-found",
   rankReached: "rank-reached",
   puzzleCompleted: "puzzle-completed",
+  scoreShared: "score-shared",
 } as const;
 
 export type GameEventName = (typeof GAME_EVENTS)[keyof typeof GAME_EVENTS];
