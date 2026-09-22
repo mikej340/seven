@@ -60,9 +60,17 @@ test("the controls use browser chrome space without changing the default comfort
   assert.match(stylesheet, /env\(safe-area-inset-bottom\)/);
 });
 
-test("found words is centred beneath the rank details", () => {
-  assert.match(stylesheet, /\.rank-footer\s*\{[\s\S]*?display:\s*grid;[\s\S]*?gap:\s*5px;/);
-  assert.match(stylesheet, /\.found-words\s*\{[\s\S]*?justify-self:\s*center;/);
+test("scorecard actions are separated beneath the rank details", () => {
+  assert.match(stylesheet, /\.rank-actions\s*\{[\s\S]*?justify-content:\s*space-between;/);
+  assert.match(stylesheet, /\.rank-actions\s*\{[\s\S]*?border-top:/);
+});
+
+test("score sharing is available during play and after completion", () => {
+  assert.match(pageSource, /className="score-share-button"/);
+  assert.match(pageSource, /className="score-share-summary"/);
+  assert.match(stylesheet, /\.score-share-button\s*\{[\s\S]*?min-height:\s*44px;/);
+  assert.match(stylesheet, /\.score-share-summary\s*\{[\s\S]*?min-height:\s*48px;/);
+  assert.match(pageSource, /scoreCardFileName\(puzzle\.date\)/);
 });
 
 test("past puzzles can reveal answers without adding them to found words", () => {
