@@ -5,9 +5,14 @@ import {
   deliverFriendInvite,
   INVITE_TEXT,
   INVITE_TITLE,
+  INVITE_URL,
 } from "../lib/share-invite.ts";
 
 const url = "https://example.com/seven/";
+
+test("sends new players to the branded domain", () => {
+  assert.equal(INVITE_URL, "https://playseven.uk/");
+});
 
 test("shares the invitation through the native share sheet", async () => {
   const shares: ShareData[] = [];

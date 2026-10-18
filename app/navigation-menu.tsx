@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
 import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
-import { deliverFriendInvite, type InviteShareResult } from "@/lib/share-invite";
-import { SITE_URL } from "@/lib/site";
+import {
+  deliverFriendInvite,
+  INVITE_URL,
+  type InviteShareResult,
+} from "@/lib/share-invite";
 import styles from "./navigation-menu.module.css";
 
 type NavigationMenuProps = {
@@ -50,7 +53,7 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
     setInviteStatus("sharing");
 
     try {
-      const result = await deliverFriendInvite(SITE_URL);
+      const result = await deliverFriendInvite(INVITE_URL);
       setInviteStatus(result === "cancelled" ? "idle" : result);
 
       if (result === "shared" || result === "copied") {

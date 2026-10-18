@@ -1,5 +1,6 @@
 export const INVITE_TITLE = "Seven Word Puzzle";
 export const INVITE_TEXT = "Fancy a daily word puzzle? Play Seven.";
+export const INVITE_URL = "https://playseven.uk/";
 
 export type InviteShareResult = "shared" | "copied" | "cancelled" | "failed";
 

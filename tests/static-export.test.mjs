@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
 
 const html = await readFile(new URL("../out/index.html", import.meta.url), "utf8");
@@ -10,6 +10,20 @@ const archiveHtml = await readFile(
 const feedbackHtml = await readFile(
   new URL("../out/feedback/index.html", import.meta.url),
   "utf8",
+);
+
+const readJavaScript = async (directory) => {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const contents = await Promise.all(entries.map(async (entry) => {
+    const url = new URL(entry.name, directory);
+    if (entry.isDirectory()) return readJavaScript(new URL(`${entry.name}/`, directory));
+    return entry.name.endsWith(".js") ? readFile(url, "utf8") : "";
+  }));
+  return contents.join("\n");
+};
+
+const clientJavaScript = await readJavaScript(
+  new URL("../out/_next/static/", import.meta.url),
 );
 
 test("exports the game landing page", () => {
@@ -32,6 +46,7 @@ test("includes anonymous Umami analytics", () => {
 test("includes the friend invitation action", () => {
   assert.match(archiveHtml, />Invite a friend</);
   assert.match(feedbackHtml, />Invite a friend</);
+  assert.match(clientJavaScript, /https:\/\/playseven\.uk\//);
 });
 
 test("includes canonical and social preview metadata", async () => {
