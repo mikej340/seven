@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
 import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import {
+  copySelectedInvite,
   deliverFriendInvite,
   INVITE_URL,
   type InviteShareResult,
@@ -17,9 +18,12 @@ type NavigationMenuProps = {
 
 export default function NavigationMenu({ current, feedbackPuzzleDate }: NavigationMenuProps) {
   const [open, setOpen] = useState(false);
-  const [inviteStatus, setInviteStatus] = useState<InviteShareResult | "idle" | "sharing">("idle");
+  const [inviteStatus, setInviteStatus] = useState<
+    InviteShareResult | "idle" | "sharing" | "copying"
+  >("idle");
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const inviteAddressRef = useRef<HTMLInputElement>(null);
   const inviteInFlightRef = useRef(false);
 
   useEffect(() => {
@@ -54,6 +58,13 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
     return () => window.clearTimeout(timeout);
   }, [inviteStatus]);
 
+  useEffect(() => {
+    if (inviteStatus !== "failed") return;
+
+    inviteAddressRef.current?.focus();
+    inviteAddressRef.current?.select();
+  }, [inviteStatus]);
+
   const shareInvite = async () => {
     if (inviteInFlightRef.current) return;
     inviteInFlightRef.current = true;
@@ -74,13 +85,14 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
   };
 
   const copyInviteLink = async () => {
-    setInviteStatus("sharing");
+    inviteAddressRef.current?.focus();
+    inviteAddressRef.current?.select();
+    setInviteStatus("copying");
 
-    try {
-      await navigator.clipboard.writeText(INVITE_URL);
+    if (await copySelectedInvite(INVITE_URL)) {
       setInviteStatus("copied");
       trackGameEvent(GAME_EVENTS.friendInviteShared, { method: "clipboard" });
-    } catch {
+    } else {
       setInviteStatus("failed");
     }
   };
@@ -141,17 +153,19 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
             {inviteStatusLabel}
           </i>
         </button>
-        {inviteStatus === "failed" ? (
+        {inviteStatus === "failed" || inviteStatus === "copying" ? (
           <div className={styles.inviteFallback}>
             <input
               aria-label="Invitation address"
               onFocus={(event) => event.currentTarget.select()}
               readOnly
+              ref={inviteAddressRef}
               value={INVITE_URL}
             />
             <button
               className={styles.copyButton}
               type="button"
+              disabled={inviteStatus === "copying"}
               onClick={() => void copyInviteLink()}
             >
               Copy

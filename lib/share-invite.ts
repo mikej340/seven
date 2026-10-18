@@ -11,6 +11,37 @@ type InviteNavigator = {
   };
 };
 
+type ClipboardWriter = {
+  writeText: (text: string) => Promise<void>;
+};
+
+type CopyDocument = {
+  execCommand: (command: string) => boolean;
+};
+
+export const copySelectedInvite = async (
+  url: string,
+  clipboard: ClipboardWriter | undefined =
+    typeof navigator === "undefined" ? undefined : navigator.clipboard,
+  copyDocument: CopyDocument | undefined =
+    typeof document === "undefined" ? undefined : document,
+): Promise<boolean> => {
+  try {
+    if (copyDocument?.execCommand("copy") === true) return true;
+  } catch {
+    // The modern clipboard API can still work when legacy copying is unavailable.
+  }
+
+  if (clipboard === undefined) return false;
+
+  try {
+    await clipboard.writeText(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const deliverFriendInvite = async (
   url: string,
   target: InviteNavigator | undefined =

@@ -85,7 +85,10 @@ test("friend invitations keep a fixed label and expose a manual copy fallback", 
   assert.match(navigationSource, /<span>Invite a friend<\/span>/);
   assert.match(navigationSource, /inviteStatus === "failed"/);
   assert.match(navigationSource, /aria-label="Invitation address"/);
+  assert.match(navigationSource, /ref=\{inviteAddressRef\}/);
+  assert.match(navigationSource, /inviteAddressRef\.current\?\.select\(\)/);
   assert.match(navigationSource, /value=\{INVITE_URL\}/);
+  assert.match(navigationSource, /copySelectedInvite\(INVITE_URL\)/);
   assert.match(navigationSource, />\s*Copy\s*<\/button>/);
   assert.match(navigationStyles, /\.inviteFallback\s*\{/);
 });

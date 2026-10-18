@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  copySelectedInvite,
   deliverFriendInvite,
   INVITE_TEXT,
   INVITE_TITLE,
@@ -12,6 +13,49 @@ const url = "https://example.com/seven/";
 
 test("sends new players to the branded domain", () => {
   assert.equal(INVITE_URL, "https://playseven.uk/");
+});
+
+test("copies the selected fallback address before retrying clipboard permissions", async () => {
+  const writes: string[] = [];
+  let legacyCopies = 0;
+
+  assert.equal(await copySelectedInvite(
+    INVITE_URL,
+    { async writeText(text) { writes.push(text); } },
+    { execCommand() { legacyCopies += 1; return true; } },
+  ), true);
+  assert.deepEqual(writes, []);
+  assert.equal(legacyCopies, 1);
+});
+
+test("copies the selected address when clipboard permissions are unavailable", async () => {
+  const commands: string[] = [];
+
+  assert.equal(await copySelectedInvite(
+    INVITE_URL,
+    undefined,
+    { execCommand(command) { commands.push(command); return true; } },
+  ), true);
+  assert.deepEqual(commands, ["copy"]);
+});
+
+test("retries the modern clipboard when selected-address copying is unavailable", async () => {
+  const writes: string[] = [];
+
+  assert.equal(await copySelectedInvite(
+    INVITE_URL,
+    { async writeText(text) { writes.push(text); } },
+    { execCommand() { return false; } },
+  ), true);
+  assert.deepEqual(writes, [INVITE_URL]);
+});
+
+test("reports when neither fallback copy mechanism succeeds", async () => {
+  assert.equal(await copySelectedInvite(
+    INVITE_URL,
+    { async writeText() { throw new DOMException("Denied", "NotAllowedError"); } },
+    { execCommand() { return false; } },
+  ), false);
 });
 
 test("shares the invitation through the native share sheet", async () => {

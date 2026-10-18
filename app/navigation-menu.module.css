@@ -44,7 +44,7 @@
   position: absolute;
   top: calc(100% + 7px);
   right: 0;
-  width: 190px;
+  width: min(220px, calc(100vw - 24px));
   overflow: hidden;
   padding: 5px;
   border: 1px solid rgba(91, 101, 75, 0.28);
