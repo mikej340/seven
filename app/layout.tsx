@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const analyticsDomain = process.env.NEXT_PUBLIC_UMAMI_DOMAIN ?? "mikej340.github.io";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,7 +56,7 @@ export default function RootLayout({
           defer
           src="https://cloud.umami.is/script.js"
           data-website-id="37db4623-e4fa-4e9a-9c91-f2fcdad09529"
-          data-domains="mikej340.github.io"
+          data-domains={analyticsDomain}
         />
       </head>
       <body

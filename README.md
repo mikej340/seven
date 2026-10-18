@@ -52,3 +52,14 @@ The static files are written to `out/`, with asset URLs based at `/seven`.
 `.github/workflows/pages.yml` builds and deploys that directory whenever a
 change reaches `main`, or when the workflow is run manually. In the repository
 settings, Pages must use **GitHub Actions** as its source.
+
+The same source can be built for the root-domain deployment at
+<https://playseven.uk/>:
+
+```sh
+npm run build:root
+npm run test:root
+```
+
+The deployment repositories, safety gate, required secrets, and manual setup
+are documented in [Dual GitHub Pages deployment](docs/DUAL-DEPLOYMENT.md).
