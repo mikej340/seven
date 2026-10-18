@@ -47,6 +47,13 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
     };
   }, [open]);
 
+  useEffect(() => {
+    if (inviteStatus !== "shared" && inviteStatus !== "copied") return;
+
+    const timeout = window.setTimeout(() => setInviteStatus("idle"), 2000);
+    return () => window.clearTimeout(timeout);
+  }, [inviteStatus]);
+
   const shareInvite = async () => {
     if (inviteInFlightRef.current) return;
     inviteInFlightRef.current = true;
@@ -66,15 +73,23 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
     }
   };
 
-  const inviteButtonLabel = inviteStatus === "sharing"
-    ? "Opening share…"
-    : inviteStatus === "shared"
-      ? "Invite shared"
+  const copyInviteLink = async () => {
+    setInviteStatus("sharing");
+
+    try {
+      await navigator.clipboard.writeText(INVITE_URL);
+      setInviteStatus("copied");
+      trackGameEvent(GAME_EVENTS.friendInviteShared, { method: "clipboard" });
+    } catch {
+      setInviteStatus("failed");
+    }
+  };
+
+  const inviteStatusLabel = inviteStatus === "shared"
+      ? "Shared"
       : inviteStatus === "copied"
-        ? "Link copied"
-        : inviteStatus === "failed"
-          ? "Couldn’t share"
-          : "Invite a friend";
+        ? "Copied"
+        : "";
 
   return (
     <div className={styles.root} ref={rootRef}>
@@ -115,12 +130,34 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
           {current === "puzzles" ? <i aria-hidden="true">Current</i> : null}
         </a>
         <button
+          className={styles.inviteAction}
           type="button"
+          aria-busy={inviteStatus === "sharing"}
           disabled={inviteStatus === "sharing"}
           onClick={() => void shareInvite()}
         >
-          <span aria-live="polite">{inviteButtonLabel}</span>
+          <span>Invite a friend</span>
+          <i className={styles.inviteStatus} aria-live="polite">
+            {inviteStatusLabel}
+          </i>
         </button>
+        {inviteStatus === "failed" ? (
+          <div className={styles.inviteFallback}>
+            <input
+              aria-label="Invitation address"
+              onFocus={(event) => event.currentTarget.select()}
+              readOnly
+              value={INVITE_URL}
+            />
+            <button
+              className={styles.copyButton}
+              type="button"
+              onClick={() => void copyInviteLink()}
+            >
+              Copy
+            </button>
+          </div>
+        ) : null}
         <a
           href={`${PUZZLE_BASE_PATH}/feedback/${feedbackPuzzleDate ? `?puzzle=${feedbackPuzzleDate}` : ""}`}
           aria-current={current === "feedback" ? "page" : undefined}

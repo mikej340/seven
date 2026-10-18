@@ -99,6 +99,51 @@
   text-transform: uppercase;
 }
 
+.menu .inviteAction {
+  margin: 0;
+}
+
+.inviteStatus {
+  color: #6e7663;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.inviteFallback {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 0 8px 8px;
+}
+
+.inviteFallback input {
+  min-width: 0;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid rgba(91, 101, 75, 0.28);
+  border-radius: 9px;
+  background: #fffdf8;
+  color: #283520;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.menu .copyButton {
+  min-height: 34px;
+  width: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(91, 101, 75, 0.28);
+  border-radius: 9px;
+  background: #ecebdc;
+  font-size: 0.7rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .button,
   .menu a,
