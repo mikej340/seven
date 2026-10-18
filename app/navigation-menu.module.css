@@ -21,7 +21,8 @@
 }
 
 .button:focus-visible,
-.menu a:focus-visible {
+.menu a:focus-visible,
+.menu button:focus-visible {
   outline: 3px solid #67283d;
   outline-offset: 2px;
 }
@@ -53,8 +54,10 @@
   text-align: left;
 }
 
-.menu a {
+.menu a,
+.menu button {
   min-height: 48px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -62,13 +65,24 @@
   padding: 10px 12px;
   border-radius: 12px;
   color: #283520;
+  border: 0;
+  background: transparent;
   font-size: 0.86rem;
+  font-family: inherit;
   font-weight: 750;
+  text-align: left;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.menu a:hover {
+.menu a:hover,
+.menu button:hover {
   background: #f1ecdf;
+}
+
+.menu button:disabled {
+  color: #6e7663;
+  cursor: wait;
 }
 
 .menu a[aria-current="page"] {
@@ -87,7 +101,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .button,
-  .menu a {
+  .menu a,
+  .menu button {
     transition: none;
   }
 }

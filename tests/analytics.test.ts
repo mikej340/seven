@@ -50,3 +50,7 @@ test("silently skips analytics when the tracker is unavailable or fails", () => 
 test("exposes the score sharing event name", () => {
   assert.equal(GAME_EVENTS.scoreShared, "score-shared");
 });
+
+test("exposes the friend invitation sharing event name", () => {
+  assert.equal(GAME_EVENTS.friendInviteShared, "friend-invite-shared");
+});

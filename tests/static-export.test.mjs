@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const html = await readFile(new URL("../out/index.html", import.meta.url), "utf8");
@@ -27,6 +27,29 @@ test("includes anonymous Umami analytics", () => {
     /data-website-id="37db4623-e4fa-4e9a-9c91-f2fcdad09529"/,
   );
   assert.match(html, /data-domains="mikej340.github.io"/);
+});
+
+test("includes the friend invitation action", () => {
+  assert.match(archiveHtml, />Invite a friend</);
+  assert.match(feedbackHtml, />Invite a friend</);
+});
+
+test("includes canonical and social preview metadata", async () => {
+  const siteUrl = "https://mikej340.github.io/seven/";
+  const imageUrl = `${siteUrl}social-card.png`;
+  assert.match(html, new RegExp(`<link rel="canonical" href="${siteUrl}"`));
+  assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
+  assert.match(html, new RegExp(`<meta property="og:image" content="${imageUrl}"`));
+  assert.match(html, /<meta property="og:image:width" content="1200"/);
+  assert.match(html, /<meta property="og:image:height" content="630"/);
+  assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
+  assert.match(html, new RegExp(`<meta name="twitter:image" content="${imageUrl}"`));
+
+  const cardPath = new URL("../out/social-card.png", import.meta.url);
+  assert.ok((await stat(cardPath)).size > 0);
+  const card = await readFile(cardPath);
+  assert.equal(card.readUInt32BE(16), 1200);
+  assert.equal(card.readUInt32BE(20), 630);
 });
 
 test("uses repository-relative GitHub Pages asset paths", () => {

@@ -4,6 +4,7 @@ export const GAME_EVENTS = {
   rankReached: "rank-reached",
   puzzleCompleted: "puzzle-completed",
   scoreShared: "score-shared",
+  friendInviteShared: "friend-invite-shared",
 } as const;
 
 export type GameEventName = (typeof GAME_EVENTS)[keyof typeof GAME_EVENTS];
