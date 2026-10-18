@@ -10,6 +10,14 @@ const pageSource = await readFile(
   new URL("../app/page.tsx", import.meta.url),
   "utf8",
 );
+const navigationSource = await readFile(
+  new URL("../app/navigation-menu.tsx", import.meta.url),
+  "utf8",
+);
+const navigationStyles = await readFile(
+  new URL("../app/navigation-menu.module.css", import.meta.url),
+  "utf8",
+);
 
 test("the normal game shell is a fixed, non-scrolling viewport", () => {
   const pageShell = stylesheet.match(/\.page-shell\s*\{(?<rules>[\s\S]*?)\n\}/)?.groups?.rules;
@@ -71,6 +79,18 @@ test("score sharing is available during play and after completion", () => {
   assert.match(stylesheet, /\.score-share-button\s*\{[\s\S]*?min-height:\s*44px;/);
   assert.match(stylesheet, /\.score-share-summary\s*\{[\s\S]*?min-height:\s*48px;/);
   assert.match(pageSource, /scoreCardFileName\(puzzle\.date\)/);
+});
+
+test("friend invitations keep a fixed label and expose a manual copy fallback", () => {
+  assert.match(navigationSource, /<span>Invite a friend<\/span>/);
+  assert.match(navigationSource, /inviteStatus === "failed"/);
+  assert.match(navigationSource, /aria-label="Invitation address"/);
+  assert.match(navigationSource, /ref=\{inviteAddressRef\}/);
+  assert.match(navigationSource, /inviteAddressRef\.current\?\.select\(\)/);
+  assert.match(navigationSource, /value=\{INVITE_URL\}/);
+  assert.match(navigationSource, /copySelectedInvite\(INVITE_URL\)/);
+  assert.match(navigationSource, />\s*Copy\s*<\/button>/);
+  assert.match(navigationStyles, /\.inviteFallback\s*\{/);
 });
 
 test("past puzzles can reveal answers without adding them to found words", () => {

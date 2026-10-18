@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SITE_URL, siteAssetUrl } from "@/lib/site";
 import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -16,8 +17,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Seven Word Puzzle",
   description: "Find words using seven letters and one required centre letter.",
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Seven",
+    title: "Seven Word Puzzle",
+    description: "Find words using seven letters and one required centre letter.",
+    images: [
+      {
+        url: siteAssetUrl("social-card.png"),
+        width: 1200,
+        height: 630,
+        alt: "Seven Word Puzzle — a daily word puzzle framed by botanical leaves.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Seven Word Puzzle",
+    description: "Find words using seven letters and one required centre letter.",
+    images: [siteAssetUrl("social-card.png")],
+  },
   icons: {
     icon: [
       { url: `${basePath}/icons/icon-32.png`, sizes: "32x32", type: "image/png" },
