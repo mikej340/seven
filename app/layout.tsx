@@ -5,6 +5,11 @@ import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const analyticsDomain = process.env.NEXT_PUBLIC_UMAMI_DOMAIN ?? "mikej340.github.io";
+const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageDescription =
+  "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
+const socialDescription =
+  "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,8 +23,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Seven Word Puzzle",
-  description: "Find words using seven letters and one required centre letter.",
+  title: pageTitle,
+  description: pageDescription,
   alternates: {
     canonical: SITE_URL,
   },
@@ -27,8 +32,8 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: "Seven",
-    title: "Seven Word Puzzle",
-    description: "Find words using seven letters and one required centre letter.",
+    title: pageTitle,
+    description: socialDescription,
     images: [
       {
         url: siteAssetUrl("social-card.png"),
@@ -40,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Seven Word Puzzle",
-    description: "Find words using seven letters and one required centre letter.",
+    title: pageTitle,
+    description: socialDescription,
     images: [siteAssetUrl("social-card.png")],
   },
   icons: {
@@ -89,11 +94,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <aside className="portrait-only-guard" aria-label="Portrait orientation required">
+        <section
+          className="portrait-only-guard"
+          aria-label="Portrait orientation required"
+          data-nosnippet
+        >
           <span className="portrait-only-icon" aria-hidden="true">↻</span>
           <strong>Please rotate your device</strong>
           <span>Seven is currently designed for portrait mode.</span>
-        </aside>
+        </section>
       </body>
     </html>
   );

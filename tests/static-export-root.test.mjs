@@ -6,6 +6,7 @@ const out = new URL("../out/", import.meta.url);
 const html = await readFile(new URL("index.html", out), "utf8");
 const archiveHtml = await readFile(new URL("puzzles/index.html", out), "utf8");
 const feedbackHtml = await readFile(new URL("feedback/index.html", out), "utf8");
+const howToPlayHtml = await readFile(new URL("how-to-play/index.html", out), "utf8");
 
 const readJavaScript = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -19,8 +20,22 @@ const readJavaScript = async (directory) => {
 
 const clientJavaScript = await readJavaScript(new URL("_next/static/", out));
 
+const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageDescription =
+  "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
+const socialDescription =
+  "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
+
 test("exports root-domain pages and public assets", async () => {
-  assert.match(html, /<title>Seven Word Puzzle<\/title>/);
+  assert.match(html, new RegExp(`<title>${pageTitle}<\\/title>`));
+  assert.ok(
+    html.includes(`<meta name="description" content="${pageDescription}"`),
+  );
+  assert.match(
+    html,
+    /<section[^>]*class="portrait-only-guard"[^>]*data-nosnippet="true"/,
+  );
+  assert.match(html, /Please rotate your device/);
   assert.match(archiveHtml, /All puzzles/);
   assert.match(feedbackHtml, /Feedback/);
 
@@ -49,10 +64,14 @@ test("includes root-domain canonical and social preview metadata", async () => {
 
   assert.match(html, new RegExp(`<link rel="canonical" href="${siteUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
+  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta property="og:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta property="og:image" content="${imageUrl}"`));
   assert.match(html, /<meta property="og:image:width" content="1200"/);
   assert.match(html, /<meta property="og:image:height" content="630"/);
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
+  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta name="twitter:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta name="twitter:image" content="${imageUrl}"`));
 
   const card = await readFile(new URL("social-card.png", out));
@@ -97,6 +116,20 @@ test("uses root-relative navigation and feedback links", () => {
   }
   assert.match(clientJavaScript, /\/feedback\/\?type=word/);
   assert.doesNotMatch(clientJavaScript, /\/seven\/feedback/);
+});
+
+test("exports a static how-to-play guide with root-domain links and metadata", () => {
+  assert.match(howToPlayHtml, /<h1>How to play<\/h1>/);
+  assert.match(howToPlayHtml, /Hyphenated words and proper nouns are not accepted/);
+  assert.match(howToPlayHtml, /A four-letter word earns one point/);
+  assert.match(howToPlayHtml, /Find every word/);
+  assert.match(howToPlayHtml, /href="\/"/);
+  assert.match(howToPlayHtml, /href="\/puzzles\/"/);
+  assert.match(howToPlayHtml, /href="\/feedback\/"/);
+  assert.match(howToPlayHtml, /<link rel="canonical" href="https:\/\/playseven\.uk\/how-to-play\/"/);
+  assert.match(howToPlayHtml, /<meta property="og:url" content="https:\/\/playseven\.uk\/how-to-play\/"/);
+  assert.match(howToPlayHtml, /<meta name="twitter:description" content="Learn how to play Seven/);
+  assert.match(html, /href="\/how-to-play\/"/);
 });
 
 test("exports installable root-domain PWA metadata", async () => {

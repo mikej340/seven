@@ -12,7 +12,7 @@ import {
 import styles from "./navigation-menu.module.css";
 
 type NavigationMenuProps = {
-  current?: "today" | "puzzles" | "feedback";
+  current?: "today" | "puzzles" | "how-to-play" | "feedback";
   feedbackPuzzleDate?: string;
 };
 
@@ -140,6 +140,13 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
         >
           <span>All puzzles</span>
           {current === "puzzles" ? <i aria-hidden="true">Current</i> : null}
+        </a>
+        <a
+          href={`${PUZZLE_BASE_PATH}/how-to-play/`}
+          aria-current={current === "how-to-play" ? "page" : undefined}
+        >
+          <span>How to play</span>
+          {current === "how-to-play" ? <i aria-hidden="true">Current</i> : null}
         </a>
         <button
           className={styles.inviteAction}
