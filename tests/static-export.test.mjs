@@ -11,6 +11,10 @@ const feedbackHtml = await readFile(
   new URL("../out/feedback/index.html", import.meta.url),
   "utf8",
 );
+const howToPlayHtml = await readFile(
+  new URL("../out/how-to-play/index.html", import.meta.url),
+  "utf8",
+);
 
 const readJavaScript = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -26,12 +30,22 @@ const clientJavaScript = await readJavaScript(
   new URL("../out/_next/static/", import.meta.url),
 );
 
+const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageDescription =
+  "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
+const socialDescription =
+  "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
+
 test("exports the game landing page", () => {
-  assert.match(html, /<title>Seven Word Puzzle<\/title>/);
+  assert.match(html, new RegExp(`<title>${pageTitle}<\\/title>`));
+  assert.ok(
+    html.includes(`<meta name="description" content="${pageDescription}"`),
+  );
   assert.match(
     html,
-    /Find words using seven letters and one required centre letter\./,
+    /<section[^>]*class="portrait-only-guard"[^>]*data-nosnippet="true"/,
   );
+  assert.match(html, /Please rotate your device/);
 });
 
 test("includes anonymous Umami analytics", () => {
@@ -54,10 +68,14 @@ test("includes canonical and social preview metadata", async () => {
   const imageUrl = `${siteUrl}social-card.png`;
   assert.match(html, new RegExp(`<link rel="canonical" href="${siteUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
+  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta property="og:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta property="og:image" content="${imageUrl}"`));
   assert.match(html, /<meta property="og:image:width" content="1200"/);
   assert.match(html, /<meta property="og:image:height" content="630"/);
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
+  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta name="twitter:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta name="twitter:image" content="${imageUrl}"`));
 
   const cardPath = new URL("../out/social-card.png", import.meta.url);
@@ -75,7 +93,7 @@ test("uses repository-relative GitHub Pages asset paths", () => {
 });
 
 test("exports the archive route and daily puzzle data", async () => {
-  assert.match(archiveHtml, /<title>Seven Word Puzzle<\/title>/);
+  assert.match(archiveHtml, new RegExp(`<title>${pageTitle}<\\/title>`));
   const manifest = JSON.parse(
     await readFile(new URL("../out/puzzles/manifest.json", import.meta.url), "utf8"),
   );
@@ -97,6 +115,21 @@ test("exports the feedback route and base-path-safe navigation", () => {
   assert.match(feedbackHtml, /Feedback/);
   assert.match(feedbackHtml, /href="\/seven\/feedback\/"/);
   assert.match(archiveHtml, /href="\/seven\/feedback\/"/);
+});
+
+test("exports a static how-to-play guide with repository-safe links and metadata", () => {
+  const guideUrl = "https://mikej340.github.io/seven/how-to-play/";
+  assert.match(howToPlayHtml, /<h1>How to play<\/h1>/);
+  assert.match(howToPlayHtml, /Hyphenated words and proper nouns are not accepted/);
+  assert.match(howToPlayHtml, /A four-letter word earns one point/);
+  assert.match(howToPlayHtml, /Find every word/);
+  assert.match(howToPlayHtml, /href="\/seven\/"/);
+  assert.match(howToPlayHtml, /href="\/seven\/puzzles\/"/);
+  assert.match(howToPlayHtml, /href="\/seven\/feedback\/"/);
+  assert.match(howToPlayHtml, /<link rel="canonical" href="https:\/\/mikej340\.github\.io\/seven\/how-to-play\/"/);
+  assert.ok(howToPlayHtml.includes(`<meta property="og:url" content="${guideUrl}"`));
+  assert.ok(howToPlayHtml.includes(`<meta name="twitter:description" content="Learn how to play Seven`));
+  assert.match(html, /href="\/seven\/how-to-play\/"/);
 });
 
 test("exports standalone web-app metadata", async () => {

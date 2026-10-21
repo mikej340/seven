@@ -215,7 +215,10 @@ export default function Home() {
     return (
       <main className="page-shell">
         <section className="game-card load-card" aria-live="polite">
-          <header className="game-heading"><h1>Seven</h1></header>
+          <header className="game-heading">
+            <NavigationMenu current="today" />
+            <h1>Seven</h1>
+          </header>
           {loadError ? (
             <>
               <p>{loadError}</p>

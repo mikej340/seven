@@ -1,0 +1,139 @@
+.page {
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  padding:
+    max(24px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right))
+    max(36px, env(safe-area-inset-bottom))
+    max(18px, env(safe-area-inset-left));
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.92), transparent 38%),
+    linear-gradient(145deg, #faf6ed, #f2ebdd);
+  color: #283520;
+}
+
+.shell {
+  width: min(100%, 680px);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+.header {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.header p {
+  margin: 0;
+  color: #8a6f58;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: #67283d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.intro,
+.section {
+  padding: clamp(18px, 5vw, 30px);
+  border: 1px solid rgba(91, 101, 75, 0.22);
+  border-radius: 24px;
+  background: rgba(255, 252, 245, 0.82);
+  box-shadow: 0 12px 34px rgba(75, 62, 42, 0.08);
+}
+
+.intro h2,
+.section h2 {
+  margin: 0 0 10px;
+  color: #67283d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  font-weight: 500;
+}
+
+.intro p,
+.section p,
+.section li {
+  color: #46523e;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.intro p,
+.section p {
+  margin: 0;
+}
+
+.section p + p {
+  margin-top: 12px;
+}
+
+.section ul {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.section li + li {
+  margin-top: 6px;
+}
+
+.section a,
+.secondaryLink {
+  color: #67283d;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.primaryLink {
+  min-height: 46px;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: #67283d;
+  color: #fffdf8;
+  font-size: 0.9rem;
+  font-weight: 750;
+  text-align: center;
+  text-decoration: none;
+}
+
+.primaryLink:hover {
+  background: #853b52;
+}
+
+.primaryLink:focus-visible,
+.section a:focus-visible,
+.secondaryLink:focus-visible {
+  outline: 3px solid #67283d;
+  outline-offset: 3px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 0 4px 12px;
+}
+
+.footer .primaryLink {
+  margin-top: 0;
+}
