@@ -65,8 +65,9 @@ test("includes the friend invitation action", () => {
 
 test("includes canonical and social preview metadata", async () => {
   const siteUrl = "https://mikej340.github.io/seven/";
+  const canonicalUrl = "https://playseven.uk/";
   const imageUrl = `${siteUrl}social-card.png`;
-  assert.match(html, new RegExp(`<link rel="canonical" href="${siteUrl}"`));
+  assert.match(html, new RegExp(`<link rel="canonical" href="${canonicalUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitle}"`));
   assert.match(html, new RegExp(`<meta property="og:description" content="${socialDescription}"`));
@@ -126,7 +127,7 @@ test("exports a static how-to-play guide with repository-safe links and metadata
   assert.match(howToPlayHtml, /href="\/seven\/"/);
   assert.match(howToPlayHtml, /href="\/seven\/puzzles\/"/);
   assert.match(howToPlayHtml, /href="\/seven\/feedback\/"/);
-  assert.match(howToPlayHtml, /<link rel="canonical" href="https:\/\/mikej340\.github\.io\/seven\/how-to-play\/"/);
+  assert.match(howToPlayHtml, /<link rel="canonical" href="https:\/\/playseven\.uk\/how-to-play\/"/);
   assert.ok(howToPlayHtml.includes(`<meta property="og:url" content="${guideUrl}"`));
   assert.ok(howToPlayHtml.includes(`<meta name="twitter:description" content="Learn how to play Seven`));
   assert.match(html, /href="\/seven\/how-to-play\/"/);
