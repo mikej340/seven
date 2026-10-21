@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteAssetUrl } from "@/lib/site";
+import { canonicalUrl, siteAssetUrl } from "@/lib/site";
 import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
 import styles from "./how-to-play.module.css";
@@ -12,7 +12,7 @@ const url = siteAssetUrl("how-to-play/");
 export const metadata: Metadata = {
   title,
   description,
-  alternates: { canonical: url },
+  alternates: { canonical: canonicalUrl("how-to-play/") },
   openGraph: {
     type: "website",
     url,

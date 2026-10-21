@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SITE_URL, siteAssetUrl } from "@/lib/site";
+import { CANONICAL_SITE_URL, SITE_URL, siteAssetUrl } from "@/lib/site";
 import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -22,11 +22,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(CANONICAL_SITE_URL),
   title: pageTitle,
   description: pageDescription,
   alternates: {
-    canonical: SITE_URL,
+    canonical: CANONICAL_SITE_URL,
   },
   openGraph: {
     type: "website",
