@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "month": "2026-11",
+  "puzzles": [
+    {
+      "id": "2026-11-01",
+      "date": "2026-11-01",
+      "letters": "admorty",
+      "centre": "y",
+      "answers": [
+        "amatory",
+        "army",
+        "array",
+        "arroyo",
+        "arty",
+        "daddy",
+        "dayroom",
+        "doomy",
+        "dory",
+        "dotty",
+        "dray",
+        "dryad",
+        "dyad",
+        "mammary",
+        "mammy",
+        "marry",
+        "martyr",
+        "martyrdom",
+        "maya",
+        "mayday",
+        "mayo",
+        "mayor",
+        "mommy",
+        "moody",
+        "moray",
+        "oratory",
+        "ratty",
+        "roomy",
+        "rotary",
+        "rotatory",
+        "tardy",
+        "tarry",
+        "tarty",
+        "tatty",
+        "toady",
+        "today",
+        "toddy",
+        "tommyrot",
+        "totty",
+        "tray",
+        "troy",
+        "tyro",
+        "yard",
+        "yardarm"
+      ],
+      "pangrams": [
+        "martyrdom"
+      ],
+      "maximumScore": 207
+    }
+  ]
+}

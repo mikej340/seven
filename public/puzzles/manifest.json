@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timeZone": "UTC",
   "startDate": "2026-08-08",
-  "endDate": "2026-10-25",
+  "endDate": "2026-11-01",
   "source": {
     "dictionarySha256": "0089b56e4ea2133902ac27e2c1a8b452ed1e2884c6bf525616a01e7e62a26293",
-    "dictionaryAdditionsSha256": "b4232492089050611eda00c777c4cb462a9483ca3812a46a56522fc1968c703a",
+    "dictionaryAdditionsSha256": "5646363ddc964eeb3fefbf15d72c7d2b806701636a511c4cc41ba7e8a9dce9cb",
     "scowlRelease": "rel-2026.02.25",
     "frequencySource": "wordfreq 3.1.1, English large wordlist"
   },
@@ -799,6 +799,76 @@
       "wordCount": 41,
       "pangramCount": 4,
       "maximumScore": 245
+    },
+    {
+      "id": "2026-10-26",
+      "date": "2026-10-26",
+      "month": "2026-10",
+      "letters": "eflorvw",
+      "centre": "l",
+      "wordCount": 47,
+      "pangramCount": 2,
+      "maximumScore": 210
+    },
+    {
+      "id": "2026-10-27",
+      "date": "2026-10-27",
+      "month": "2026-10",
+      "letters": "aehlmpt",
+      "centre": "h",
+      "wordCount": 46,
+      "pangramCount": 2,
+      "maximumScore": 188
+    },
+    {
+      "id": "2026-10-28",
+      "date": "2026-10-28",
+      "month": "2026-10",
+      "letters": "adghior",
+      "centre": "d",
+      "wordCount": 38,
+      "pangramCount": 1,
+      "maximumScore": 156
+    },
+    {
+      "id": "2026-10-29",
+      "date": "2026-10-29",
+      "month": "2026-10",
+      "letters": "acnortu",
+      "centre": "u",
+      "wordCount": 47,
+      "pangramCount": 1,
+      "maximumScore": 233
+    },
+    {
+      "id": "2026-10-30",
+      "date": "2026-10-30",
+      "month": "2026-10",
+      "letters": "filoprt",
+      "centre": "r",
+      "wordCount": 41,
+      "pangramCount": 1,
+      "maximumScore": 157
+    },
+    {
+      "id": "2026-10-31",
+      "date": "2026-10-31",
+      "month": "2026-10",
+      "letters": "cfilopr",
+      "centre": "i",
+      "wordCount": 33,
+      "pangramCount": 1,
+      "maximumScore": 119
+    },
+    {
+      "id": "2026-11-01",
+      "date": "2026-11-01",
+      "month": "2026-11",
+      "letters": "admorty",
+      "centre": "y",
+      "wordCount": 44,
+      "pangramCount": 1,
+      "maximumScore": 207
     }
   ]
 }
