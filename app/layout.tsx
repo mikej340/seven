@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { CANONICAL_SITE_URL, SITE_URL, siteAssetUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -10,16 +9,6 @@ const pageDescription =
   "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 const socialDescription =
   "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_SITE_URL),
@@ -90,9 +79,7 @@ export default function RootLayout({
           data-domains={analyticsDomain}
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         {children}
         <section
           className="portrait-only-guard"
