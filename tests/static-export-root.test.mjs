@@ -79,6 +79,14 @@ test("includes root-domain canonical and social preview metadata", async () => {
   assert.equal(card.readUInt32BE(20), 630);
 });
 
+test("exports distinct canonical URLs for the archive and feedback", () => {
+  for (const [page, path] of [[archiveHtml, "puzzles/"], [feedbackHtml, "feedback/"]]) {
+    const canonicalLinks = [...page.matchAll(/<link rel="canonical" href="([^"]+)"/g)]
+      .map((match) => match[1]);
+    assert.deepEqual(canonicalLinks, [`https://playseven.uk/${path}`]);
+  }
+});
+
 test("uses root-relative static, icon and metadata paths", () => {
   assert.match(html, /(?:href|src)="\/_next\//);
   assert.match(html, /href="\/icons\/icon-32\.png"/);
