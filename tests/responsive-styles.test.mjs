@@ -6,10 +6,11 @@ const stylesheet = await readFile(
   new URL("../app/globals.css", import.meta.url),
   "utf8",
 );
-const pageSource = await readFile(
-  new URL("../app/page.tsx", import.meta.url),
-  "utf8",
-);
+const [gameViewSource, scoreCardSource, summarySource, feedbackSource, dialogSource, sharingSource] =
+  await Promise.all([
+    "game-view.tsx", "score-card.tsx", "game-summary.tsx", "word-feedback.tsx",
+    "found-words-dialog.tsx", "use-score-sharing.ts",
+  ].map((file) => readFile(new URL(`../app/_game/${file}`, import.meta.url), "utf8")));
 const navigationSource = await readFile(
   new URL("../app/navigation-menu.tsx", import.meta.url),
   "utf8",
@@ -43,13 +44,14 @@ test("responsive rules never hide the found-words control", () => {
 });
 
 test("found words is separated from the word controls by the game board", () => {
-  const foundWordsPosition = pageSource.indexOf('className="found-words"');
-  const wheelPosition = pageSource.indexOf('className="letter-wheel-stage"');
-  const controlsPosition = pageSource.indexOf('className="game-controls"');
+  const foundWordsPosition = gameViewSource.indexOf('<ScoreCard');
+  const wheelPosition = gameViewSource.indexOf('<LetterWheel');
+  const controlsPosition = gameViewSource.indexOf('className="game-controls"');
 
   assert.ok(foundWordsPosition > -1);
   assert.ok(foundWordsPosition < wheelPosition);
   assert.ok(wheelPosition < controlsPosition);
+  assert.match(scoreCardSource, /className="found-words"/);
   assert.match(
     stylesheet,
     /\.found-words-button\s*\{[\s\S]*?min-height:\s*44px;/,
@@ -74,11 +76,11 @@ test("scorecard actions are separated beneath the rank details", () => {
 });
 
 test("score sharing is available during play and after completion", () => {
-  assert.match(pageSource, /className="score-share-button"/);
-  assert.match(pageSource, /className="score-share-summary"/);
+  assert.match(scoreCardSource, /className="score-share-button"/);
+  assert.match(summarySource, /className="score-share-summary"/);
   assert.match(stylesheet, /\.score-share-button\s*\{[\s\S]*?min-height:\s*44px;/);
   assert.match(stylesheet, /\.score-share-summary\s*\{[\s\S]*?min-height:\s*48px;/);
-  assert.match(pageSource, /scoreCardFileName\(puzzle\.date\)/);
+  assert.match(sharingSource, /scoreCardFileName\(puzzle\.date\)/);
 });
 
 test("friend invitations keep a fixed label and expose a manual copy fallback", () => {
@@ -94,11 +96,11 @@ test("friend invitations keep a fixed label and expose a manual copy fallback", 
 });
 
 test("past puzzles can reveal answers without adding them to found words", () => {
-  assert.match(pageSource, /disabled=\{foundWords\.length === 0 && !canRevealAnswers\}/);
-  assert.match(pageSource, /aria-pressed=\{answersRevealed\}/);
-  assert.match(pageSource, /Reveal all words/);
-  assert.match(pageSource, /revealed-word/);
-  assert.doesNotMatch(pageSource, /setFoundWords\(solutionWords\)/);
+  assert.match(scoreCardSource, /disabled=\{foundCount === 0 && !canRevealAnswers\}/);
+  assert.match(dialogSource, /aria-pressed=\{answersRevealed\}/);
+  assert.match(dialogSource, /Reveal all words/);
+  assert.match(dialogSource, /revealed-word/);
+  assert.doesNotMatch(dialogSource, /setFoundWords\(solutionWords\)/);
   assert.match(
     stylesheet,
     /\.found-words-list div\.revealed-word\s*\{[\s\S]*?color:/,
@@ -106,8 +108,8 @@ test("past puzzles can reveal answers without adding them to found words", () =>
 });
 
 test("rejected unknown words offer a puzzle-aware suggestion link", () => {
-  assert.match(pageSource, /Suggest this word/);
-  assert.match(pageSource, /type=word&puzzle=\$\{puzzle\.date\}&word=/);
+  assert.match(feedbackSource, /Suggest this word/);
+  assert.match(feedbackSource, /type=word&puzzle=\$\{puzzleDate\}&word=/);
 });
 
 test("the fixed-height word panel always reserves a divided feedback strip", () => {
@@ -115,7 +117,7 @@ test("the fixed-height word panel always reserves a divided feedback strip", () 
     /\.feedback-line\s*\{(?<rules>[\s\S]*?)\n\}/,
   )?.groups?.rules;
 
-  assert.match(pageSource, /className="feedback-line"/);
+  assert.match(feedbackSource, /className="feedback-line"/);
   assert.match(
     stylesheet,
     /\.word-panel\s*\{[\s\S]*?height:\s*clamp\(86px, 13dvh, 104px\);/,
@@ -129,7 +131,7 @@ test("the fixed-height word panel always reserves a divided feedback strip", () 
 });
 
 test("accepted words get a restrained confirmation bloom", () => {
-  assert.match(pageSource, /Correct · \+\{feedback\.points\}/);
+  assert.match(feedbackSource, /Correct · \+\{feedback\.points\}/);
   assert.match(stylesheet, /@keyframes accepted-word-lift/);
   assert.match(stylesheet, /@keyframes accepted-check-pop/);
   assert.match(

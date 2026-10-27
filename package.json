@@ -13,7 +13,7 @@
     "test": "npm run test:pages",
     "test:pages": "npm run test:unit && npm run build:pages && node --test tests/static-export.test.mjs",
     "test:root": "npm run test:unit && npm run build:root && node --test tests/static-export-root.test.mjs",
-    "test:unit": "node --experimental-strip-types --test tests/analytics.test.ts tests/feedback.test.ts tests/game-save.test.ts tests/puzzles.test.ts tests/share-invite.test.ts tests/share-score.test.ts tests/responsive-styles.test.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/analytics.test.ts tests/feedback.test.ts tests/game-rules.test.ts tests/game-save.test.ts tests/puzzles.test.ts tests/share-invite.test.ts tests/share-score.test.ts tests/responsive-styles.test.mjs",
     "test:storage": "node --experimental-strip-types --test tests/game-save.test.ts",
     "lint": "eslint ."
   },
