@@ -133,15 +133,26 @@ export const loadPuzzleManifest = async () => {
   return manifest;
 };
 
-export const loadDailyPuzzle = async (entry: PuzzleManifestEntry) => {
-  const shard = await fetchJson<PuzzleMonth>(`/puzzles/${entry.month}.json`);
-  if (shard.schemaVersion !== 1 || shard.month !== entry.month || !Array.isArray(shard.puzzles)) {
-    throw new Error("Unsupported puzzle data");
-  }
-  const puzzle = shard.puzzles.find((candidate) => candidate.id === entry.id);
-  if (puzzle === undefined) throw new Error(`Puzzle data is missing for ${entry.date}`);
-  return puzzle;
+// Scope this cache to one collection run, including failed shard requests.
+export const createDailyPuzzleLoader = () => {
+  const months = new Map<string, Promise<PuzzleMonth>>();
+  return async (entry: PuzzleManifestEntry) => {
+    let loading = months.get(entry.month);
+    if (loading === undefined) {
+      loading = fetchJson<PuzzleMonth>(`/puzzles/${entry.month}.json`);
+      months.set(entry.month, loading);
+    }
+    const shard = await loading;
+    if (shard.schemaVersion !== 1 || shard.month !== entry.month || !Array.isArray(shard.puzzles)) {
+      throw new Error("Unsupported puzzle data");
+    }
+    const puzzle = shard.puzzles.find((candidate) => candidate.id === entry.id);
+    if (puzzle === undefined) throw new Error(`Puzzle data is missing for ${entry.date}`);
+    return puzzle;
+  };
 };
+
+export const loadDailyPuzzle = (entry: PuzzleManifestEntry) => createDailyPuzzleLoader()(entry);
 
 export const rankForScore = (
   score: number,

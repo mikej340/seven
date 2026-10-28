@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clearGameProgress, loadGameProgress, saveGameProgress } from "@/lib/game-save";
 import { GAME_EVENTS, trackGameEvent } from "@/lib/analytics";
+import { recordScoreSnapshotsOnAcceptedWord } from "@/lib/score-snapshots";
 import {
   deriveGameStats,
   evaluateWord,
@@ -153,6 +154,8 @@ export function usePuzzleGame() {
       const nextStats = deriveGameStats(nextFoundWords, game.rules);
       setFoundWords(nextFoundWords);
       resetShareStatus();
+
+      void recordScoreSnapshotsOnAcceptedWord(game.puzzle.date);
 
       if (!engagedPuzzleIdsRef.current.has(game.puzzle.id)) {
         const tracked = trackGameEvent(GAME_EVENTS.puzzleEngaged, { puzzle: game.puzzle.id });

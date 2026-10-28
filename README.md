@@ -14,12 +14,16 @@ Puzzle dictionary generation and candidate curation live in the separate
 - dedicated all-puzzles page with progress and rank previews
 - client-side scoring, ranks, pangram detection and completion summary
 - versioned, validated per-puzzle device-local progress with legacy migration
+- aggregate score snapshots of earlier saved puzzles when returning to play today
 
 The app fetches `public/puzzles/manifest.json` first, then the relevant monthly
 shard (for example `public/puzzles/2026-08.json`). The root URL selects today in
 UTC, while `/?date=YYYY-MM-DD` opens a released historic puzzle. Returning to a
 foregrounded root page after midnight refreshes the selected puzzle; no service
 worker or server is required.
+
+Score snapshot timing, event properties and measurement limits are documented in
+[Score snapshot analytics](docs/SCORE-SNAPSHOTS.md).
 
 Open product decisions are recorded in `TODO.md`. Original Site import details
 are recorded in `SOURCE.md`.
