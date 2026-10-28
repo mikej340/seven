@@ -185,3 +185,21 @@ export const clearGameProgress = (storage: StorageAdapter, puzzleId: string) => 
 export const loadProgressSummaries = (
   storage: StorageAdapter,
 ): Record<string, PuzzleProgress> => readGameSave(storage).puzzles;
+
+// Read legacy progress for snapshots without migrating or changing game saves.
+export const loadSavedFoundWords = (storage: StorageAdapter): Record<string, string[]> => {
+  const puzzles = Object.fromEntries(
+    Object.entries(readGameSave(storage).puzzles).map(([id, progress]) => [id, progress.foundWords]),
+  );
+  if (puzzles[LEGACY_PUZZLE_DATE] !== undefined) return puzzles;
+  try {
+    const legacy: unknown = JSON.parse(storage.getItem(LEGACY_GAME_SAVE_KEY) ?? "null");
+    if (isRecord(legacy) && legacy.version === 1 && legacy.puzzleId === LEGACY_PUZZLE_ID &&
+        Array.isArray(legacy.foundWords)) {
+      puzzles[LEGACY_PUZZLE_DATE] = legacy.foundWords.filter((word): word is string => typeof word === "string");
+    }
+  } catch {
+    // Unreadable legacy progress does not affect other puzzles.
+  }
+  return puzzles;
+};

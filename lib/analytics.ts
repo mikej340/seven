@@ -5,6 +5,7 @@ export const GAME_EVENTS = {
   puzzleCompleted: "puzzle-completed",
   scoreShared: "score-shared",
   friendInviteShared: "friend-invite-shared",
+  puzzleScoreSnapshot: "puzzle-score-snapshot",
 } as const;
 
 export type GameEventName = (typeof GAME_EVENTS)[keyof typeof GAME_EVENTS];
@@ -34,6 +35,30 @@ export const trackGameEvent = (
 
   try {
     target.umami.track(eventName, data);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Snapshot delivery needs the asynchronous outcome; existing UI events keep their
+// synchronous handoff behaviour. A successful handoff is not a delivery receipt.
+export const trackGameEventAsync = async (
+  eventName: GameEventName,
+  data: GameEventData,
+  target: AnalyticsTarget | undefined =
+    typeof window === "undefined" ? undefined : window,
+) => {
+  if (typeof target?.umami?.track !== "function") return false;
+  try {
+    const result = await target.umami.track(eventName, data);
+    if (result === false) return false;
+    if (typeof result === "object" && result !== null) {
+      if ("ok" in result && result.ok === false) return false;
+      if ("success" in result && result.success === false) return false;
+      if ("status" in result && typeof result.status === "number" && result.status >= 400) return false;
+      if ("error" in result && result.error) return false;
+    }
     return true;
   } catch {
     return false;
