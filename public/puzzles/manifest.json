@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "timeZone": "UTC",
   "startDate": "2026-08-08",
-  "endDate": "2026-11-01",
+  "endDate": "2026-11-08",
   "source": {
     "dictionarySha256": "0089b56e4ea2133902ac27e2c1a8b452ed1e2884c6bf525616a01e7e62a26293",
-    "dictionaryAdditionsSha256": "5646363ddc964eeb3fefbf15d72c7d2b806701636a511c4cc41ba7e8a9dce9cb",
+    "dictionaryAdditionsSha256": "421b1a6fcd3b87254016d91af489f16867828b37a0897e0af2922c92af89d973",
     "scowlRelease": "rel-2026.02.25",
     "frequencySource": "wordfreq 3.1.1, English large wordlist"
   },
@@ -869,6 +869,76 @@
       "wordCount": 44,
       "pangramCount": 1,
       "maximumScore": 207
+    },
+    {
+      "id": "2026-11-02",
+      "date": "2026-11-02",
+      "month": "2026-11",
+      "letters": "adilmpu",
+      "centre": "a",
+      "wordCount": 42,
+      "pangramCount": 1,
+      "maximumScore": 122
+    },
+    {
+      "id": "2026-11-03",
+      "date": "2026-11-03",
+      "month": "2026-11",
+      "letters": "ghortuw",
+      "centre": "o",
+      "wordCount": 43,
+      "pangramCount": 2,
+      "maximumScore": 196
+    },
+    {
+      "id": "2026-11-04",
+      "date": "2026-11-04",
+      "month": "2026-11",
+      "letters": "bilnoty",
+      "centre": "i",
+      "wordCount": 36,
+      "pangramCount": 1,
+      "maximumScore": 128
+    },
+    {
+      "id": "2026-11-05",
+      "date": "2026-11-05",
+      "month": "2026-11",
+      "letters": "abefilx",
+      "centre": "b",
+      "wordCount": 43,
+      "pangramCount": 1,
+      "maximumScore": 203
+    },
+    {
+      "id": "2026-11-06",
+      "date": "2026-11-06",
+      "month": "2026-11",
+      "letters": "abcelnu",
+      "centre": "n",
+      "wordCount": 49,
+      "pangramCount": 1,
+      "maximumScore": 229
+    },
+    {
+      "id": "2026-11-07",
+      "date": "2026-11-07",
+      "month": "2026-11",
+      "letters": "aceiotv",
+      "centre": "e",
+      "wordCount": 39,
+      "pangramCount": 3,
+      "maximumScore": 208
+    },
+    {
+      "id": "2026-11-08",
+      "date": "2026-11-08",
+      "month": "2026-11",
+      "letters": "cefklor",
+      "centre": "l",
+      "wordCount": 44,
+      "pangramCount": 1,
+      "maximumScore": 173
     }
   ]
 }
