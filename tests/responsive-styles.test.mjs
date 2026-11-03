@@ -2,10 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const stylesheet = await readFile(
-  new URL("../app/globals.css", import.meta.url),
-  "utf8",
-);
+const stylesheet = (await Promise.all([
+  "../app/globals.css", "../app/_game/letter-wheel.css",
+].map((path) => readFile(new URL(path, import.meta.url), "utf8")))).join("\n");
 const [gameViewSource, scoreCardSource, summarySource, feedbackSource, dialogSource, sharingSource] =
   await Promise.all([
     "game-view.tsx", "score-card.tsx", "game-summary.tsx", "word-feedback.tsx",

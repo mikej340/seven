@@ -1,45 +1,87 @@
 # Dated puzzle shares
 
-The first share page is `/daily/2026-11-03/`, with its production image at
-`public/social/2026-11-03.png`. Both are maintained manually for now.
+Every date in `public/puzzles/manifest.json` has a static share page at
+`/daily/YYYY-MM-DD/` and a PNG at `/social/YYYY-MM-DD.png`. They are prepared
+with the puzzle release; no server, daily job or daily deployment is needed.
 
-## Current implementation
+## Prepare a release
 
-- `app/daily/2026-11-03/page.tsx` supplies static canonical, Open Graph and
-  Twitter metadata. Keep the image dimensions in metadata equal to the PNG.
-- Its client component calls `usePuzzleGame("2026-11-03")`. The explicit date
-  takes precedence over query parameters and prevents automatic selection of
-  another puzzle after midnight. Existing puzzle IDs and saved progress are
-  shared with the normal game.
-- `GameView` opts into a past-puzzle banner linking to the homepage. The date
-  comparison uses the existing UTC clock and updates on visibility changes.
-- The homepage retains its generic social card. Existing `/?date=...` URLs
-  continue working, but cannot serve date-specific metadata on GitHub Pages:
-  query parameters do not select a different static HTML file.
+After copying the approved puzzle export into `public/puzzles/`:
 
-## Card design
+```sh
+npm ci
+npx playwright install chromium
+npm run cards:generate
+npm run test:pages
+npm run test:root
+```
 
-Use the committed PNG as the visual reference: warm ivory background, centred
-botanical letter wheel, date at the top right, no Seven wordmark, a thin sage
-rule above the footer, and “Try today’s puzzle at playseven.uk” below it, with
-the domain in plum. Show six outer letters and the required centre letter.
-The current PNG is 1731 × 909; future output can standardise on 1200 × 630.
+Commit the intended puzzle changes, new `public/social/*.png` files and the
+updated `public/social/manifest.json`. Existing dated images are preserved. Generation
+only renders missing dates. If an existing card's puzzle inputs or image bytes
+have changed, it stops rather than replacing the published snapshot.
 
-## Future automation
+After committing, prepare Markdown for the release PR description:
 
-Generate dated HTML pages and PNGs when publishing the puzzle schedule, rather
-than rebuilding daily. Read dates, letters and centre letters from
-`public/puzzles/manifest.json`; monthly shards supply the playable puzzles.
-Use a static route per date, for example an App Router `[date]` route with
-`generateStaticParams`, while retaining the existing client-side release check.
+```sh
+npm run --silent cards:preview -- --date YYYY-MM-DD
+```
 
-Render a deterministic image template using the existing botanical wheel styles
-(`app/_game/letter-wheel.tsx` and `app/globals.css`) so cards do not require AI
-generation. Keep each page's canonical/OG URL and PNG URL specific to its date;
-do not replace one shared image each day. Prepublished future files being
-publicly accessible is acceptable. No server or daily deployment is required.
+Choose at least one newly generated card from the release. Without `--date`,
+the command selects the final date in the card manifest. Paste its output into
+the PR description and push the commit: the embedded image uses the exact
+commit SHA so it can be reviewed before the site is deployed. The command
+refuses an image that has not been committed. Check at least one card manually
+before merging; leave its checkbox unchecked until the editor has done so.
+A new release does not require an A–Z run or a visual review of every card.
 
-`tests/daily-puzzle-export.test.mjs` currently checks this one page, both social
-image tags, PNG dimensions and the scheduled letters. Generalise those checks
-to all generated dates when automating. Run `npm run test:root` and
-`npm run test:pages` to verify both deployments and their different base paths.
+## Rendering and data
+
+- `app/daily/[date]/page.tsx` reads the exported schedule and card manifest at
+  build time. `generateStaticParams` creates the dated routes; titles,
+  descriptions, alt text and image dimensions come from the same inputs.
+  A missing card blocks the build with the generation command to run.
+- `scripts/generate-social-cards.tsx` renders a fixed 1200 × 630 HTML card to
+  PNG using the pinned Playwright Chromium release. The frame supplies the date,
+  warm ivory background, sage rule and plum domain in the footer.
+- The renderer uses the actual `LetterWheel` React component and
+  `app/_game/letter-wheel.css`, also imported by the game. `puzzleWheelLetters`
+  supplies the same initial ordering in both places. Interactive shuffling
+  affects only the game. Card geometry is fixed instead of viewport-dependent.
+- The font is bundled Lato Bold, licensed under the SIL Open Font License in
+  `scripts/assets/OFL-Lato.txt`. Its source is the Google Fonts repository:
+  <https://github.com/google/fonts/tree/main/ofl/lato>. No remote assets or AI
+  generation are involved in rendering. The card manifest records a SHA-256 of
+  each PNG and the template inputs used to render it.
+- The 3 November 2026 card was regenerated with the shared template at the
+  editor’s explicit request. All current cards are 1200 × 630. Changes to the
+  template apply to subsequently generated cards.
+
+The dated client calls `usePuzzleGame(date)`. Its date takes precedence over
+query parameters, stays pinned across midnight, and shares progress with
+`/?date=YYYY-MM-DD` on the same origin. A past-puzzle notice links to today's
+puzzle. The existing client-side release selection remains in place.
+Prepublished future pages and card files are publicly accessible, as with the
+exported schedule. The homepage retains its generic social card, and invitation
+and score-sharing behaviour are unchanged.
+
+## Verification
+
+`tests/daily-puzzle-export.test.mjs` checks the complete exported schedule:
+page metadata, canonical and asset URLs, card inputs, PNG dimensions and hashes.
+Run both deployment tests because `/seven` and the root domain use different
+asset paths. Unit tests cover preserving snapshots, repeated generation and
+preview Markdown. Deployment builds consume committed cards and do not launch
+Chromium.
+
+The optional commissioning check exercises A–Z in all seven positions:
+
+```sh
+npm run cards:check-alphabet
+```
+
+It writes 26 example PNGs and a geometry report to the ignored
+`output/card-alphabet/` directory and checks 182 glyph placements. It is not
+part of the weekly release or normal test suite. Repeat it if the wheel or font
+changes. The initial implementation passed this check; regular releases use the
+manual PR preview check described above.

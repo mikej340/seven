@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "Seven Card";
+  src: url("data:font/ttf;base64,FONT_DATA") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root { --plum: #67283d; }
+* { box-sizing: border-box; }
+body { margin: 0; color: #283520; font-family: "Seven Card", sans-serif; font-weight: 700; }
+button { font: inherit; }
+.social-card {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.88) 0 22%, transparent 57%),
+    linear-gradient(145deg, #faf6ed 0%, #f2ebdd 100%);
+}
+.social-card time { position: absolute; top: 18px; right: 32px; font-size: 34px; }
+.social-card .wheel-frame { position: absolute; top: 0; left: 320px; width: 560px; height: 548px; }
+.social-card .letter-wheel-stage { width: 100%; height: 100%; }
+.social-card .letter-wheel { --letter-wheel-size: 510px; }
+.social-card .letter { font-size: 56px; }
+.social-card footer {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 20px;
+  border-top: 3px solid #a6ad83;
+  padding-top: 14px;
+  text-align: center;
+  font-size: 42px;
+}
+.social-card footer strong { color: var(--plum); }
+.social-card::before, .social-card::after {
+  content: "";
+  position: absolute;
+  width: 210px;
+  height: 90px;
+  border-radius: 70% 13% 70% 18%;
+  background: #a5ad85;
+  opacity: 0.35;
+}
+.social-card::before { left: -120px; top: 130px; transform: rotate(45deg); }
+.social-card::after { right: -120px; bottom: 140px; transform: rotate(45deg); }

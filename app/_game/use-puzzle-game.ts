@@ -18,6 +18,7 @@ import {
   loadDailyPuzzle,
   loadPuzzleManifest,
   ranksReachedBetween,
+  puzzleWheelLetters,
   resolvePuzzleSelection,
   utcDateString,
   type DailyPuzzle,
@@ -74,7 +75,7 @@ export function usePuzzleGame(puzzleDate?: string) {
       // A fresh view session resets dialog state on every successful load.
       viewSessionRef.current += 1;
       setGame({ puzzle, selection, rules, viewSession: viewSessionRef.current });
-      setOuterLetters(rules.puzzleLetters.filter((letter) => letter !== rules.centreLetter));
+      setOuterLetters(puzzleWheelLetters(puzzle).outerLetters);
       setCurrentWord("");
       setFoundWords(progress.foundWords);
       setFeedback(null);
@@ -195,7 +196,7 @@ export function usePuzzleGame(puzzleDate?: string) {
 
   const retryGame = () => {
     if (game === null) return;
-    setOuterLetters(game.rules.puzzleLetters.filter((letter) => letter !== game.rules.centreLetter));
+    setOuterLetters(puzzleWheelLetters(game.puzzle).outerLetters);
     setCurrentWord("");
     setFoundWords([]);
     setFeedback(null);
