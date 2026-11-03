@@ -1,10 +1,11 @@
 import type { RefObject } from "react";
 import type { GameStats } from "@/lib/game-rules";
-import { formatPuzzleDate } from "@/lib/puzzles";
+import { PuzzleDate } from "./puzzle-date";
 import type { ShareStatus } from "./use-score-sharing";
 
 type ScoreCardProps = {
   puzzleDate: string;
+  isPastPuzzle: boolean;
   stats: GameStats;
   maximumScore: number;
   foundCount: number;
@@ -18,15 +19,13 @@ type ScoreCardProps = {
 };
 
 export function ScoreCard({
-  puzzleDate, stats, maximumScore, foundCount, canRevealAnswers, foundWordsOpen,
+  puzzleDate, isPastPuzzle, stats, maximumScore, foundCount, canRevealAnswers, foundWordsOpen,
   foundWordsButtonRef, onOpenFoundWords, shareStatus, shareButtonLabel, onShare,
 }: ScoreCardProps) {
   const { currentRank, score, progress } = stats;
   return (
     <fieldset className="rank-panel">
-      <legend className="scorecard-date">
-        <time dateTime={puzzleDate}>{formatPuzzleDate(puzzleDate, false)}</time>
-      </legend>
+      <PuzzleDate as="legend" date={puzzleDate} isPastPuzzle={isPastPuzzle} />
       <div className="rank-content">
         <div className="rank-copy">
           <div>

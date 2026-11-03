@@ -95,27 +95,21 @@ button {
   line-height: 1.35;
 }
 
-.shared-puzzle-notice {
-  margin: 10px auto 0;
-  padding: 8px 14px;
-  max-width: 410px;
-  border: 1px solid rgba(91, 101, 75, 0.25);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.55);
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.shared-puzzle-notice p {
+.historic-puzzle-date {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.4em;
   margin: 0;
+  font-size: 0.75rem;
 }
 
-.shared-puzzle-notice a {
+.historic-puzzle-date a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   color: var(--plum);
-  font-weight: 700;
   text-underline-offset: 3px;
 }
 
