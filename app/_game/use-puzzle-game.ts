@@ -36,7 +36,7 @@ const vibrate = (pattern: number | number[]) => {
   if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(pattern);
 };
 
-export function usePuzzleGame() {
+export function usePuzzleGame(puzzleDate?: string) {
   const [game, setGame] = useState<LoadedGame | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export function usePuzzleGame() {
 
     try {
       const manifest = await loadPuzzleManifest();
-      const requestedDate = new URLSearchParams(window.location.search).get("date");
+      const requestedDate = puzzleDate ?? new URLSearchParams(window.location.search).get("date");
       const selection = resolvePuzzleSelection(manifest, requestedDate);
       const entry = manifest.entries.find((candidate) => candidate.date === selection.date);
       if (entry === undefined) throw new Error("Selected puzzle is missing from the manifest");
@@ -87,7 +87,7 @@ export function usePuzzleGame() {
     } finally {
       setLoading(false);
     }
-  }, [resetShareStatus]);
+  }, [puzzleDate, resetShareStatus]);
 
   useEffect(() => {
     queueMicrotask(() => void loadSelectedGame());
@@ -96,6 +96,7 @@ export function usePuzzleGame() {
       setCurrentUtcDate(visibleUtcDate);
       if (
         document.visibilityState === "visible" &&
+        puzzleDate === undefined &&
         !new URLSearchParams(window.location.search).has("date") &&
         loadedUtcDateRef.current !== visibleUtcDate
       ) {
@@ -104,7 +105,7 @@ export function usePuzzleGame() {
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [loadSelectedGame]);
+  }, [loadSelectedGame, puzzleDate]);
 
   useEffect(() => {
     if (!saveLoaded || game === null) return;
@@ -205,6 +206,7 @@ export function usePuzzleGame() {
 
   return {
     game, loading, loadError, stats, outerLetters, currentWord, foundWords, feedback,
+    isPastPuzzle: game !== null && game.puzzle.date < currentUtcDate,
     canRevealAnswers, shareStatus, shareButtonLabel,
     loadSelectedGame, addLetter, deleteLetter, shuffleLetters, submitWord, retryGame,
     shareScore: () => game !== null && stats !== null

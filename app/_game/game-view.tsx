@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import type { GameStats } from "@/lib/game-rules";
-import { formatPuzzleDate } from "@/lib/puzzles";
+import { formatPuzzleDate, PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
 import { FoundWordsDialog } from "./found-words-dialog";
 import { GameSummary } from "./game-summary";
@@ -13,9 +13,10 @@ type ReadyGameProps = {
   controller: PuzzleGameController;
   game: NonNullable<PuzzleGameController["game"]>;
   stats: GameStats;
+  showPastPuzzleNotice: boolean;
 };
 
-function ReadyGame({ controller, game, stats }: ReadyGameProps) {
+function ReadyGame({ controller, game, stats, showPastPuzzleNotice }: ReadyGameProps) {
   const [foundWordsOpen, setFoundWordsOpen] = useState(false);
   const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const closeFoundWords = useCallback(() => {
@@ -54,6 +55,12 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
           </p> : null}
           {selection.notice ? (
             <p className="puzzle-notice" role="status">{selection.notice}</p>
+          ) : null}
+          {showPastPuzzleNotice && controller.isPastPuzzle ? (
+            <aside className="shared-puzzle-notice" aria-label="Past puzzle">
+              <p>You’re playing the puzzle from <time dateTime={puzzle.date}>{formatPuzzleDate(puzzle.date, false)}</time>.</p>
+              <a href={`${PUZZLE_BASE_PATH}/`}>Play today’s puzzle →</a>
+            </aside>
           ) : null}
         </header>
 
@@ -112,7 +119,10 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
   );
 }
 
-export function GameView({ controller }: { controller: PuzzleGameController }) {
+export function GameView({ controller, showPastPuzzleNotice = false }: {
+  controller: PuzzleGameController;
+  showPastPuzzleNotice?: boolean;
+}) {
   const { game, stats, loading, loadError, loadSelectedGame } = controller;
   if (loading || game === null || stats === null) {
     return (
@@ -136,5 +146,5 @@ export function GameView({ controller }: { controller: PuzzleGameController }) {
       </main>
     );
   }
-  return <ReadyGame key={game.viewSession} controller={controller} game={game} stats={stats} />;
+  return <ReadyGame key={game.viewSession} controller={controller} game={game} stats={stats} showPastPuzzleNotice={showPastPuzzleNotice} />;
 }
