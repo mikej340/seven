@@ -1,34 +1,49 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { shareCardText } from "../lib/daily-shares.ts";
 
 const out = new URL("../out/", import.meta.url);
 const home = await readFile(new URL("index.html", out), "utf8");
-const html = await readFile(new URL("daily/2026-11-03/index.html", out), "utf8");
 const siteUrl = home.match(/<meta property="og:url" content="([^"]+)"/)?.[1];
 assert.ok(siteUrl);
-const imageUrl = new URL("social/2026-11-03.png", siteUrl).href;
+const manifest = JSON.parse(await readFile(new URL("puzzles/manifest.json", out), "utf8"));
+const cards = JSON.parse(await readFile(new URL("social/manifest.json", out), "utf8"));
+const byDate = new Map(cards.cards.map((card) => [card.date, card]));
+const escapeAttribute = (value) => value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("'", "&#x27;");
 
-test("exports a dated puzzle page with its own canonical and social card", () => {
-  assert.ok(html.includes('<title>Seven – 3 November 2026 Word Puzzle</title>'));
-  assert.ok(html.includes('<link rel="canonical" href="https://playseven.uk/daily/2026-11-03/"'));
-  assert.ok(html.includes(`<meta property="og:url" content="${new URL("daily/2026-11-03/", siteUrl).href}"`));
-  assert.ok(html.includes(`<meta property="og:image" content="${imageUrl}"`));
-  assert.ok(html.includes(`<meta name="twitter:image" content="${imageUrl}"`));
-  assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image"'));
-  assert.ok(html.includes("G, H, R, T, U and W, with O in every word."));
-  assert.ok(!html.includes(new URL("social-card.png", siteUrl).href));
+test("exports a dated page and matching social image for every scheduled puzzle", async () => {
+  for (const puzzle of manifest.entries) {
+    const html = await readFile(new URL(`daily/${puzzle.date}/index.html`, out), "utf8");
+    const text = shareCardText(puzzle);
+    const imageUrl = new URL(`social/${puzzle.date}.png`, siteUrl).href;
+    const card = byDate.get(puzzle.date);
+    assert.ok(card, puzzle.date);
+    assert.equal(card.letters, puzzle.letters);
+    assert.equal(card.centre, puzzle.centre);
+    assert.ok(html.includes(`<title>${text.title}</title>`), puzzle.date);
+    assert.ok(html.includes(`<link rel="canonical" href="https://playseven.uk/daily/${puzzle.date}/"`), puzzle.date);
+    assert.ok(html.includes(`<meta property="og:url" content="${new URL(`daily/${puzzle.date}/`, siteUrl).href}"`));
+    assert.ok(html.includes(`<meta property="og:image" content="${imageUrl}"`));
+    assert.ok(html.includes(`<meta name="twitter:image" content="${imageUrl}"`));
+    assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image"'));
+    assert.ok(html.includes(`<meta name="description" content="${escapeAttribute(text.description)}"`));
+    assert.ok(html.includes(`<meta property="og:image:alt" content="${escapeAttribute(text.alt)}"`));
+    assert.ok(!html.includes(new URL("social-card.png", siteUrl).href));
+    const png = await readFile(new URL(`social/${puzzle.date}.png`, out));
+    assert.equal(png.toString("hex", 0, 8), "89504e470d0a1a0a");
+    assert.equal(png.readUInt32BE(16), card.width);
+    assert.equal(png.readUInt32BE(20), card.height);
+    assert.equal(createHash("sha256").update(png).digest("hex"), card.imageSha256);
+    assert.ok(html.includes(`<meta property="og:image:width" content="${card.width}"`));
+    assert.ok(html.includes(`<meta property="og:image:height" content="${card.height}"`));
+  }
 });
 
-test("the published dated PNG matches its metadata and scheduled puzzle", async () => {
-  const card = await readFile(new URL("social/2026-11-03.png", out));
-  assert.equal(card.toString("hex", 0, 8), "89504e470d0a1a0a");
-  const width = card.readUInt32BE(16);
-  const height = card.readUInt32BE(20);
-  assert.ok(html.includes(`<meta property="og:image:width" content="${width}"`));
-  assert.ok(html.includes(`<meta property="og:image:height" content="${height}"`));
-  const manifest = JSON.parse(await readFile(new URL("puzzles/manifest.json", out), "utf8"));
-  const puzzle = manifest.entries.find((entry) => entry.date === "2026-11-03");
-  assert.equal(puzzle?.letters, "ghortuw");
-  assert.equal(puzzle?.centre, "o");
+test("preserves the original manually designed 3 November card", () => {
+  const original = byDate.get("2026-11-03");
+  assert.equal(original.templateSha256, "manual-original");
+  assert.equal(original.width, 1731);
+  assert.equal(original.height, 909);
 });

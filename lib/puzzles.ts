@@ -1,5 +1,14 @@
 export const PUZZLE_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+// Shared initial wheel ordering for the game and dated social cards.
+export const puzzleWheelLetters = (puzzle: { letters: string; centre: string }) => {
+  const centreLetter = puzzle.centre.toUpperCase();
+  return {
+    centreLetter,
+    outerLetters: puzzle.letters.toUpperCase().split("").filter((letter) => letter !== centreLetter),
+  };
+};
+
 export const RANKS = [
   { name: "Beginner", threshold: 0 },
   { name: "Good Start", threshold: 0.02 },

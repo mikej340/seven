@@ -38,3 +38,7 @@ next-env.d.ts
 
 # local package cache used by the development environment
 /.sites-runtime/
+
+# Local card commissioning checks
+/output/card-alphabet/
+*.tsbuildinfo

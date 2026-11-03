@@ -22,14 +22,12 @@ UTC, while `/?date=YYYY-MM-DD` opens a released historic puzzle. Returning to a
 foregrounded root page after midnight refreshes the selected puzzle; no service
 worker or server is required.
 
-The one-off share URL `/daily/2026-11-03/` opens the 3 November 2026 puzzle
-with a dated botanical social card at `/social/2026-11-03.png`. It uses the
-same game and saved progress as `/?date=2026-11-03`, stays on that puzzle on
-later dates, and shows a link to today's puzzle when it is in the past. The
-homepage retains its default social card. This page and PNG are maintained
-manually; there is no scheduled card generation or daily deployment.
-Implementation details and the intended automation approach are recorded in
-[Dated puzzle shares](docs/DATED-PUZZLE-SHARES.md).
+Every scheduled puzzle has a dated share URL such as `/daily/2026-11-03/`
+and its own botanical social card. Cards are generated with the puzzle release
+using the game's actual letter wheel; each release PR includes a card preview
+for a manual check before merging. Existing dated cards are preserved. See
+[Dated puzzle shares](docs/DATED-PUZZLE-SHARES.md) for the release commands and
+one-off alphabet check.
 
 Score snapshot timing, event properties and measurement limits are documented in
 [Score snapshot analytics](docs/SCORE-SNAPSHOTS.md).
