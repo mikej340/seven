@@ -101,14 +101,14 @@ button {
   align-items: center;
   justify-content: center;
   column-gap: 0.4em;
-  margin: 0;
-  font-size: 0.75rem;
 }
 
 .historic-puzzle-date a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  /* Keep the touch target without making the date row taller than one line. */
+  margin-block: calc((1lh - 44px) / 2);
   color: var(--plum);
   text-underline-offset: 3px;
 }
