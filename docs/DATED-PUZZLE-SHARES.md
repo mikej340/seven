@@ -43,7 +43,8 @@ A new release does not require an A–Z run or a visual review of every card.
   A missing card blocks the build with the generation command to run.
 - `scripts/generate-social-cards.tsx` renders a fixed 1200 × 630 HTML card to
   PNG using the pinned Playwright Chromium release. The frame supplies the date,
-  warm ivory background, sage rule and plum domain in the footer.
+  warm ivory background, sage rule and “Try this puzzle at playseven.uk” footer
+  with the domain in plum.
 - The renderer uses the actual `LetterWheel` React component and
   `app/_game/letter-wheel.css`, also imported by the game. `puzzleWheelLetters`
   supplies the same initial ordering in both places. Interactive shuffling
@@ -53,14 +54,18 @@ A new release does not require an A–Z run or a visual review of every card.
   <https://github.com/google/fonts/tree/main/ofl/lato>. No remote assets or AI
   generation are involved in rendering. The card manifest records a SHA-256 of
   each PNG and the template inputs used to render it.
-- The 3 November 2026 card was regenerated with the shared template at the
-  editor’s explicit request. All current cards are 1200 × 630. Changes to the
-  template apply to subsequently generated cards.
+- All 93 cards were regenerated for the change from “Try today’s puzzle” to
+  “Try this puzzle”, so the invitation remains accurate when an old post is
+  shared. All current cards are 1200 × 630. Routine generation continues to
+  preserve existing cards.
 
 The dated client calls `usePuzzleGame(date)`. Its date takes precedence over
 query parameters, stays pinned across midnight, and shares progress with
-`/?date=YYYY-MM-DD` on the same origin. A past-puzzle notice links to today's
-puzzle. The existing client-side release selection remains in place.
+`/?date=YYYY-MM-DD` on the same origin. All historic puzzles show a compact
+“3 November 2026 · Play today’s puzzle →” line in the score panel’s date,
+whether opened through a dated share page or the `?date=` archive URL. After
+completion, this line appears beneath the heading. Current puzzles retain
+their normal date without the extra link. The existing client-side release selection remains in place.
 Prepublished future pages and card files are publicly accessible, as with the
 exported schedule. The homepage retains its generic social card, and invitation
 and score-sharing behaviour are unchanged.

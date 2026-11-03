@@ -1,5 +1,7 @@
 import { formatPuzzleDate, puzzleWheelLetters } from "./puzzles.ts";
 
+export const SHARE_CARD_INVITATION = "Try this puzzle at";
+
 export type SharePuzzle = { date: string; letters: string; centre: string };
 
 export type ShareCard = SharePuzzle & {
@@ -19,7 +21,7 @@ export function shareCardText(puzzle: SharePuzzle) {
     date,
     title: `Seven – ${date} Word Puzzle`,
     description: `Play Seven’s word puzzle for ${date}. Find words using ${letters}, with ${centreLetter} in every word.`,
-    alt: `${date}: ${letters} on six green leaves, with ${centreLetter} in the centre. Try today’s puzzle at playseven.uk.`,
+    alt: `${date}: ${letters} on six green leaves, with ${centreLetter} in the centre. ${SHARE_CARD_INVITATION} playseven.uk.`,
   };
 }
 

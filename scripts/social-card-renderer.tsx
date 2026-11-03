@@ -6,7 +6,7 @@ import { chromium } from "playwright";
 import type { Page } from "playwright";
 import { LetterWheel } from "../app/_game/letter-wheel";
 import { puzzleWheelLetters } from "../lib/puzzles.ts";
-import { shareCardText, type SharePuzzle } from "../lib/daily-shares.ts";
+import { SHARE_CARD_INVITATION, shareCardText, type SharePuzzle } from "../lib/daily-shares.ts";
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 630;
@@ -19,6 +19,7 @@ export async function createCardRenderer() {
     readFile(new URL("./assets/Lato-Bold.ttf", import.meta.url)),
     readFile(new URL("../app/_game/letter-wheel.tsx", import.meta.url), "utf8"),
     readFile(new URL("../lib/puzzles.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/daily-shares.ts", import.meta.url), "utf8"),
     readFile(new URL("./social-card-renderer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
   ]);
@@ -55,7 +56,7 @@ async function setCardContent(page: Page, css: string, puzzle: SharePuzzle) {
           <div className="wheel-frame">
             <LetterWheel outerLetters={outerLetters} centreLetter={centreLetter} onAddLetter={() => {}} />
           </div>
-          <footer>Try today’s puzzle at <strong>playseven.uk</strong></footer>
+          <footer>{SHARE_CARD_INVITATION} <strong>playseven.uk</strong></footer>
         </article>
       </body>
     </html>,

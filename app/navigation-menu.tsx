@@ -131,7 +131,7 @@ export default function NavigationMenu({ current, feedbackPuzzleDate }: Navigati
         hidden={!open}
       >
         <a href={`${PUZZLE_BASE_PATH}/`} aria-current={current === "today" ? "page" : undefined}>
-          <span>Today</span>
+          <span>Today’s Puzzle</span>
           {current === "today" ? <i aria-hidden="true">Current</i> : null}
         </a>
         <a

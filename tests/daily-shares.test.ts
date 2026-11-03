@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { puzzleWheelLetters } from "../lib/puzzles.ts";
-import { shareCardText, shareCardPreviewMarkdown, validateShareCard, type ShareCard } from "../lib/daily-shares.ts";
+import { SHARE_CARD_INVITATION, shareCardText, shareCardPreviewMarkdown, validateShareCard, type ShareCard } from "../lib/daily-shares.ts";
 import { fileSha256, generateSocialCards } from "../scripts/social-card-files.ts";
 
 const puzzle = { date: "2026-11-03", letters: "ghortuw", centre: "o" };
@@ -31,6 +31,9 @@ test("PR previews point at the exact committed card and include the manual check
   assert.ok(markdown.includes("https://raw.githubusercontent.com/editor/seven/abc123/public/social/2026-11-03.png"));
   assert.ok(markdown.includes("- [ ] Manually checked at least one generated card"));
   assert.ok(markdown.includes("3 November 2026"));
+  assert.equal(SHARE_CARD_INVITATION, "Try this puzzle at");
+  assert.ok(markdown.includes("Try this puzzle at playseven.uk."));
+  assert.ok(!markdown.includes("Try today’s puzzle"));
 });
 
 test("generation preserves existing card bytes, adds missing dates, and is idempotent", async () => {
