@@ -28,7 +28,7 @@ export async function generateSocialCards(
   const cards = new Map(manifest.cards.map((card) => [card.date, card]));
   if (cards.size !== manifest.cards.length) throw new Error("Duplicate dates in social-card manifest");
   // Check every existing card before creating any new files. Published images
-  // are snapshots, including the original manually designed November card.
+  // are snapshots and are not overwritten by routine generation.
   for (const card of cards.values()) {
     const bytes = await readFile(join(directory, `${card.date}.png`));
     if (fileSha256(bytes) !== card.imageSha256) throw new Error(`Existing card bytes changed: ${card.date}`);

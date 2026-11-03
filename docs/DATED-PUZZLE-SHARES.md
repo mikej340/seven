@@ -17,8 +17,7 @@ npm run test:root
 ```
 
 Commit the intended puzzle changes, new `public/social/*.png` files and the
-updated `public/social/manifest.json`. Existing dated images are preserved,
-including the original manually designed 3 November 2026 card. Generation
+updated `public/social/manifest.json`. Existing dated images are preserved. Generation
 only renders missing dates. If an existing card's puzzle inputs or image bytes
 have changed, it stops rather than replacing the published snapshot.
 
@@ -54,8 +53,9 @@ A new release does not require an A–Z run or a visual review of every card.
   <https://github.com/google/fonts/tree/main/ofl/lato>. No remote assets or AI
   generation are involved in rendering. The card manifest records a SHA-256 of
   each PNG and the template inputs used to render it.
-- The original 1731 × 909 PNG is retained at its original URL and dimensions.
-  Changes to the template apply to subsequently generated cards.
+- The 3 November 2026 card was regenerated with the shared template at the
+  editor’s explicit request. All current cards are 1200 × 630. Changes to the
+  template apply to subsequently generated cards.
 
 The dated client calls `usePuzzleGame(date)`. Its date takes precedence over
 query parameters, stays pinned across midnight, and shares progress with

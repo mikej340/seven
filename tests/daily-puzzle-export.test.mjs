@@ -41,9 +41,10 @@ test("exports a dated page and matching social image for every scheduled puzzle"
   }
 });
 
-test("preserves the original manually designed 3 November card", () => {
-  const original = byDate.get("2026-11-03");
-  assert.equal(original.templateSha256, "manual-original");
-  assert.equal(original.width, 1731);
-  assert.equal(original.height, 909);
+test("all dated cards use the shared template dimensions", () => {
+  for (const card of cards.cards) {
+    assert.match(card.templateSha256, /^[a-f0-9]{64}$/);
+    assert.equal(card.width, 1200);
+    assert.equal(card.height, 630);
+  }
 });
