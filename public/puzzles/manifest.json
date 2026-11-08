@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "timeZone": "UTC",
   "startDate": "2026-08-08",
-  "endDate": "2026-11-08",
+  "endDate": "2026-11-15",
   "source": {
     "dictionarySha256": "0089b56e4ea2133902ac27e2c1a8b452ed1e2884c6bf525616a01e7e62a26293",
     "dictionaryAdditionsSha256": "421b1a6fcd3b87254016d91af489f16867828b37a0897e0af2922c92af89d973",
@@ -939,6 +939,76 @@
       "wordCount": 44,
       "pangramCount": 1,
       "maximumScore": 173
+    },
+    {
+      "id": "2026-11-09",
+      "date": "2026-11-09",
+      "month": "2026-11",
+      "letters": "cenoqru",
+      "centre": "n",
+      "wordCount": 39,
+      "pangramCount": 3,
+      "maximumScore": 230
+    },
+    {
+      "id": "2026-11-10",
+      "date": "2026-11-10",
+      "month": "2026-11",
+      "letters": "efilmny",
+      "centre": "e",
+      "wordCount": 34,
+      "pangramCount": 1,
+      "maximumScore": 114
+    },
+    {
+      "id": "2026-11-11",
+      "date": "2026-11-11",
+      "month": "2026-11",
+      "letters": "eiloprw",
+      "centre": "w",
+      "wordCount": 37,
+      "pangramCount": 1,
+      "maximumScore": 165
+    },
+    {
+      "id": "2026-11-12",
+      "date": "2026-11-12",
+      "month": "2026-11",
+      "letters": "abglruy",
+      "centre": "u",
+      "wordCount": 43,
+      "pangramCount": 2,
+      "maximumScore": 178
+    },
+    {
+      "id": "2026-11-13",
+      "date": "2026-11-13",
+      "month": "2026-11",
+      "letters": "bhilnot",
+      "centre": "t",
+      "wordCount": 41,
+      "pangramCount": 1,
+      "maximumScore": 142
+    },
+    {
+      "id": "2026-11-14",
+      "date": "2026-11-14",
+      "month": "2026-11",
+      "letters": "adjnoru",
+      "centre": "o",
+      "wordCount": 30,
+      "pangramCount": 1,
+      "maximumScore": 109
+    },
+    {
+      "id": "2026-11-15",
+      "date": "2026-11-15",
+      "month": "2026-11",
+      "letters": "acehkmt",
+      "centre": "h",
+      "wordCount": 43,
+      "pangramCount": 1,
+      "maximumScore": 169
     }
   ]
 }

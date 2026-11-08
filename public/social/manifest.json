@@ -837,6 +837,69 @@
       "height": 630,
       "imageSha256": "d9a25e9449c0a866b490c1d8d82532d1e26c0a676643b0fa5b42afc98e1e7bf1",
       "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-09",
+      "letters": "cenoqru",
+      "centre": "n",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "d76b3991fdc14fb124de36d87dfdfb83c55cf32cce722d1da473364366de7964",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-10",
+      "letters": "efilmny",
+      "centre": "e",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "e2df48862478a60696de5eb137cd17a7878ec36b91d922127db88cfcc069a949",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-11",
+      "letters": "eiloprw",
+      "centre": "w",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "0818afa4dc7d1ad44e7fb5ae7af24c3140b4e64b2ea588e2cf27bd57c4a0675d",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-12",
+      "letters": "abglruy",
+      "centre": "u",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "710e39294e842af38c5ba23271a048285c1cfcda33784dd41357d46596c8c2e1",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-13",
+      "letters": "bhilnot",
+      "centre": "t",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "72999bb6163e82867088d79f8ab3ab511343e797410cd82794774547ea3d87eb",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-14",
+      "letters": "adjnoru",
+      "centre": "o",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "dddbb2b422417f7b4573a9f0116281346f2b296743790ec67698bf623ac16b98",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-15",
+      "letters": "acehkmt",
+      "centre": "h",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "0a73d83600307e79989402792a0118b12041f8414b5dfe82ebed11121c03c510",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
     }
   ]
 }
