@@ -900,6 +900,69 @@
       "height": 630,
       "imageSha256": "0a73d83600307e79989402792a0118b12041f8414b5dfe82ebed11121c03c510",
       "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-16",
+      "letters": "egklnow",
+      "centre": "n",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "014621f492cf66e13e7075906b1306851f1b4acdf14de1fdbfe0ebfed958f0d5",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-17",
+      "letters": "ckloptu",
+      "centre": "l",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "02bb75a69200e9a7c3da8448241bf91ac243bb4bca99d82b5c124be14a8fdeef",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-18",
+      "letters": "aeinorw",
+      "centre": "i",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "1117ba2a6aefb21c7d585101f5c31d2efdd03beee23ca3e637b552968b1c5086",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-19",
+      "letters": "cehoruv",
+      "centre": "r",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "ca88b3e98d743887d601a1e96580ba1f991653c353d381e5c143f9e286ffa8f2",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-20",
+      "letters": "abcehkn",
+      "centre": "e",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "2ae85d303b50771e1b11e39b27876f94c2563d4ff081818427e13aeb4786deb8",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-21",
+      "letters": "adiprty",
+      "centre": "d",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "c8f644d846bd0952b8c3783fe6642461cff00ddc147bb98125e56bceda92dea6",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-22",
+      "letters": "ailmopt",
+      "centre": "m",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "f62a8a9f14a729a2a91600b51aa94c90af4479be4244ad2faa535eaefe84df06",
+      "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
     }
   ]
 }
