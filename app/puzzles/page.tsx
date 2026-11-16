@@ -115,16 +115,23 @@ export default function PuzzlesPage() {
                       ? rankForScore(saved.score, entry.maximumScore, complete).rank.name
                       : "Not started";
 
+                    const answersAvailable = isPuzzleRevealAvailable(entry.date, today);
+                    const playHref = `${PUZZLE_BASE_PATH}/?date=${entry.date}`;
+
+                    // The card is not itself a link, so it can hold two: the date link
+                    // stretches over the whole card (tap anywhere to play) and the
+                    // Answers pill sits above it as its own target.
                     return (
-                      <div className={styles.entry} key={entry.id}>
-                      <a
+                      <div
                         className={`${styles.card} ${entry.date === today ? styles.today : ""}`}
-                        href={`${PUZZLE_BASE_PATH}/?date=${entry.date}`}
+                        key={entry.id}
                       >
                         <div className={styles.cardHeading}>
                           <div>
                             {entry.date === today ? <span className={styles.todayLabel}>Today</span> : null}
-                            <strong>{formatPuzzleDate(entry.date)}</strong>
+                            <a className={styles.cardLink} href={playHref}>
+                              <strong>{formatPuzzleDate(entry.date)}</strong>
+                            </a>
                           </div>
                           <span className={styles.chevron} aria-hidden="true">›</span>
                         </div>
@@ -143,17 +150,16 @@ export default function PuzzlesPage() {
                         <div className={styles.progress}>
                           <span><small>Rank</small><strong>{currentRank}</strong></span>
                           <span><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
+                          {answersAvailable ? (
+                            <a
+                              className={styles.answersPill}
+                              href={answersPageHref(entry.date)}
+                              aria-label={`Answers for ${formatPuzzleDate(entry.date, false)}`}
+                            >
+                              Answers
+                            </a>
+                          ) : null}
                         </div>
-                      </a>
-                      {isPuzzleRevealAvailable(entry.date, today) ? (
-                        <a
-                          className={styles.answersLink}
-                          href={answersPageHref(entry.date)}
-                          aria-label={`Answers for ${formatPuzzleDate(entry.date, false)}`}
-                        >
-                          Answers
-                        </a>
-                      ) : null}
                       </div>
                     );
                   })}
