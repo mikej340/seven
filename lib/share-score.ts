@@ -73,6 +73,22 @@ const drawAmbientLeaf = (
   context.restore();
 };
 
+// The score card follows the page's active season by reading the same CSS
+// variables as the game (app/theme.css). Fallbacks are the default theme.
+const readThemeColours = () => {
+  const style = typeof document === "undefined" ? undefined : getComputedStyle(document.documentElement);
+  const read = (name: string, fallback: string) => style?.getPropertyValue(name).trim() || fallback;
+  return {
+    ink: read("--ink", "#283520"),
+    muted: read("--muted", "#6e7663"),
+    plum: read("--plum", "#67283d"),
+    progressFrom: read("--progress-from", "#5f7544"),
+    progressTo: read("--progress-to", "#97a85b"),
+    progressThumb: read("--progress-thumb", "#6f8647"),
+    decorLeaf: read("--decor-leaf-light", "#78805c"),
+  };
+};
+
 const dataUrlToBlob = (dataUrl: string) => {
   const [header, encoded] = dataUrl.split(",");
   if (header === undefined || encoded === undefined) {
@@ -94,6 +110,7 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   canvas.height = CARD_HEIGHT;
   const context = canvas.getContext("2d");
   if (context === null) throw new Error("Canvas is unavailable");
+  const theme = readThemeColours();
 
   const sans = '"Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif';
   const background = context.createLinearGradient(0, 0, CARD_WIDTH, CARD_HEIGHT);
@@ -108,11 +125,14 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   context.fillStyle = glow;
   context.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 
-  context.fillStyle = "rgba(100, 112, 76, 0.12)";
+  context.save();
+  context.fillStyle = theme.decorLeaf;
+  context.globalAlpha = 0.12;
   drawAmbientLeaf(context, 26, 80, 245, 86, -0.28);
   drawAmbientLeaf(context, 12, 248, 220, 72, 0.53);
-  context.fillStyle = "rgba(117, 128, 83, 0.10)";
+  context.globalAlpha = 0.1;
   drawAmbientLeaf(context, 1152, 322, 180, 66, -0.38);
+  context.restore();
 
   // Like the in-app fieldset, the date sits in a gap in the top border.
   const cardX = 20;
@@ -138,27 +158,27 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   context.stroke();
 
   context.textBaseline = "middle";
-  context.fillStyle = "#6e7663";
+  context.fillStyle = theme.muted;
   context.textAlign = "center";
   context.fillText(data.date, CARD_WIDTH / 2, cardY);
   context.textAlign = "left";
   context.textBaseline = "alphabetic";
 
-  context.fillStyle = "#283520";
+  context.fillStyle = theme.ink;
   context.font = `750 47px ${sans}`;
   context.fillText(data.rank, 54, 109);
 
   const pointsLabel = "POINTS";
   context.font = `700 27px ${sans}`;
   const labelWidth = context.measureText(pointsLabel).width;
-  context.fillStyle = "#6e7663";
+  context.fillStyle = theme.muted;
   context.fillText(pointsLabel, CARD_WIDTH - 54 - labelWidth, 109);
 
   const labelStart = CARD_WIDTH - 54 - labelWidth;
   context.font = `750 49px ${sans}`;
   const scoreText = String(data.score);
   const scoreWidth = context.measureText(scoreText).width;
-  context.fillStyle = "#67283d";
+  context.fillStyle = theme.plum;
   context.fillText(scoreText, labelStart - scoreWidth - 17, 109);
 
   const trackX = 54;
@@ -172,8 +192,8 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   const progress = Math.max(0, Math.min(1, data.progress));
   const fillWidth = Math.max(3, trackWidth * progress);
   const fillGradient = context.createLinearGradient(trackX, 0, trackX + fillWidth, 0);
-  fillGradient.addColorStop(0, "#5f7544");
-  fillGradient.addColorStop(1, "#97a85b");
+  fillGradient.addColorStop(0, theme.progressFrom);
+  fillGradient.addColorStop(1, theme.progressTo);
   roundedRect(context, trackX, trackY, fillWidth, trackHeight, trackHeight / 2);
   context.fillStyle = fillGradient;
   context.fill();
@@ -184,14 +204,14 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   context.rotate(-0.12);
   context.beginPath();
   context.ellipse(0, 0, 27, 18, 0, 0, Math.PI * 2);
-  context.fillStyle = "#6f8647";
+  context.fillStyle = theme.progressThumb;
   context.fill();
   context.lineWidth = 6;
   context.strokeStyle = "#fffaf1";
   context.stroke();
   context.restore();
 
-  context.fillStyle = "#6e7663";
+  context.fillStyle = theme.muted;
   context.font = `400 34px ${sans}`;
   context.textAlign = "right";
   context.fillText(data.nextRankText, CARD_WIDTH - 54, 216);
@@ -205,7 +225,7 @@ export const createScoreCardPng = (data: ScoreCardData) => {
   context.stroke();
 
   // The export has no actions: centre the words-found summary in the footer.
-  context.fillStyle = "#283520";
+  context.fillStyle = theme.ink;
   context.font = `650 36px ${sans}`;
   context.textAlign = "center";
   context.textBaseline = "middle";

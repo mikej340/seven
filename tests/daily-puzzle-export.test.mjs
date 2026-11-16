@@ -16,9 +16,9 @@ const escapeAttribute = (value) => value.replaceAll("&", "&amp;").replaceAll('"'
 test("exports a dated page and matching social image for every scheduled puzzle", async () => {
   for (const puzzle of manifest.entries) {
     const html = await readFile(new URL(`daily/${puzzle.date}/index.html`, out), "utf8");
-    const text = shareCardText(puzzle);
-    const imageUrl = new URL(`social/${puzzle.date}.png`, siteUrl).href;
     const card = byDate.get(puzzle.date);
+    const text = shareCardText(puzzle, card?.season);
+    const imageUrl = new URL(`social/${puzzle.date}.png`, siteUrl).href;
     assert.ok(card, puzzle.date);
     assert.equal(card.letters, puzzle.letters);
     assert.equal(card.centre, puzzle.centre);

@@ -2,10 +2,12 @@ import { readFile, mkdir, writeFile, rename } from "node:fs/promises";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { validateShareCard, type SharePuzzle, type ShareCard, type ShareCardManifest } from "../lib/daily-shares.ts";
+import type { Season } from "../lib/season.ts";
 
 export const fileSha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 
 type Renderer = {
+  season: Season;
   templateSha256: string;
   render: (puzzle: SharePuzzle) => Promise<Buffer>;
   close: () => Promise<void>;
@@ -53,6 +55,7 @@ export async function generateSocialCards(
         height: bytes.readUInt32BE(20),
         imageSha256: fileSha256(bytes),
         templateSha256: renderer.templateSha256,
+        season: renderer.season,
       };
       await writeFile(join(directory, `${puzzle.date}.png`), bytes, { flag: "wx" });
       cards.set(card.date, card);
