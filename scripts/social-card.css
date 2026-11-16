@@ -5,9 +5,8 @@
   font-style: normal;
 }
 
-:root { --plum: #67283d; }
 * { box-sizing: border-box; }
-body { margin: 0; color: #283520; font-family: "Seven Card", sans-serif; font-weight: 700; }
+body { margin: 0; color: var(--ink); font-family: "Seven Card", sans-serif; font-weight: 700; }
 button { font: inherit; }
 .social-card {
   position: relative;
@@ -28,7 +27,7 @@ button { font: inherit; }
   left: 32px;
   right: 32px;
   bottom: 20px;
-  border-top: 3px solid #a6ad83;
+  border-top: 3px solid var(--card-rule);
   padding-top: 14px;
   text-align: center;
   font-size: 42px;
@@ -40,7 +39,7 @@ button { font: inherit; }
   width: 210px;
   height: 90px;
   border-radius: 70% 13% 70% 18%;
-  background: #a5ad85;
+  background: var(--card-leaf);
   opacity: 0.35;
 }
 .social-card::before { left: -120px; top: 130px; transform: rotate(45deg); }

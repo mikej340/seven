@@ -1,0 +1,73 @@
+/* Colour tokens shared by the game (globals.css) and the dated share-card
+   renderer (scripts/social-card-renderer.tsx). Seasons override the seasonal
+   layer under :root[data-season="…"]; the active season is lib/season.ts. */
+
+:root {
+  /* Brand layer: stays the same every season. */
+  --paper: #f7f2e7;
+  --plum: #67283d;
+  --terracotta: #c96f4d;
+
+  /* Seasonal layer: default (spring/summer green). Override per season below. */
+  --ink: #283520;
+  --muted: #6e7663;
+  --petal-1-light: #788760; --petal-1-dark: #536445;
+  --petal-2-light: #576331; --petal-2-dark: #34451f;
+  --petal-3-light: #8f9a54; --petal-3-dark: #65743a;
+  --petal-4-light: #9ba274; --petal-4-dark: #737d54;
+  --petal-5-light: #526444; --petal-5-dark: #2f4931;
+  --petal-6-light: #849541; --petal-6-dark: #65792b;
+  --progress-from: #5f7544;
+  --progress-to: #97a85b;
+  --progress-thumb: #6f8647;
+  --decor-leaf-light: #78805c;
+  --decor-leaf-dark: #4d5b39;
+  --wheel-glow: rgba(212, 216, 187, 0.2);
+  --wheel-halo-line: rgba(110, 125, 87, 0.13);
+  --wheel-halo-shadow: rgba(134, 148, 109, 0.12);
+  --card-rule: #a6ad83;
+  --card-leaf: #a5ad85;
+
+  /* Success ("word accepted"). Must always read as green: a season may pick
+     its own shade within OKLCH hue ~125–155, but never towards olive, gold or
+     brown, which belong to the leaves and the prompt/pangram states. */
+  --success-text: #426a38;
+  --success-strong: #315e2f;
+  --success-badge: #4f7b3f;
+  --success-line: 72 112 56;
+  --success-glow: 69 105 53;
+  --success-tint: 244 249 235;
+  --success-tint-peak: 235 246 220;
+}
+
+:root[data-season="autumn"] {
+  --ink: #33261c;
+  --muted: #75695b;
+  /* Leaves matched to the autumn mockup (sampled, corrected for texture/shading). */
+  --petal-1-light: #a67f32; --petal-1-dark: #84641d;
+  --petal-2-light: #904824; --petal-2-dark: #7b3918;
+  --petal-3-light: #d28c31; --petal-3-dark: #a96715;
+  --petal-4-light: #a58541; --petal-4-dark: #8a6b30;
+  --petal-5-light: #80642e; --petal-5-dark: #715721;
+  --petal-6-light: #c16425; --petal-6-dark: #ab4d13;
+  /* Pine (as success) growing into golden olive (as the leaves). */
+  --progress-from: #4b6d4c;
+  --progress-to: #a29745;
+  --progress-thumb: #657a4a;
+  --decor-leaf-light: #c9b48a;
+  --decor-leaf-dark: #a8915f;
+  --wheel-glow: rgba(222, 205, 170, 0.22);
+  --wheel-halo-line: rgba(140, 112, 72, 0.13);
+  --wheel-halo-shadow: rgba(170, 135, 90, 0.12);
+  --card-rule: #c4ad7e;
+  --card-leaf: #c9b48a;
+  /* Deep pine success green: evergreen among autumn leaves. Cooler and darker
+     than the golden-olive leaves so it never reads as one of them. */
+  --success-text: #3e6549;
+  --success-strong: #30543a;
+  --success-badge: #436f4f;
+  --success-line: 80 115 87;
+  --success-glow: 65 93 71;
+  --success-tint: 246 248 239;
+  --success-tint-peak: 237 243 227;
+}

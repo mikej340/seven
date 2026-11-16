@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params;
   const share = dailyShares.find(({ puzzle }) => puzzle.date === date);
   if (share === undefined) notFound();
-  const { title, description, alt } = shareCardText(share.puzzle);
+  const { title, description, alt } = shareCardText(share.puzzle, share.card.season);
   const image = siteAssetUrl(`social/${date}.png`);
   return {
     title,
