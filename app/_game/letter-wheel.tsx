@@ -1,12 +1,12 @@
 import type { CSSProperties } from "react";
 
 const outerSlots = [
-  { position: "top", tone: "sage", rotation: "4deg" },
-  { position: "upper-left", tone: "olive", rotation: "-42deg" },
-  { position: "upper-right", tone: "lime", rotation: "44deg" },
-  { position: "lower-left", tone: "soft", rotation: "-126deg" },
-  { position: "lower-right", tone: "forest", rotation: "128deg" },
-  { position: "bottom", tone: "fresh", rotation: "176deg" },
+  { position: "top", tone: "petal-1", rotation: "4deg" },
+  { position: "upper-left", tone: "petal-2", rotation: "-42deg" },
+  { position: "upper-right", tone: "petal-3", rotation: "44deg" },
+  { position: "lower-left", tone: "petal-4", rotation: "-126deg" },
+  { position: "lower-right", tone: "petal-5", rotation: "128deg" },
+  { position: "bottom", tone: "petal-6", rotation: "176deg" },
 ] as const;
 
 type LetterWheelProps = {

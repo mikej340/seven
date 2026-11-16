@@ -64,7 +64,7 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 12px;
-  color: #283520;
+  color: var(--ink);
   border: 0;
   background: transparent;
   font-size: 0.86rem;
@@ -81,7 +81,7 @@
 }
 
 .menu button:disabled {
-  color: #6e7663;
+  color: var(--muted);
   cursor: wait;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .menu a i {
-  color: #6e7663;
+  color: var(--muted);
   font-size: 0.6rem;
   font-style: normal;
   font-weight: 750;
@@ -104,7 +104,7 @@
 }
 
 .inviteStatus {
-  color: #6e7663;
+  color: var(--muted);
   font-size: 0.6rem;
   font-style: normal;
   font-weight: 750;
@@ -127,7 +127,7 @@
   border: 1px solid rgba(91, 101, 75, 0.28);
   border-radius: 9px;
   background: #fffdf8;
-  color: #283520;
+  color: var(--ink);
   font-family: inherit;
   font-size: 0.68rem;
   font-weight: 650;

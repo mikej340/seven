@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { CANONICAL_SITE_URL, SITE_URL, siteAssetUrl } from "@/lib/site";
+import { CURRENT_SEASON } from "@/lib/season";
 import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -70,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-season={CURRENT_SEASON}>
       <head>
         <script
           defer
