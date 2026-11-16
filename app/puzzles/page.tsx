@@ -3,9 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { loadProgressSummaries, type PuzzleProgress } from "@/lib/game-save";
 import {
-  answersPageHref,
   formatPuzzleDate,
-  isPuzzleRevealAvailable,
   loadPuzzleManifest,
   PUZZLE_BASE_PATH,
   rankForScore,
@@ -115,25 +113,18 @@ export default function PuzzlesPage() {
                       ? rankForScore(saved.score, entry.maximumScore, complete).rank.name
                       : "Not started";
 
-                    const answersAvailable = isPuzzleRevealAvailable(entry.date, today);
-                    const playHref = `${PUZZLE_BASE_PATH}/?date=${entry.date}`;
-
-                    // The card is not itself a link, so it can hold two: the date link
-                    // stretches over the whole card (tap anywhere to play) and the
-                    // answers footer sits above it as its own target.
                     return (
-                      <div
+                      <a
                         className={`${styles.card} ${entry.date === today ? styles.today : ""}`}
+                        href={`${PUZZLE_BASE_PATH}/?date=${entry.date}`}
                         key={entry.id}
                       >
                         <div className={styles.cardHeading}>
                           <div>
                             {entry.date === today ? <span className={styles.todayLabel}>Today</span> : null}
-                            <a className={styles.cardLink} href={playHref}>
-                              <strong>{formatPuzzleDate(entry.date)}</strong>
-                            </a>
+                            <strong>{formatPuzzleDate(entry.date)}</strong>
                           </div>
-                          <span className={styles.chevron} aria-hidden="true">Play <i>›</i></span>
+                          <span className={styles.chevron} aria-hidden="true">›</span>
                         </div>
 
                         <div className={styles.letters} aria-label={`Letters ${entry.letters}, required ${entry.centre}`}>
@@ -148,20 +139,10 @@ export default function PuzzlesPage() {
                         </div>
 
                         <div className={styles.progress}>
-                          <span className={styles.rank}><small>Rank</small><strong>{currentRank}</strong></span>
-                          <span className={styles.found}><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
+                          <span><small>Rank</small><strong>{currentRank}</strong></span>
+                          <span><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
                         </div>
-
-                        {answersAvailable ? (
-                          <a
-                            className={styles.answersFooter}
-                            href={answersPageHref(entry.date)}
-                            aria-label={`View answers for ${formatPuzzleDate(entry.date, false)}`}
-                          >
-                            View answers <i aria-hidden="true">›</i>
-                          </a>
-                        ) : null}
-                      </div>
+                      </a>
                     );
                   })}
                 </div>
