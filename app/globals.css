@@ -405,9 +405,9 @@ h1 {
 .game-controls button {
   min-height: clamp(44px, 6dvh, 49px);
   padding: 8px 10px;
-  border: 1px solid rgba(69, 82, 55, 0.34);
+  border: 1px solid var(--button-border);
   border-radius: 16px;
-  background: rgba(255, 252, 245, 0.78);
+  background: var(--button-bg);
   color: var(--ink);
   font-size: 0.9rem;
   font-weight: 700;
@@ -431,10 +431,11 @@ h1 {
   opacity: 0.42;
 }
 
-.game-controls .submit-button {
+.game-controls .submit-button,
+.found-words-dialog-header button.is-primary {
   border-color: var(--plum);
   background: var(--plum);
-  color: #fffaf1;
+  color: var(--button-primary-ink);
 }
 
 .found-words-button {
@@ -451,6 +452,7 @@ h1 {
   line-height: 20px;
   font-weight: 650;
   cursor: pointer;
+  text-decoration: none;
   touch-action: manipulation;
 }
 
@@ -551,7 +553,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 12px;
   padding: 22px 22px 14px;
 }
 
@@ -572,12 +574,39 @@ h1 {
   font-weight: 500;
 }
 
+.found-words-dialog-header h2.found-words-letters {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.found-words-letters span {
+  width: 27px;
+  flex: none;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(85, 100, 67, 0.26);
+  border-radius: 50%;
+  background: #e5ead8;
+  color: #3d4b31;
+  font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.found-words-letters span.is-centre {
+  border-color: rgba(103, 40, 61, 0.4);
+  background: #efe2c8;
+  color: #67283d;
+}
+
 .found-words-dialog-header button {
   min-height: 42px;
   padding: 7px 14px;
-  border: 1px solid rgba(69, 82, 55, 0.34);
+  border: 1px solid var(--button-border);
   border-radius: 14px;
-  background: #f1ecdf;
+  background: var(--button-bg);
   color: var(--ink);
   font-size: 0.82rem;
   font-weight: 750;
@@ -597,8 +626,7 @@ h1 {
 .found-words-reveal-control {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
   padding: 12px 22px;
   border-bottom: 1px solid rgba(91, 101, 75, 0.2);
   background: rgba(230, 229, 207, 0.28);
@@ -607,25 +635,14 @@ h1 {
 .found-words-reveal-control button {
   min-height: 42px;
   padding: 7px 13px;
-  border: 1px solid rgba(103, 40, 61, 0.3);
+  border: 1px solid var(--button-border);
   border-radius: 14px;
-  background: #fffaf1;
-  color: var(--plum);
+  background: var(--button-bg);
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 750;
   cursor: pointer;
   touch-action: manipulation;
-}
-
-.found-words-reveal-control button[aria-pressed="true"] {
-  background: #eee3e4;
-}
-
-.found-words-reveal-control span {
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 650;
-  text-align: right;
 }
 
 .found-words-list {
@@ -697,6 +714,11 @@ h1 {
 
 .found-words-list div:last-child {
   border-bottom: 0;
+}
+
+/* Unrevealed answers stay in the page for search engines but are not shown. */
+.found-words-list div[hidden] {
+  display: none;
 }
 
 .game-summary {
@@ -774,10 +796,10 @@ h1 {
 .score-share-summary {
   width: 100%;
   min-height: 48px;
-  border: 1px solid rgba(103, 40, 61, 0.48);
+  border: 1px solid var(--plum);
   border-radius: 17px;
-  background: rgba(255, 252, 245, 0.72);
-  color: var(--plum);
+  background: var(--plum);
+  color: var(--button-primary-ink);
   font-weight: 750;
   cursor: pointer;
   touch-action: manipulation;
@@ -840,6 +862,19 @@ h1 {
   cursor: pointer;
   touch-action: manipulation;
   transition: transform 120ms ease, filter 120ms ease;
+}
+
+/* On the completion screen sharing is the main action; starting over is not. */
+.game-summary .retry-button {
+  border-color: var(--button-border);
+  background: var(--button-bg);
+  color: var(--ink);
+}
+
+a.retry-button {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
 }
 
 .retry-button:hover { filter: brightness(1.08); }

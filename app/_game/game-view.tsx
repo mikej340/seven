@@ -1,5 +1,6 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { GameStats } from "@/lib/game-rules";
+import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
 import { FoundWordsDialog } from "./found-words-dialog";
 import { GameSummary } from "./game-summary";
@@ -9,20 +10,51 @@ import { PuzzleDate } from "./puzzle-date";
 import type { PuzzleGameController } from "./use-puzzle-game";
 import { WordFeedback } from "./word-feedback";
 
+/** The game was opened at /daily/<date>/answers/; onPlay runs when that first panel closes. */
+export type AnswersView = { onPlay: () => void };
+
+const currentUrl = () => `${window.location.pathname}${window.location.search}`;
+// The address may arrive with or without its trailing slash.
+const isAt = (href: string | null) => window.location.pathname.replace(/\/?$/, "/") === href;
+
 type ReadyGameProps = {
   controller: PuzzleGameController;
   game: NonNullable<PuzzleGameController["game"]>;
   stats: GameStats;
+  answersView?: AnswersView;
 };
 
-function ReadyGame({ controller, game, stats }: ReadyGameProps) {
-  const [foundWordsOpen, setFoundWordsOpen] = useState(false);
-  const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
+function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
+  const { puzzle, selection, rules } = game;
+  // Once a puzzle's answers can be revealed, its words panel is the answers
+  // page: the panel is open exactly while the address is the answers URL.
+  const gameHref = `${PUZZLE_BASE_PATH}/daily/${puzzle.date}/`;
+  const answersHref = controller.canRevealAnswers ? `${gameHref}answers/` : null;
+  const [foundWordsOpen, setFoundWordsOpen] = useState(
+    () => answersView !== undefined && isAt(answersHref),
+  );
+  const openedOnAnswersPage = useRef(foundWordsOpen);
+  // Where closing the panel returns to; the game page when opened on the answers URL.
+  const returnUrl = useRef(gameHref);
+  const foundWordsButtonRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
+  const openFoundWords = useCallback(() => {
+    if (answersHref !== null && !isAt(answersHref)) {
+      returnUrl.current = currentUrl();
+      window.history.replaceState(null, "", answersHref);
+    }
+    setFoundWordsOpen(true);
+  }, [answersHref]);
   const closeFoundWords = useCallback(() => {
     setFoundWordsOpen(false);
+    if (answersHref !== null && isAt(answersHref)) {
+      window.history.replaceState(null, "", returnUrl.current);
+    }
+    if (openedOnAnswersPage.current) {
+      openedOnAnswersPage.current = false;
+      answersView?.onPlay();
+    }
     queueMicrotask(() => foundWordsButtonRef.current?.focus());
-  }, []);
-  const { puzzle, selection, rules } = game;
+  }, [answersHref, answersView]);
   const {
     outerLetters, currentWord, foundWords, feedback, canRevealAnswers,
     shareStatus, shareButtonLabel, shareScore, addLetter, deleteLetter,
@@ -80,10 +112,10 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
               stats={stats}
               maximumScore={puzzle.maximumScore}
               foundCount={foundWords.length}
-              canRevealAnswers={canRevealAnswers}
               foundWordsOpen={foundWordsOpen}
               foundWordsButtonRef={foundWordsButtonRef}
-              onOpenFoundWords={() => setFoundWordsOpen(true)}
+              answersHref={answersHref}
+              onOpenFoundWords={openFoundWords}
               shareStatus={shareStatus}
               shareButtonLabel={shareButtonLabel}
               onShare={onShare}
@@ -106,6 +138,8 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
       {foundWordsOpen ? (
         <FoundWordsDialog
           puzzleDate={puzzle.date}
+          letters={puzzle.letters}
+          centreLetter={puzzle.centre}
           foundWords={foundWords}
           solutionWords={rules.solutionWords}
           pangramWordSet={rules.pangramWordSet}
@@ -117,11 +151,18 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
   );
 }
 
-export function GameView({ controller }: { controller: PuzzleGameController }) {
+type GameViewProps = {
+  controller: PuzzleGameController;
+  answersView?: AnswersView;
+  /** Shown over the loading card, e.g. answers written into the static HTML. */
+  loadingOverlay?: ReactNode;
+};
+
+export function GameView({ controller, answersView, loadingOverlay }: GameViewProps) {
   const { game, stats, loading, loadError, loadSelectedGame } = controller;
   if (loading || game === null || stats === null) {
     return (
-      <main className="page-shell">
+      <main className={`page-shell${loadingOverlay ? " has-modal" : ""}`}>
         <section className="game-card load-card" aria-live="polite">
           <header className="game-heading">
             <NavigationMenu current="today" />
@@ -138,8 +179,17 @@ export function GameView({ controller }: { controller: PuzzleGameController }) {
             <p>Loading today&apos;s puzzle…</p>
           )}
         </section>
+        {loadError ? null : loadingOverlay}
       </main>
     );
   }
-  return <ReadyGame key={game.viewSession} controller={controller} game={game} stats={stats} />;
+  return (
+    <ReadyGame
+      key={game.viewSession}
+      controller={controller}
+      game={game}
+      stats={stats}
+      answersView={answersView}
+    />
+  );
 }

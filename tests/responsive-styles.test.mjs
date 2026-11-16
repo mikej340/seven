@@ -95,7 +95,9 @@ test("friend invitations keep a fixed label and expose a manual copy fallback", 
 });
 
 test("past puzzles can reveal answers without adding them to found words", () => {
-  assert.match(scoreCardSource, /disabled=\{foundCount === 0 && !canRevealAnswers\}/);
+  // Past puzzles open the panel through a link to their answers page.
+  assert.match(scoreCardSource, /href=\{answersHref\}/);
+  assert.match(scoreCardSource, /disabled=\{foundCount === 0\}/);
   assert.match(dialogSource, /aria-pressed=\{answersRevealed\}/);
   assert.match(dialogSource, /Reveal all words/);
   assert.match(dialogSource, /revealed-word/);

@@ -103,8 +103,12 @@ export default function HowToPlayPage() {
           </p>
           <p>
             Visit <a href={`${PUZZLE_BASE_PATH}/puzzles/`}>All puzzles</a>{" "}to
-            continue a previous day. Once a puzzle&apos;s date has passed, you can
-            reveal its remaining answers.
+            continue a previous day.
+          </p>
+          <p>
+            Once a puzzle&apos;s day is over, you can see its answers: open the
+            puzzle, tap <strong>words found</strong> and choose{" "}
+            <strong>Reveal all words</strong>.
           </p>
         </section>
 

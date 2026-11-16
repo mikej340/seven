@@ -32,10 +32,10 @@
 .state button {
   margin-top: 10px;
   padding: 8px 18px;
-  border: 1px solid rgba(69, 82, 55, 0.34);
+  border: 1px solid var(--button-border);
   border-radius: 999px;
-  background: #fffdf8;
-  color: #37432d;
+  background: var(--button-bg);
+  color: var(--ink);
 }
 
 .months {

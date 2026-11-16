@@ -7,6 +7,11 @@
   --paper: #f7f2e7;
   --plum: #67283d;
   --terracotta: #c96f4d;
+  /* Buttons come in two styles. Primary (plum, one per screen) is the action
+     that moves you on: Enter, Play, Share score. Secondary is everything else. */
+  --button-bg: rgba(255, 252, 245, 0.78);
+  --button-border: rgba(69, 82, 55, 0.34);
+  --button-primary-ink: #fffaf1;
 
   /* Seasonal layer: default (spring/summer green). Override per season below. */
   --ink: #283520;
