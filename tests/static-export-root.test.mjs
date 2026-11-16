@@ -20,14 +20,16 @@ const readJavaScript = async (directory) => {
 
 const clientJavaScript = await readJavaScript(new URL("_next/static/", out));
 
-const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageTitle = "Seven – A Free Spelling Bee Alternative (British-English)";
+// Escaped for use inside the RegExp assertions below.
+const pageTitlePattern = pageTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const pageDescription =
   "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 const socialDescription =
   "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 
 test("exports root-domain pages and public assets", async () => {
-  assert.match(html, new RegExp(`<title>${pageTitle}<\\/title>`));
+  assert.match(html, new RegExp(`<title>${pageTitlePattern}<\\/title>`));
   assert.ok(
     html.includes(`<meta name="description" content="${pageDescription}"`),
   );
@@ -64,13 +66,13 @@ test("includes root-domain canonical and social preview metadata", async () => {
 
   assert.match(html, new RegExp(`<link rel="canonical" href="${siteUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
-  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitlePattern}"`));
   assert.match(html, new RegExp(`<meta property="og:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta property="og:image" content="${imageUrl}"`));
   assert.match(html, /<meta property="og:image:width" content="1200"/);
   assert.match(html, /<meta property="og:image:height" content="630"/);
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
-  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitlePattern}"`));
   assert.match(html, new RegExp(`<meta name="twitter:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta name="twitter:image" content="${imageUrl}"`));
 
@@ -167,4 +169,26 @@ test("allows playseven.uk to use the existing Umami site", () => {
     /data-website-id="37db4623-e4fa-4e9a-9c91-f2fcdad09529"/,
   );
   assert.match(html, /data-domains="playseven\.uk"/);
+});
+
+test("exports a root-domain sitemap and robots file", async () => {
+  const sitemap = await readFile(new URL("../out/sitemap.xml", import.meta.url), "utf8");
+  const robots = await readFile(new URL("../out/robots.txt", import.meta.url), "utf8");
+  assert.ok(sitemap.includes("<loc>https://playseven.uk/</loc>"));
+  assert.ok(sitemap.includes("<loc>https://playseven.uk/how-to-play/</loc>"));
+  assert.match(sitemap, /<loc>https:\/\/playseven\.uk\/daily\/\d{4}-\d{2}-\d{2}\/<\/loc>/);
+  assert.match(robots, /User-Agent: \*\nAllow: \/\n/);
+  assert.match(robots, /Sitemap: https:\/\/playseven\.uk\/sitemap\.xml/);
+});
+
+test("describes the game with structured data and a Spelling Bee alternative section", () => {
+  const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
+  assert.ok(json, "homepage has JSON-LD");
+  const data = JSON.parse(json);
+  const game = data["@graph"].find((item) => item["@type"] === "WebApplication");
+  assert.equal(game.url, "https://playseven.uk/");
+  assert.equal(game.inLanguage, "en-GB");
+  assert.equal(game.isAccessibleForFree, true);
+  assert.match(howToPlayHtml, /A free Spelling Bee alternative/);
+  assert.match(howToPlayHtml, /not affiliated with The New York Times/);
 });

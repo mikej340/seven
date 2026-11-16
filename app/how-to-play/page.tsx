@@ -6,7 +6,7 @@ import styles from "./how-to-play.module.css";
 
 const title = "How to Play Seven – Rules, Scoring & Pangrams";
 const description =
-  "Learn how to play Seven, the free daily British-English word puzzle. Discover the rules, scoring, pangrams and ranks, then try today’s puzzle.";
+  "Learn how to play Seven, a free British-English alternative to the Spelling Bee. Discover the rules, scoring, pangrams and ranks, then try today’s puzzle.";
 const url = siteAssetUrl("how-to-play/");
 
 export const metadata: Metadata = {
@@ -49,6 +49,18 @@ export default function HowToPlayPage() {
           <a className={styles.primaryLink} href={`${PUZZLE_BASE_PATH}/`}>
             Play today&apos;s puzzle
           </a>
+        </section>
+
+        <section className={styles.section} aria-labelledby="alternative-title">
+          <h2 id="alternative-title">A free Spelling Bee alternative</h2>
+          <p>
+            If you enjoy the New York Times Spelling Bee, Seven will feel
+            familiar: seven letters, a centre letter every word must use, and a
+            pangram to hunt for. Seven uses a British-English word list, so
+            British spellings count. Every puzzle is free, including all past
+            puzzles, and there&apos;s no account to create.
+          </p>
+          <p className={styles.note}>Seven is not affiliated with The New York Times.</p>
         </section>
 
         <section className={styles.section} aria-labelledby="words-title">

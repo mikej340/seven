@@ -48,6 +48,11 @@
   margin-top: 12px;
 }
 
+.section p.note {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .section ul {
   margin: 0 0 14px;
   padding-left: 1.3em;

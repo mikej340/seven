@@ -30,14 +30,16 @@ const clientJavaScript = await readJavaScript(
   new URL("../out/_next/static/", import.meta.url),
 );
 
-const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageTitle = "Seven – A Free Spelling Bee Alternative (British-English)";
+// Escaped for use inside the RegExp assertions below.
+const pageTitlePattern = pageTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const pageDescription =
   "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 const socialDescription =
   "Play Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 
 test("exports the game landing page", () => {
-  assert.match(html, new RegExp(`<title>${pageTitle}<\\/title>`));
+  assert.match(html, new RegExp(`<title>${pageTitlePattern}<\\/title>`));
   assert.ok(
     html.includes(`<meta name="description" content="${pageDescription}"`),
   );
@@ -69,13 +71,13 @@ test("includes canonical and social preview metadata", async () => {
   const imageUrl = `${siteUrl}social-card.png`;
   assert.match(html, new RegExp(`<link rel="canonical" href="${canonicalUrl}"`));
   assert.match(html, new RegExp(`<meta property="og:url" content="${siteUrl}"`));
-  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta property="og:title" content="${pageTitlePattern}"`));
   assert.match(html, new RegExp(`<meta property="og:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta property="og:image" content="${imageUrl}"`));
   assert.match(html, /<meta property="og:image:width" content="1200"/);
   assert.match(html, /<meta property="og:image:height" content="630"/);
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
-  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitle}"`));
+  assert.match(html, new RegExp(`<meta name="twitter:title" content="${pageTitlePattern}"`));
   assert.match(html, new RegExp(`<meta name="twitter:description" content="${socialDescription}"`));
   assert.match(html, new RegExp(`<meta name="twitter:image" content="${imageUrl}"`));
 
@@ -102,7 +104,8 @@ test("uses repository-relative GitHub Pages asset paths", () => {
 });
 
 test("exports the archive route and daily puzzle data", async () => {
-  assert.match(archiveHtml, new RegExp(`<title>${pageTitle}<\\/title>`));
+  assert.match(archiveHtml, /<title>All Puzzles – Seven Daily Word Puzzle Archive<\/title>/);
+  assert.match(feedbackHtml, /<title>Feedback – Seven<\/title>/);
   const manifest = JSON.parse(
     await readFile(new URL("../out/puzzles/manifest.json", import.meta.url), "utf8"),
   );
@@ -161,4 +164,32 @@ test("exports standalone web-app metadata", async () => {
       { sizes: "512x512", purpose: "maskable" },
     ],
   );
+});
+
+test("exports a sitemap of canonical URLs and a robots file pointing to it", async () => {
+  const sitemap = await readFile(new URL("../out/sitemap.xml", import.meta.url), "utf8");
+  const robots = await readFile(new URL("../out/robots.txt", import.meta.url), "utf8");
+  const puzzles = JSON.parse(await readFile(new URL("../public/puzzles/manifest.json", import.meta.url), "utf8"));
+  const today = new Date().toISOString().slice(0, 10);
+  for (const path of ["", "how-to-play/", "puzzles/", "feedback/"]) {
+    assert.ok(sitemap.includes(`<loc>https://playseven.uk/${path}</loc>`), path);
+  }
+  assert.ok(!sitemap.includes("github.io"), "sitemap lists canonical URLs only");
+  for (const { date } of puzzles.entries) {
+    const listed = sitemap.includes(`<loc>https://playseven.uk/daily/${date}/</loc>`);
+    assert.equal(listed, date <= today, `${date} listed only once it is not in the future`);
+  }
+  assert.match(robots, /Sitemap: https:\/\/playseven\.uk\/sitemap\.xml/);
+});
+
+test("describes the game with structured data and a Spelling Bee alternative section", () => {
+  const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
+  assert.ok(json, "homepage has JSON-LD");
+  const data = JSON.parse(json);
+  const game = data["@graph"].find((item) => item["@type"] === "WebApplication");
+  assert.equal(game.url, "https://playseven.uk/");
+  assert.equal(game.inLanguage, "en-GB");
+  assert.equal(game.isAccessibleForFree, true);
+  assert.match(howToPlayHtml, /A free Spelling Bee alternative/);
+  assert.match(howToPlayHtml, /not affiliated with The New York Times/);
 });
