@@ -123,6 +123,7 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
           canRevealAnswers={canRevealAnswers}
           onClose={closeFoundWords}
           mode={showingAnswers ? "answers" : "found"}
+          score={stats.score}
           maximumScore={puzzle.maximumScore}
         />
       ) : null}

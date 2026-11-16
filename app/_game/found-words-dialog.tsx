@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { answersPageHref, formatPuzzleDate } from "@/lib/puzzles";
+import { formatPuzzleDate } from "@/lib/puzzles";
 
 type FoundWordsDialogProps = {
   puzzleDate: string;
@@ -10,14 +10,21 @@ type FoundWordsDialogProps = {
   onClose: () => void;
   /** "answers" is the /daily/<date>/answers/ view: titled Answers, closes into play. */
   mode?: "found" | "answers";
-  maximumScore?: number;
+  /** Current score and the puzzle's maximum, for the summary line. */
+  score: number;
+  maximumScore: number;
 };
 
-const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? "" : "s"}`;
+const plural = (total: number, word: string) => `${word}${total === 1 ? "" : "s"}`;
+
+// "32 words · 1 pangram · 120 points" before anything is found; afterwards
+// progress against those totals: "12 / 32 words · 0 / 1 pangram · 45 / 120 points".
+const summaryPart = (found: number, total: number, word: string, showProgress: boolean) =>
+  `${showProgress ? `${found} / ` : ""}${total} ${plural(total, word)}`;
 
 export function FoundWordsDialog({
   puzzleDate, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
-  mode = "found", maximumScore,
+  mode = "found", score, maximumScore,
 }: FoundWordsDialogProps) {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
@@ -29,7 +36,13 @@ export function FoundWordsDialog({
   // changes what is shown.
   const listedWords = (canRevealAnswers ? solutionWords : foundWords).toSorted();
   const visibleWordCount = answersRevealed ? listedWords.length : foundWords.length;
-  const revealedWordCount = answersRevealed ? solutionWords.length - foundWords.length : 0;
+  const pangramsFound = foundWords.filter((word) => pangramWordSet.has(word)).length;
+  const showProgress = foundWords.length > 0;
+  const summary = [
+    summaryPart(foundWords.length, solutionWords.length, "word", showProgress),
+    summaryPart(pangramsFound, pangramWordSet.size, "pangram", showProgress),
+    summaryPart(score, maximumScore, "point", showProgress),
+  ].join(" · ");
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -87,21 +100,7 @@ export function FoundWordsDialog({
             {isAnswersMode ? "Play" : "Close"}
           </button>
         </header>
-        <p className="found-words-dialog-count">
-          {answersRevealed ? (
-            <>
-              {foundWords.length} found · {revealedWordCount} revealed · {solutionWords.length} total
-            </>
-          ) : isAnswersMode ? (
-            <>
-              {plural(solutionWords.length, "word")} · {plural(pangramWordSet.size, "pangram")}
-              {maximumScore === undefined ? null : <> · {maximumScore} points</>}
-              {foundWords.length > 0 ? <> · {foundWords.length} found</> : null}
-            </>
-          ) : (
-            <>{foundWords.length} {foundWords.length === 1 ? "word" : "words"} found</>
-          )}
-        </p>
+        <p className="found-words-dialog-count">{summary}</p>
         {canRevealAnswers ? (
           <div className="found-words-reveal-control">
             <button
@@ -111,11 +110,7 @@ export function FoundWordsDialog({
             >
               {answersRevealed ? "Hide revealed words" : "Reveal all words"}
             </button>
-            {isAnswersMode ? (
-              <span>Try it first: tap Play</span>
-            ) : (
-              <a href={answersPageHref(puzzleDate)}>Answers page</a>
-            )}
+            <span>{isAnswersMode ? "Try it first: tap Play" : "Available for past puzzles"}</span>
           </div>
         ) : null}
         <div

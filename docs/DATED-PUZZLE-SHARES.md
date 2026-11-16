@@ -104,7 +104,9 @@ changes to the game page). Words the player found on this device are marked.
   they show “Answers for … will be available from …” until the UTC date has
   passed, after which the game loads the answers from the puzzle data. The next
   weekly release writes their answers into the HTML and lists them.
-- The archive links to answer pages for past puzzles, and the in-game words
-  panel links to its puzzle's answer page once answers can be revealed.
+- The archive links to answer pages for past puzzles. In play, the same words
+  panel (titled “Found words”, with Close instead of Play) keeps its own
+  reveal for past puzzles. Both versions show the puzzle's totals, as
+  progress once words have been found.
 - `answers-page-opened` and `answers-page-play` analytics events measure
   whether answer pages lead to play.

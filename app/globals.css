@@ -769,13 +769,6 @@ h1 {
   display: none;
 }
 
-.found-words-reveal-control a {
-  color: var(--plum);
-  font-size: 0.72rem;
-  font-weight: 750;
-  text-underline-offset: 3px;
-}
-
 .game-summary {
   width: min(100%, 440px);
   display: grid;

@@ -71,6 +71,7 @@ export default function AnswersGame({ date, buildAnswers }: AnswersGameProps) {
       // Before the game has loaded, Play goes to the plain game page.
       onClose={() => router.push(`/daily/${date}/`)}
       mode="answers"
+      score={0}
       maximumScore={buildAnswers.maximumScore}
     />
   );
