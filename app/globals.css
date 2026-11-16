@@ -617,7 +617,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 12px;
   padding: 22px 22px 14px;
 }
 
@@ -636,6 +636,33 @@ h1 {
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.65rem, 7vw, 2.2rem);
   font-weight: 500;
+}
+
+.found-words-dialog-header h2.found-words-letters {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.found-words-letters span {
+  width: 27px;
+  flex: none;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(85, 100, 67, 0.26);
+  border-radius: 50%;
+  background: #e5ead8;
+  color: #3d4b31;
+  font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.found-words-letters span.is-centre {
+  border-color: rgba(103, 40, 61, 0.4);
+  background: #efe2c8;
+  color: #67283d;
 }
 
 .found-words-dialog-header button {

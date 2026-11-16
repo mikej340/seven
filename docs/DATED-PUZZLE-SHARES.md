@@ -110,7 +110,7 @@ changes to the game page). Words the player found on this device are marked.
   control that opens it is a real link to the answers page, which is how
   search engines reach answer pages from game pages. With nothing found yet,
   the panel's close button reads “Play”. Today's puzzle has
-  no reveal and no address change. The panel is always titled “Words” and shows
-  the puzzle's word and pangram totals, as progress once words have been found.
+  no reveal and no address change. The panel's heading is the puzzle's seven
+  letters, centre letter highlighted, and it shows the word and pangram totals, as progress once words have been found.
 - `answers-page-opened` and `answers-page-play` analytics events measure
   whether answer pages lead to play.

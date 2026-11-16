@@ -7,7 +7,7 @@ import { utcDateString, type DailyPuzzle, type PuzzleManifestEntry } from "./puz
 // puzzle's UTC day is over; later dates are built without them and are filled
 // in by the browser after the date passes (and in the HTML at the next build).
 
-export type BuildAnswers = Pick<DailyPuzzle, "answers" | "pangrams">;
+export type BuildAnswers = Pick<DailyPuzzle, "answers" | "pangrams" | "letters" | "centre">;
 
 const months = new Map<string, DailyPuzzle[]>();
 
@@ -29,5 +29,5 @@ export function buildAnswersFor(date: string, buildDate = utcDateString()): Buil
   if (entry === undefined) return null;
   const puzzle = monthPuzzles(entry.month).find((candidate) => candidate.id === entry.id);
   if (puzzle === undefined) throw new Error(`Puzzle data is missing for ${date}`);
-  return { answers: puzzle.answers, pangrams: puzzle.pangrams };
+  return { answers: puzzle.answers, pangrams: puzzle.pangrams, letters: puzzle.letters, centre: puzzle.centre };
 }

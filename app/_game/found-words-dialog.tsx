@@ -3,6 +3,9 @@ import { formatPuzzleDate } from "@/lib/puzzles";
 
 type FoundWordsDialogProps = {
   puzzleDate: string;
+  /** The puzzle's seven letters (in alphabetical order) and its centre letter, for the heading. */
+  letters: string;
+  centreLetter: string;
   foundWords: readonly string[];
   solutionWords: readonly string[];
   pangramWordSet: ReadonlySet<string>;
@@ -18,12 +21,14 @@ const summaryPart = (found: number, total: number, word: string, showProgress: b
   `${showProgress ? `${found} / ` : ""}${total} ${plural(total, word)}`;
 
 export function FoundWordsDialog({
-  puzzleDate, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
+  puzzleDate, letters, centreLetter, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
 }: FoundWordsDialogProps) {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const foundWordsDialogRef = useRef<HTMLElement>(null);
   const foundWordSet = new Set(foundWords);
+  const centre = centreLetter.toUpperCase();
+  const headingLetters = letters.toUpperCase().split("");
   // One panel serves play and /daily/<date>/answers/. With answers available
   // and nothing found yet it invites the visitor to play first.
   const invitesPlay = canRevealAnswers && foundWords.length === 0;
@@ -84,7 +89,17 @@ export function FoundWordsDialog({
         <header className="found-words-dialog-header">
           <div>
             <p>{formatPuzzleDate(puzzleDate, false)}</p>
-            <h2 id="found-words-dialog-title">Words</h2>
+            <h2
+              id="found-words-dialog-title"
+              className="found-words-letters"
+              aria-label={`Words from ${headingLetters.join(", ")}, centre ${centre}`}
+            >
+              {headingLetters.map((letter) => (
+                <span className={letter === centre ? "is-centre" : undefined} aria-hidden="true" key={letter}>
+                  {letter}
+                </span>
+              ))}
+            </h2>
           </div>
           <button
             type="button"

@@ -138,6 +138,8 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
       {foundWordsOpen ? (
         <FoundWordsDialog
           puzzleDate={puzzle.date}
+          letters={puzzle.letters}
+          centreLetter={puzzle.centre}
           foundWords={foundWords}
           solutionWords={rules.solutionWords}
           pangramWordSet={rules.pangramWordSet}

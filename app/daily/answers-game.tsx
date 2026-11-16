@@ -60,6 +60,8 @@ export default function AnswersGame({ date, buildAnswers }: AnswersGameProps) {
   const staticAnswers = buildAnswers === null ? null : (
     <FoundWordsDialog
       puzzleDate={date}
+      letters={buildAnswers.letters}
+      centreLetter={buildAnswers.centre}
       foundWords={[]}
       solutionWords={buildAnswers.answers.map((word) => word.toUpperCase())}
       pangramWordSet={new Set(buildAnswers.pangrams.map((word) => word.toUpperCase()))}
