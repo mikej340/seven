@@ -1,6 +1,6 @@
 .page {
   composes: page from "../secondary-page.module.css";
-  color: #283520;
+  color: var(--ink);
 }
 
 .shell {

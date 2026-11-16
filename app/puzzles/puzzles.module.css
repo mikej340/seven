@@ -1,6 +1,6 @@
 .page {
   composes: page from "../secondary-page.module.css";
-  color: #283520;
+  color: var(--ink);
 }
 
 .shell {
@@ -13,7 +13,7 @@
 }
 
 .header > span {
-  color: #6e7663;
+  color: var(--muted);
   font-size: 0.82rem;
 }
 

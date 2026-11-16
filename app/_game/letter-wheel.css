@@ -27,16 +27,16 @@
   inset: 12%;
   z-index: -2;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(212, 216, 187, 0.2), transparent 68%);
+  background: radial-gradient(circle, var(--wheel-glow), transparent 68%);
 }
 
 .letter-wheel-halo {
   position: absolute;
   inset: 27%;
   z-index: -1;
-  border: 1px solid rgba(110, 125, 87, 0.13);
+  border: 1px solid var(--wheel-halo-line);
   border-radius: 50%;
-  box-shadow: 0 0 70px rgba(134, 148, 109, 0.12);
+  box-shadow: 0 0 70px var(--wheel-halo-shadow);
 }
 
 .letter-button {
@@ -114,12 +114,12 @@
 .leaf-vein::before { left: 18%; transform: rotate(28deg); }
 .leaf-vein::after { left: 48%; transform: rotate(-27deg); }
 
-.sage { background: linear-gradient(145deg, #788760, #536445); }
-.olive { background: linear-gradient(145deg, #576331, #34451f); }
-.lime { background: linear-gradient(145deg, #8f9a54, #65743a); }
-.soft { background: linear-gradient(145deg, #9ba274, #737d54); }
-.forest { background: linear-gradient(145deg, #526444, #2f4931); }
-.fresh { background: linear-gradient(145deg, #849541, #65792b); }
+.petal-1 { background: linear-gradient(145deg, var(--petal-1-light), var(--petal-1-dark)); }
+.petal-2 { background: linear-gradient(145deg, var(--petal-2-light), var(--petal-2-dark)); }
+.petal-3 { background: linear-gradient(145deg, var(--petal-3-light), var(--petal-3-dark)); }
+.petal-4 { background: linear-gradient(145deg, var(--petal-4-light), var(--petal-4-dark)); }
+.petal-5 { background: linear-gradient(145deg, var(--petal-5-light), var(--petal-5-dark)); }
+.petal-6 { background: linear-gradient(145deg, var(--petal-6-light), var(--petal-6-dark)); }
 
 .letter {
   position: absolute;
