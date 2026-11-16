@@ -663,8 +663,7 @@ h1 {
 .found-words-reveal-control {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
   padding: 12px 22px;
   border-bottom: 1px solid rgba(91, 101, 75, 0.2);
   background: rgba(230, 229, 207, 0.28);
@@ -681,17 +680,6 @@ h1 {
   font-weight: 750;
   cursor: pointer;
   touch-action: manipulation;
-}
-
-.found-words-reveal-control button[aria-pressed="true"] {
-  background: #eee3e4;
-}
-
-.found-words-reveal-control span {
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 650;
-  text-align: right;
 }
 
 .found-words-list {

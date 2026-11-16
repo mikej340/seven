@@ -111,7 +111,6 @@ export function FoundWordsDialog({
             >
               {answersRevealed ? "Hide revealed words" : "Reveal all words"}
             </button>
-            <span>{invitesPlay ? "Try it first: tap Play" : "Shows the words you missed"}</span>
           </div>
         ) : null}
         <div
