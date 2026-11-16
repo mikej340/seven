@@ -1,4 +1,5 @@
 import { formatPuzzleDate, puzzleWheelLetters } from "./puzzles.ts";
+import type { Season } from "./season.ts";
 
 export const SHARE_CARD_INVITATION = "Try this puzzle at";
 
@@ -9,11 +10,18 @@ export type ShareCard = SharePuzzle & {
   height: number;
   imageSha256: string;
   templateSha256: string;
+  /** Theme the card was rendered in. Cards made before seasons were green. */
+  season?: Season;
 };
 
 export type ShareCardManifest = { schemaVersion: 1; cards: ShareCard[] };
 
-export function shareCardText(puzzle: SharePuzzle) {
+const LEAF_DESCRIPTION: Record<Season, string> = {
+  default: "six green leaves",
+  autumn: "six autumn leaves",
+};
+
+export function shareCardText(puzzle: SharePuzzle, season: Season = "default") {
   const date = formatPuzzleDate(puzzle.date, false);
   const { outerLetters, centreLetter } = puzzleWheelLetters(puzzle);
   const letters = `${outerLetters.slice(0, -1).join(", ")} and ${outerLetters.at(-1)}`;
@@ -21,7 +29,7 @@ export function shareCardText(puzzle: SharePuzzle) {
     date,
     title: `Seven – ${date} Word Puzzle`,
     description: `Play Seven’s word puzzle for ${date}. Find words using ${letters}, with ${centreLetter} in every word.`,
-    alt: `${date}: ${letters} on six green leaves, with ${centreLetter} in the centre. ${SHARE_CARD_INVITATION} playseven.uk.`,
+    alt: `${date}: ${letters} on ${LEAF_DESCRIPTION[season]}, with ${centreLetter} in the centre. ${SHARE_CARD_INVITATION} playseven.uk.`,
   };
 }
 
@@ -37,7 +45,7 @@ export function validateShareCard(puzzle: SharePuzzle, card: ShareCard | undefin
 
 // Call after committing: the preview points at the exact image in that commit.
 export function shareCardPreviewMarkdown(card: ShareCard, commit: string, repository: string) {
-  const { date, alt } = shareCardText(card);
+  const { date, alt } = shareCardText(card, card.season);
   const image = `https://raw.githubusercontent.com/${repository}/${commit}/public/social/${card.date}.png`;
   return `### Puzzle card preview\n\n${date} — please check this card before merging.\n\n![${alt}](${image})\n\n- [ ] Manually checked at least one generated card before publication.\n`;
 }

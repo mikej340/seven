@@ -26,6 +26,15 @@ test("missing cards and changed puzzle inputs block a release build", () => {
   assert.equal(validateShareCard(puzzle, card), card);
 });
 
+test("card alt text describes the leaves in the season the card was rendered in", () => {
+  assert.match(shareCardText(puzzle).alt, /on six green leaves,/);
+  assert.match(shareCardText(puzzle, "default").alt, /on six green leaves,/);
+  assert.match(shareCardText(puzzle, "autumn").alt, /on six autumn leaves,/);
+  // Cards made before seasons have no season field and stay described as green.
+  assert.match(shareCardPreviewMarkdown(card, "abc123", "editor/seven"), /six green leaves/);
+  assert.match(shareCardPreviewMarkdown({ ...card, season: "autumn" }, "abc123", "editor/seven"), /six autumn leaves/);
+});
+
 test("PR previews point at the exact committed card and include the manual check", () => {
   const markdown = shareCardPreviewMarkdown(card, "abc123", "editor/seven");
   assert.ok(markdown.includes("https://raw.githubusercontent.com/editor/seven/abc123/public/social/2026-11-03.png"));
@@ -41,6 +50,7 @@ test("generation preserves existing card bytes, adds missing dates, and is idemp
   let renders = 0;
   let closes = 0;
   const renderer = async () => ({
+    season: "autumn" as const,
     templateSha256: "test-template",
     render: async () => { renders += 1; return png; },
     close: async () => { closes += 1; },
@@ -59,6 +69,8 @@ test("generation preserves existing card bytes, adds missing dates, and is idemp
     assert.equal(renders, 1);
     const saved = JSON.parse(before.toString());
     assert.equal(saved.cards[1].templateSha256, "test-template");
+    assert.equal(saved.cards[1].season, "autumn");
+    assert.equal(saved.cards[0].season, undefined, "existing cards are not rewritten");
     assert.equal(saved.cards[1].imageSha256, fileSha256(png));
   } finally {
     await rm(directory, { recursive: true, force: true });

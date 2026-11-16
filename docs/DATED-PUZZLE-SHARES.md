@@ -43,8 +43,15 @@ A new release does not require an A–Z run or a visual review of every card.
   A missing card blocks the build with the generation command to run.
 - `scripts/generate-social-cards.tsx` renders a fixed 1200 × 630 HTML card to
   PNG using the pinned Playwright Chromium release. The frame supplies the date,
-  warm ivory background, sage rule and “Try this puzzle at playseven.uk” footer
+  warm ivory background, a rule and “Try this puzzle at playseven.uk” footer
   with the domain in plum.
+- Cards are rendered in the season active at generation time
+  (`CURRENT_SEASON` in `lib/season.ts`), using the same colour variables as the
+  game (`app/theme.css`). Each new manifest entry records its `season`, which
+  selects the alt text (“six green leaves” or “six autumn leaves”). Entries
+  made before seasons have no `season` field and are described as green.
+  Changing season does not alter existing cards; regenerate them only
+  deliberately, by removing their PNGs and manifest entries first.
 - The renderer uses the actual `LetterWheel` React component and
   `app/_game/letter-wheel.css`, also imported by the game. `puzzleWheelLetters`
   supplies the same initial ordering in both places. Interactive shuffling

@@ -7,13 +7,15 @@ import type { Page } from "playwright";
 import { LetterWheel } from "../app/_game/letter-wheel";
 import { puzzleWheelLetters } from "../lib/puzzles.ts";
 import { SHARE_CARD_INVITATION, shareCardText, type SharePuzzle } from "../lib/daily-shares.ts";
+import { CURRENT_SEASON, type Season } from "../lib/season.ts";
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 630;
 export const sha256 = (bytes: string | Buffer) => createHash("sha256").update(bytes).digest("hex");
 
-export async function createCardRenderer() {
+export async function createCardRenderer(season: Season = CURRENT_SEASON) {
   const sources = await Promise.all([
+    readFile(new URL("../app/theme.css", import.meta.url), "utf8"),
     readFile(new URL("../app/_game/letter-wheel.css", import.meta.url), "utf8"),
     readFile(new URL("./social-card.css", import.meta.url), "utf8"),
     readFile(new URL("./assets/Lato-Bold.ttf", import.meta.url)),
@@ -23,8 +25,9 @@ export async function createCardRenderer() {
     readFile(new URL("./social-card-renderer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
   ]);
-  const css = `${sources[0]}\n${String(sources[1]).replace("FONT_DATA", sources[2].toString("base64"))}`;
-  const templateSha256 = sha256(sources.map((source) => sha256(source)).join("\n"));
+  const css = `${sources[0]}\n${sources[1]}\n${String(sources[2]).replace("FONT_DATA", sources[3].toString("base64"))}`;
+  // The season is a template input: it selects which theme variables apply.
+  const templateSha256 = sha256([...sources.map((source) => sha256(source)), season].join("\n"));
   const browser = await chromium.launch();
   const page = await browser.newPage({
     viewport: { width: CARD_WIDTH, height: CARD_HEIGHT },
@@ -36,19 +39,20 @@ export async function createCardRenderer() {
   });
   return {
     page,
+    season,
     templateSha256,
     close: () => browser.close(),
     render: async (puzzle: SharePuzzle) => {
-      await setCardContent(page, css, puzzle);
+      await setCardContent(page, css, puzzle, season);
       return page.locator(".social-card").screenshot({ animations: "disabled", type: "png" });
     },
   };
 }
 
-async function setCardContent(page: Page, css: string, puzzle: SharePuzzle) {
+async function setCardContent(page: Page, css: string, puzzle: SharePuzzle, season: Season) {
   const { outerLetters, centreLetter } = puzzleWheelLetters(puzzle);
   const html = renderToStaticMarkup(
-    <html lang="en">
+    <html lang="en" data-season={season}>
       <head><meta charSet="utf-8" /><style>{css}</style></head>
       <body>
         <article className="social-card">
