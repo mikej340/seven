@@ -866,10 +866,10 @@ h1 {
 .score-share-summary {
   width: 100%;
   min-height: 48px;
-  border: 1px solid var(--button-border);
+  border: 1px solid var(--plum);
   border-radius: 17px;
-  background: var(--button-bg);
-  color: var(--ink);
+  background: var(--plum);
+  color: var(--button-primary-ink);
   font-weight: 750;
   cursor: pointer;
   touch-action: manipulation;
@@ -932,6 +932,13 @@ h1 {
   cursor: pointer;
   touch-action: manipulation;
   transition: transform 120ms ease, filter 120ms ease;
+}
+
+/* On the completion screen sharing is the main action; starting over is not. */
+.game-summary .retry-button {
+  border-color: var(--button-border);
+  background: var(--button-bg);
+  color: var(--ink);
 }
 
 a.retry-button {
