@@ -5,7 +5,7 @@ import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const analyticsDomain = process.env.NEXT_PUBLIC_UMAMI_DOMAIN ?? "mikej340.github.io";
-const pageTitle = "Seven – Free Daily British Word Puzzle";
+const pageTitle = "Seven – A Free Spelling Bee Alternative (British-English)";
 const pageDescription =
   "Love the NYT Spelling Bee? Try Seven, a free daily British-English word game. Find words, discover pangrams and climb the ranks at your own pace.";
 const socialDescription =
