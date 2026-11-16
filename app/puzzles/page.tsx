@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { loadProgressSummaries, type PuzzleProgress } from "@/lib/game-save";
 import {
+  answersPageHref,
   formatPuzzleDate,
+  isPuzzleRevealAvailable,
   loadPuzzleManifest,
   PUZZLE_BASE_PATH,
   rankForScore,
@@ -114,10 +116,10 @@ export default function PuzzlesPage() {
                       : "Not started";
 
                     return (
+                      <div className={styles.entry} key={entry.id}>
                       <a
                         className={`${styles.card} ${entry.date === today ? styles.today : ""}`}
                         href={`${PUZZLE_BASE_PATH}/?date=${entry.date}`}
-                        key={entry.id}
                       >
                         <div className={styles.cardHeading}>
                           <div>
@@ -143,6 +145,16 @@ export default function PuzzlesPage() {
                           <span><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
                         </div>
                       </a>
+                      {isPuzzleRevealAvailable(entry.date, today) ? (
+                        <a
+                          className={styles.answersLink}
+                          href={answersPageHref(entry.date)}
+                          aria-label={`Answers for ${formatPuzzleDate(entry.date, false)}`}
+                        >
+                          Answers
+                        </a>
+                      ) : null}
+                      </div>
                     );
                   })}
                 </div>

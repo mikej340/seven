@@ -193,3 +193,26 @@ test("describes the game with structured data and a Spelling Bee alternative sec
   assert.match(howToPlayHtml, /A free Spelling Bee alternative/);
   assert.match(howToPlayHtml, /not affiliated with The New York Times/);
 });
+
+test("exports an answers page per puzzle: words in the HTML once the day is over, otherwise unindexed", async () => {
+  const puzzles = JSON.parse(await readFile(new URL("../public/puzzles/manifest.json", import.meta.url), "utf8"));
+  const sitemap = await readFile(new URL("../out/sitemap.xml", import.meta.url), "utf8");
+  const today = new Date().toISOString().slice(0, 10);
+  const months = new Map();
+  for (const entry of puzzles.entries) {
+    if (!months.has(entry.month)) {
+      months.set(entry.month, JSON.parse(await readFile(new URL(`../public/puzzles/${entry.month}.json`, import.meta.url), "utf8")));
+    }
+    const puzzle = months.get(entry.month).puzzles.find((candidate) => candidate.id === entry.id);
+    const page = await readFile(new URL(`../out/daily/${entry.date}/answers/index.html`, import.meta.url), "utf8");
+    const released = entry.date < today;
+    assert.ok(page.includes(`<link rel="canonical" href="https://playseven.uk/daily/${entry.date}/answers/"/>`), entry.date);
+    assert.match(page, /<title>Seven Answers – /, entry.date);
+    assert.equal(page.includes('<meta name="robots" content="noindex, follow"/>'), !released, entry.date);
+    assert.equal(sitemap.includes(`<loc>https://playseven.uk/daily/${entry.date}/answers/</loc>`), released, entry.date);
+    for (const word of puzzle.answers) {
+      // Rendered words are uppercase inside list items, e.g. ><span>WORD</span>.
+      assert.equal(page.includes(`<span>${word.toUpperCase()}</span>`), released, `${entry.date} ${word}`);
+    }
+  }
+});

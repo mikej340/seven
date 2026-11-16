@@ -764,6 +764,18 @@ h1 {
   border-bottom: 0;
 }
 
+/* Unrevealed answers stay in the page for search engines but are not shown. */
+.found-words-list div[hidden] {
+  display: none;
+}
+
+.found-words-reveal-control a {
+  color: var(--plum);
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-underline-offset: 3px;
+}
+
 .game-summary {
   width: min(100%, 440px);
   display: grid;
@@ -905,6 +917,12 @@ h1 {
   cursor: pointer;
   touch-action: manipulation;
   transition: transform 120ms ease, filter 120ms ease;
+}
+
+a.retry-button {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
 }
 
 .retry-button:hover { filter: brightness(1.08); }

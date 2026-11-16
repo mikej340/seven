@@ -1,5 +1,8 @@
 export const PUZZLE_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
+export const answersPageHref = (puzzleDate: string) =>
+  `${PUZZLE_BASE_PATH}/daily/${puzzleDate}/answers/`;
+
 // Shared initial wheel ordering for the game and dated social cards.
 export const puzzleWheelLetters = (puzzle: { letters: string; centre: string }) => {
   const centreLetter = puzzle.centre.toUpperCase();

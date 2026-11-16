@@ -6,6 +6,8 @@ export const GAME_EVENTS = {
   scoreShared: "score-shared",
   friendInviteShared: "friend-invite-shared",
   puzzleScoreSnapshot: "puzzle-score-snapshot",
+  answersPageOpened: "answers-page-opened",
+  answersPagePlay: "answers-page-play",
 } as const;
 
 export type GameEventName = (typeof GAME_EVENTS)[keyof typeof GAME_EVENTS];

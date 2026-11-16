@@ -90,3 +90,21 @@ It writes 26 example PNGs and a geometry report to the ignored
 part of the weekly release or normal test suite. Repeat it if the wheel or font
 changes. The initial implementation passed this check; regular releases use the
 manual PR preview check described above.
+
+## Answer pages
+
+Every dated puzzle also has `/daily/YYYY-MM-DD/answers/`, which opens the game
+with the words panel in its "Answers" mode: the puzzle's totals, a reveal
+control, and a Play button that closes the panel into that puzzle (the URL
+changes to the game page). Words the player found on this device are marked.
+
+- Dates whose UTC day had ended at build time have every answer written into
+  the static HTML, folded away until revealed, and are listed in the sitemap.
+- Later dates are built without answers and with `noindex`. In the browser
+  they show “Answers for … will be available from …” until the UTC date has
+  passed, after which the game loads the answers from the puzzle data. The next
+  weekly release writes their answers into the HTML and lists them.
+- The archive links to answer pages for past puzzles, and the in-game words
+  panel links to its puzzle's answer page once answers can be revealed.
+- `answers-page-opened` and `answers-page-play` analytics events measure
+  whether answer pages lead to play.

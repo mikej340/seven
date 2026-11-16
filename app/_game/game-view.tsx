@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { GameStats } from "@/lib/game-rules";
 import NavigationMenu from "../navigation-menu";
 import { FoundWordsDialog } from "./found-words-dialog";
@@ -9,19 +9,30 @@ import { PuzzleDate } from "./puzzle-date";
 import type { PuzzleGameController } from "./use-puzzle-game";
 import { WordFeedback } from "./word-feedback";
 
+/** Opens the game with the words panel showing answers (/daily/<date>/answers/). */
+export type AnswersView = { onPlay: () => void };
+
 type ReadyGameProps = {
   controller: PuzzleGameController;
   game: NonNullable<PuzzleGameController["game"]>;
   stats: GameStats;
+  answersView?: AnswersView;
 };
 
-function ReadyGame({ controller, game, stats }: ReadyGameProps) {
-  const [foundWordsOpen, setFoundWordsOpen] = useState(false);
+function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
+  const [foundWordsOpen, setFoundWordsOpen] = useState(answersView !== undefined);
+  // The answers presentation applies to the first opening only; reopening the
+  // panel later during play shows the normal found-words view.
+  const [showingAnswers, setShowingAnswers] = useState(answersView !== undefined);
   const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const closeFoundWords = useCallback(() => {
     setFoundWordsOpen(false);
+    if (showingAnswers) {
+      setShowingAnswers(false);
+      answersView?.onPlay();
+    }
     queueMicrotask(() => foundWordsButtonRef.current?.focus());
-  }, []);
+  }, [answersView, showingAnswers]);
   const { puzzle, selection, rules } = game;
   const {
     outerLetters, currentWord, foundWords, feedback, canRevealAnswers,
@@ -111,17 +122,26 @@ function ReadyGame({ controller, game, stats }: ReadyGameProps) {
           pangramWordSet={rules.pangramWordSet}
           canRevealAnswers={canRevealAnswers}
           onClose={closeFoundWords}
+          mode={showingAnswers ? "answers" : "found"}
+          maximumScore={puzzle.maximumScore}
         />
       ) : null}
     </main>
   );
 }
 
-export function GameView({ controller }: { controller: PuzzleGameController }) {
+type GameViewProps = {
+  controller: PuzzleGameController;
+  answersView?: AnswersView;
+  /** Shown over the loading card, e.g. answers written into the static HTML. */
+  loadingOverlay?: ReactNode;
+};
+
+export function GameView({ controller, answersView, loadingOverlay }: GameViewProps) {
   const { game, stats, loading, loadError, loadSelectedGame } = controller;
   if (loading || game === null || stats === null) {
     return (
-      <main className="page-shell">
+      <main className={`page-shell${loadingOverlay ? " has-modal" : ""}`}>
         <section className="game-card load-card" aria-live="polite">
           <header className="game-heading">
             <NavigationMenu current="today" />
@@ -138,8 +158,17 @@ export function GameView({ controller }: { controller: PuzzleGameController }) {
             <p>Loading today&apos;s puzzle…</p>
           )}
         </section>
+        {loadError ? null : loadingOverlay}
       </main>
     );
   }
-  return <ReadyGame key={game.viewSession} controller={controller} game={game} stats={stats} />;
+  return (
+    <ReadyGame
+      key={game.viewSession}
+      controller={controller}
+      game={game}
+      stats={stats}
+      answersView={answersView}
+    />
+  );
 }

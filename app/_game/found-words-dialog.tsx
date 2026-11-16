@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { formatPuzzleDate } from "@/lib/puzzles";
+import { answersPageHref, formatPuzzleDate } from "@/lib/puzzles";
 
 type FoundWordsDialogProps = {
   puzzleDate: string;
@@ -8,16 +8,27 @@ type FoundWordsDialogProps = {
   pangramWordSet: ReadonlySet<string>;
   canRevealAnswers: boolean;
   onClose: () => void;
+  /** "answers" is the /daily/<date>/answers/ view: titled Answers, closes into play. */
+  mode?: "found" | "answers";
+  maximumScore?: number;
 };
+
+const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? "" : "s"}`;
 
 export function FoundWordsDialog({
   puzzleDate, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
+  mode = "found", maximumScore,
 }: FoundWordsDialogProps) {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const foundWordsDialogRef = useRef<HTMLElement>(null);
   const foundWordSet = new Set(foundWords);
-  const displayedWords = (answersRevealed ? solutionWords : foundWords).toSorted();
+  const isAnswersMode = mode === "answers";
+  // When answers can be revealed, every answer stays in the page (folded away
+  // until revealed) so search engines can read answer pages; revealing only
+  // changes what is shown.
+  const listedWords = (canRevealAnswers ? solutionWords : foundWords).toSorted();
+  const visibleWordCount = answersRevealed ? listedWords.length : foundWords.length;
   const revealedWordCount = answersRevealed ? solutionWords.length - foundWords.length : 0;
 
   useEffect(() => {
@@ -51,7 +62,7 @@ export function FoundWordsDialog({
       <button
         className="found-words-backdrop"
         type="button"
-        aria-label="Close found words"
+        aria-label={isAnswersMode ? "Close answers and play" : "Close found words"}
         tabIndex={-1}
         onClick={onClose}
       />
@@ -65,16 +76,27 @@ export function FoundWordsDialog({
         <header className="found-words-dialog-header">
           <div>
             <p>{formatPuzzleDate(puzzleDate, false)}</p>
-            <h2 id="found-words-dialog-title">Found words</h2>
+            <h2 id="found-words-dialog-title">{isAnswersMode ? "Answers" : "Found words"}</h2>
           </div>
-          <button type="button" onClick={onClose} ref={closeFoundWordsButtonRef}>
-            Close
+          <button
+            type="button"
+            onClick={onClose}
+            ref={closeFoundWordsButtonRef}
+            aria-label={isAnswersMode ? "Play this puzzle" : undefined}
+          >
+            {isAnswersMode ? "Play" : "Close"}
           </button>
         </header>
         <p className="found-words-dialog-count">
           {answersRevealed ? (
             <>
               {foundWords.length} found · {revealedWordCount} revealed · {solutionWords.length} total
+            </>
+          ) : isAnswersMode ? (
+            <>
+              {plural(solutionWords.length, "word")} · {plural(pangramWordSet.size, "pangram")}
+              {maximumScore === undefined ? null : <> · {maximumScore} points</>}
+              {foundWords.length > 0 ? <> · {foundWords.length} found</> : null}
             </>
           ) : (
             <>{foundWords.length} {foundWords.length === 1 ? "word" : "words"} found</>
@@ -89,23 +111,31 @@ export function FoundWordsDialog({
             >
               {answersRevealed ? "Hide revealed words" : "Reveal all words"}
             </button>
-            <span>Available for past puzzles</span>
+            {isAnswersMode ? (
+              <span>Try it first: tap Play</span>
+            ) : (
+              <a href={answersPageHref(puzzleDate)}>Answers page</a>
+            )}
           </div>
         ) : null}
         <div
           className="found-words-list"
-          role={displayedWords.length > 0 ? "list" : undefined}
+          role={visibleWordCount > 0 ? "list" : undefined}
         >
-          {displayedWords.length === 0 ? (
-            <p className="found-words-empty">No words found yet.</p>
+          {visibleWordCount === 0 ? (
+            <p className="found-words-empty">
+              {isAnswersMode ? "No words found yet. Reveal the answers, or tap Play to try it." : "No words found yet."}
+            </p>
           ) : null}
-          {displayedWords.map((word) => {
-            const isRevealedWord = answersRevealed && !foundWordSet.has(word);
+          {listedWords.map((word) => {
+            const isFound = foundWordSet.has(word);
+            const isRevealedWord = answersRevealed && !isFound;
             const isPangram = pangramWordSet.has(word);
 
             return (
               <div
-                className={`${isPangram ? "pangram-word" : ""}${isRevealedWord ? " revealed-word" : ""}`}
+                className={`${isPangram ? "pangram-word" : ""}${!isFound ? " revealed-word" : ""}`}
+                hidden={!isFound && !answersRevealed}
                 role="listitem"
                 aria-label={`${word}${isPangram ? ", pangram" : ""}${isRevealedWord ? ", revealed" : ""}`}
                 key={word}

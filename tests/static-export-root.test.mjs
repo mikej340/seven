@@ -192,3 +192,12 @@ test("describes the game with structured data and a Spelling Bee alternative sec
   assert.match(howToPlayHtml, /A free Spelling Bee alternative/);
   assert.match(howToPlayHtml, /not affiliated with The New York Times/);
 });
+
+test("answers pages use root-domain links", async () => {
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const page = await readFile(new URL(`daily/${yesterday}/answers/index.html`, out), "utf8").catch(() => null);
+  if (page === null) return; // Outside the published schedule.
+  assert.ok(page.includes(`<link rel="canonical" href="https://playseven.uk/daily/${yesterday}/answers/"/>`));
+  assert.match(page, /role="dialog"/);
+  assert.doesNotMatch(page, /href="\/seven\//);
+});
