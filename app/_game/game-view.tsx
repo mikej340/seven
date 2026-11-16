@@ -143,8 +143,6 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
           pangramWordSet={rules.pangramWordSet}
           canRevealAnswers={canRevealAnswers}
           onClose={closeFoundWords}
-          score={stats.score}
-          maximumScore={puzzle.maximumScore}
         />
       ) : null}
     </main>

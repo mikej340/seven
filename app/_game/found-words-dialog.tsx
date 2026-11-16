@@ -8,29 +8,24 @@ type FoundWordsDialogProps = {
   pangramWordSet: ReadonlySet<string>;
   canRevealAnswers: boolean;
   onClose: () => void;
-  /** Current score and the puzzle's maximum, for the summary line. */
-  score: number;
-  maximumScore: number;
 };
 
 const plural = (total: number, word: string) => `${word}${total === 1 ? "" : "s"}`;
 
-// "32 words · 1 pangram · 120 points" before anything is found; afterwards
-// progress against those totals: "12 / 32 words · 0 / 1 pangram · 45 / 120 points".
+// "32 words · 1 pangram" before anything is found; afterwards progress against
+// those totals: "12 / 32 words · 0 / 1 pangram".
 const summaryPart = (found: number, total: number, word: string, showProgress: boolean) =>
   `${showProgress ? `${found} / ` : ""}${total} ${plural(total, word)}`;
 
 export function FoundWordsDialog({
   puzzleDate, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
-  score, maximumScore,
 }: FoundWordsDialogProps) {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const foundWordsDialogRef = useRef<HTMLElement>(null);
   const foundWordSet = new Set(foundWords);
-  // One panel serves play and /daily/<date>/answers/. Once a puzzle's answers
-  // can be revealed it is the Answers panel; with nothing found yet it invites
-  // the visitor to play first.
+  // One panel serves play and /daily/<date>/answers/. With answers available
+  // and nothing found yet it invites the visitor to play first.
   const invitesPlay = canRevealAnswers && foundWords.length === 0;
   // When answers can be revealed, every answer stays in the page (folded away
   // until revealed) so search engines can read answer pages; revealing only
@@ -42,7 +37,6 @@ export function FoundWordsDialog({
   const summary = [
     summaryPart(foundWords.length, solutionWords.length, "word", showProgress),
     summaryPart(pangramsFound, pangramWordSet.size, "pangram", showProgress),
-    summaryPart(score, maximumScore, "point", showProgress),
   ].join(" · ");
 
   useEffect(() => {
@@ -76,7 +70,7 @@ export function FoundWordsDialog({
       <button
         className="found-words-backdrop"
         type="button"
-        aria-label={canRevealAnswers ? "Close answers" : "Close found words"}
+        aria-label="Close words"
         tabIndex={-1}
         onClick={onClose}
       />
@@ -90,7 +84,7 @@ export function FoundWordsDialog({
         <header className="found-words-dialog-header">
           <div>
             <p>{formatPuzzleDate(puzzleDate, false)}</p>
-            <h2 id="found-words-dialog-title">{canRevealAnswers ? "Answers" : "Found words"}</h2>
+            <h2 id="found-words-dialog-title">Words</h2>
           </div>
           <button
             type="button"

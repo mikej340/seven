@@ -94,7 +94,7 @@ manual PR preview check described above.
 ## Answer pages
 
 Every dated puzzle also has `/daily/YYYY-MM-DD/answers/`, which opens the game
-with the words panel in its "Answers" mode: the puzzle's totals, a reveal
+with the words panel open: the puzzle's totals, a reveal
 control, and a Play button that closes the panel into that puzzle (the URL
 changes to the game page). Words the player found on this device are marked.
 
@@ -105,12 +105,12 @@ changes to the game page). Words the player found on this device are marked.
   passed, after which the game loads the answers from the puzzle data. The next
   weekly release writes their answers into the HTML and lists them.
 - The answers page and the game's words panel are one panel. Once a puzzle's
-  answers can be revealed, the panel is titled “Answers” and the address is the
+  answers can be revealed, the address is the
   answers URL for as long as it is open; closing it returns to the game. The
   control that opens it is a real link to the answers page, which is how
   search engines reach answer pages from game pages. With nothing found yet,
-  the panel's close button reads “Play”. Today's puzzle keeps “Found words”
-  with no reveal and no address change. The panel always shows the puzzle's
-  totals, as progress once words have been found.
+  the panel's close button reads “Play”. Today's puzzle has
+  no reveal and no address change. The panel is always titled “Words” and shows
+  the puzzle's word and pangram totals, as progress once words have been found.
 - `answers-page-opened` and `answers-page-play` analytics events measure
   whether answer pages lead to play.
