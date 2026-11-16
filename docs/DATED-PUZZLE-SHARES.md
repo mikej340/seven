@@ -104,10 +104,13 @@ changes to the game page). Words the player found on this device are marked.
   they show “Answers for … will be available from …” until the UTC date has
   passed, after which the game loads the answers from the puzzle data. The next
   weekly release writes their answers into the HTML and lists them.
-- Nothing in the app links to answer pages yet; they are reached from search
-  and the sitemap. In play, the same words
-  panel (titled “Found words”, with Close instead of Play) keeps its own
-  reveal for past puzzles. Both versions show the puzzle's totals, as
-  progress once words have been found.
+- The answers page and the game's words panel are one panel. Once a puzzle's
+  answers can be revealed, the panel is titled “Answers” and the address is the
+  answers URL for as long as it is open; closing it returns to the game. The
+  control that opens it is a real link to the answers page, which is how
+  search engines reach answer pages from game pages. With nothing found yet,
+  the panel's close button reads “Play”. Today's puzzle keeps “Found words”
+  with no reveal and no address change. The panel always shows the puzzle's
+  totals, as progress once words have been found.
 - `answers-page-opened` and `answers-page-play` analytics events measure
   whether answer pages lead to play.

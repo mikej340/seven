@@ -8,8 +8,6 @@ type FoundWordsDialogProps = {
   pangramWordSet: ReadonlySet<string>;
   canRevealAnswers: boolean;
   onClose: () => void;
-  /** "answers" is the /daily/<date>/answers/ view: titled Answers, closes into play. */
-  mode?: "found" | "answers";
   /** Current score and the puzzle's maximum, for the summary line. */
   score: number;
   maximumScore: number;
@@ -24,13 +22,16 @@ const summaryPart = (found: number, total: number, word: string, showProgress: b
 
 export function FoundWordsDialog({
   puzzleDate, foundWords, solutionWords, pangramWordSet, canRevealAnswers, onClose,
-  mode = "found", score, maximumScore,
+  score, maximumScore,
 }: FoundWordsDialogProps) {
   const [answersRevealed, setAnswersRevealed] = useState(false);
   const closeFoundWordsButtonRef = useRef<HTMLButtonElement>(null);
   const foundWordsDialogRef = useRef<HTMLElement>(null);
   const foundWordSet = new Set(foundWords);
-  const isAnswersMode = mode === "answers";
+  // One panel serves play and /daily/<date>/answers/. Once a puzzle's answers
+  // can be revealed it is the Answers panel; with nothing found yet it invites
+  // the visitor to play first.
+  const invitesPlay = canRevealAnswers && foundWords.length === 0;
   // When answers can be revealed, every answer stays in the page (folded away
   // until revealed) so search engines can read answer pages; revealing only
   // changes what is shown.
@@ -75,7 +76,7 @@ export function FoundWordsDialog({
       <button
         className="found-words-backdrop"
         type="button"
-        aria-label={isAnswersMode ? "Close answers and play" : "Close found words"}
+        aria-label={canRevealAnswers ? "Close answers" : "Close found words"}
         tabIndex={-1}
         onClick={onClose}
       />
@@ -89,15 +90,15 @@ export function FoundWordsDialog({
         <header className="found-words-dialog-header">
           <div>
             <p>{formatPuzzleDate(puzzleDate, false)}</p>
-            <h2 id="found-words-dialog-title">{isAnswersMode ? "Answers" : "Found words"}</h2>
+            <h2 id="found-words-dialog-title">{canRevealAnswers ? "Answers" : "Found words"}</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             ref={closeFoundWordsButtonRef}
-            aria-label={isAnswersMode ? "Play this puzzle" : undefined}
+            aria-label={invitesPlay ? "Play this puzzle" : undefined}
           >
-            {isAnswersMode ? "Play" : "Close"}
+            {invitesPlay ? "Play" : "Close"}
           </button>
         </header>
         <p className="found-words-dialog-count">{summary}</p>
@@ -110,7 +111,7 @@ export function FoundWordsDialog({
             >
               {answersRevealed ? "Hide revealed words" : "Reveal all words"}
             </button>
-            <span>{isAnswersMode ? "Try it first: tap Play" : "Available for past puzzles"}</span>
+            <span>{invitesPlay ? "Try it first: tap Play" : "Shows the words you missed"}</span>
           </div>
         ) : null}
         <div
@@ -119,7 +120,7 @@ export function FoundWordsDialog({
         >
           {visibleWordCount === 0 ? (
             <p className="found-words-empty">
-              {isAnswersMode ? "No words found yet. Reveal the answers, or tap Play to try it." : "No words found yet."}
+              {invitesPlay ? "No words found yet. Reveal the answers, or tap Play to try it." : "No words found yet."}
             </p>
           ) : null}
           {listedWords.map((word) => {

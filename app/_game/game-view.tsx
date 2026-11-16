@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { GameStats } from "@/lib/game-rules";
+import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
 import { FoundWordsDialog } from "./found-words-dialog";
 import { GameSummary } from "./game-summary";
@@ -9,8 +10,12 @@ import { PuzzleDate } from "./puzzle-date";
 import type { PuzzleGameController } from "./use-puzzle-game";
 import { WordFeedback } from "./word-feedback";
 
-/** Opens the game with the words panel showing answers (/daily/<date>/answers/). */
+/** The game was opened at /daily/<date>/answers/; onPlay runs when that first panel closes. */
 export type AnswersView = { onPlay: () => void };
+
+const currentUrl = () => `${window.location.pathname}${window.location.search}`;
+// The address may arrive with or without its trailing slash.
+const isAt = (href: string | null) => window.location.pathname.replace(/\/?$/, "/") === href;
 
 type ReadyGameProps = {
   controller: PuzzleGameController;
@@ -20,20 +25,36 @@ type ReadyGameProps = {
 };
 
 function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
-  const [foundWordsOpen, setFoundWordsOpen] = useState(answersView !== undefined);
-  // The answers presentation applies to the first opening only; reopening the
-  // panel later during play shows the normal found-words view.
-  const [showingAnswers, setShowingAnswers] = useState(answersView !== undefined);
-  const foundWordsButtonRef = useRef<HTMLButtonElement>(null);
+  const { puzzle, selection, rules } = game;
+  // Once a puzzle's answers can be revealed, its words panel is the answers
+  // page: the panel is open exactly while the address is the answers URL.
+  const gameHref = `${PUZZLE_BASE_PATH}/daily/${puzzle.date}/`;
+  const answersHref = controller.canRevealAnswers ? `${gameHref}answers/` : null;
+  const [foundWordsOpen, setFoundWordsOpen] = useState(
+    () => answersView !== undefined && isAt(answersHref),
+  );
+  const openedOnAnswersPage = useRef(foundWordsOpen);
+  // Where closing the panel returns to; the game page when opened on the answers URL.
+  const returnUrl = useRef(gameHref);
+  const foundWordsButtonRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
+  const openFoundWords = useCallback(() => {
+    if (answersHref !== null && !isAt(answersHref)) {
+      returnUrl.current = currentUrl();
+      window.history.replaceState(null, "", answersHref);
+    }
+    setFoundWordsOpen(true);
+  }, [answersHref]);
   const closeFoundWords = useCallback(() => {
     setFoundWordsOpen(false);
-    if (showingAnswers) {
-      setShowingAnswers(false);
+    if (answersHref !== null && isAt(answersHref)) {
+      window.history.replaceState(null, "", returnUrl.current);
+    }
+    if (openedOnAnswersPage.current) {
+      openedOnAnswersPage.current = false;
       answersView?.onPlay();
     }
     queueMicrotask(() => foundWordsButtonRef.current?.focus());
-  }, [answersView, showingAnswers]);
-  const { puzzle, selection, rules } = game;
+  }, [answersHref, answersView]);
   const {
     outerLetters, currentWord, foundWords, feedback, canRevealAnswers,
     shareStatus, shareButtonLabel, shareScore, addLetter, deleteLetter,
@@ -91,10 +112,10 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
               stats={stats}
               maximumScore={puzzle.maximumScore}
               foundCount={foundWords.length}
-              canRevealAnswers={canRevealAnswers}
               foundWordsOpen={foundWordsOpen}
               foundWordsButtonRef={foundWordsButtonRef}
-              onOpenFoundWords={() => setFoundWordsOpen(true)}
+              answersHref={answersHref}
+              onOpenFoundWords={openFoundWords}
               shareStatus={shareStatus}
               shareButtonLabel={shareButtonLabel}
               onShare={onShare}
@@ -122,7 +143,6 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
           pangramWordSet={rules.pangramWordSet}
           canRevealAnswers={canRevealAnswers}
           onClose={closeFoundWords}
-          mode={showingAnswers ? "answers" : "found"}
           score={stats.score}
           maximumScore={puzzle.maximumScore}
         />

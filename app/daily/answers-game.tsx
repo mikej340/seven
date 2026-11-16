@@ -25,7 +25,6 @@ const dayAfter = (date: string) => {
 export default function AnswersGame({ date, buildAnswers }: AnswersGameProps) {
   const game = usePuzzleGame(date);
   const router = useRouter();
-  const gameHref = `${PUZZLE_BASE_PATH}/daily/${date}/`;
   // Decided after mount so the first render matches the static HTML.
   const [released, setReleased] = useState<boolean | null>(null);
 
@@ -36,12 +35,9 @@ export default function AnswersGame({ date, buildAnswers }: AnswersGameProps) {
   }, [date]);
 
   const answersView = useMemo<AnswersView>(() => ({
-    onPlay: () => {
-      // Closing the answers panel continues into the puzzle at its game URL.
-      window.history.replaceState(null, "", gameHref);
-      trackGameEvent(GAME_EVENTS.answersPagePlay, { puzzle: date });
-    },
-  }), [date, gameHref]);
+    // Closing the answers panel continues into the puzzle.
+    onPlay: () => trackGameEvent(GAME_EVENTS.answersPagePlay, { puzzle: date }),
+  }), [date]);
 
   if (released === false) {
     return (
@@ -70,7 +66,6 @@ export default function AnswersGame({ date, buildAnswers }: AnswersGameProps) {
       canRevealAnswers
       // Before the game has loaded, Play goes to the plain game page.
       onClose={() => router.push(`/daily/${date}/`)}
-      mode="answers"
       score={0}
       maximumScore={buildAnswers.maximumScore}
     />

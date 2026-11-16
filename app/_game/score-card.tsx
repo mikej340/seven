@@ -9,9 +9,10 @@ type ScoreCardProps = {
   stats: GameStats;
   maximumScore: number;
   foundCount: number;
-  canRevealAnswers: boolean;
   foundWordsOpen: boolean;
-  foundWordsButtonRef: RefObject<HTMLButtonElement | null>;
+  foundWordsButtonRef: RefObject<(HTMLButtonElement & HTMLAnchorElement) | null>;
+  /** The puzzle's answers page, once its answers can be revealed. */
+  answersHref: string | null;
   onOpenFoundWords: () => void;
   shareStatus: ShareStatus;
   shareButtonLabel: string;
@@ -19,10 +20,18 @@ type ScoreCardProps = {
 };
 
 export function ScoreCard({
-  puzzleDate, isPastPuzzle, stats, maximumScore, foundCount, canRevealAnswers, foundWordsOpen,
-  foundWordsButtonRef, onOpenFoundWords, shareStatus, shareButtonLabel, onShare,
+  puzzleDate, isPastPuzzle, stats, maximumScore, foundCount, foundWordsOpen,
+  foundWordsButtonRef, answersHref, onOpenFoundWords, shareStatus, shareButtonLabel, onShare,
 }: ScoreCardProps) {
   const { currentRank, score, progress } = stats;
+  const openerContent = (
+    <>
+      <span>{foundCount} {foundCount === 1 ? "word" : "words"} found</span>
+      <svg className="found-words-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
+        <path d="m9 5 7 7-7 7" />
+      </svg>
+    </>
+  );
   return (
     <fieldset className="rank-panel">
       <PuzzleDate as="legend" date={puzzleDate} isPastPuzzle={isPastPuzzle} />
@@ -53,25 +62,40 @@ export function ScoreCard({
           </p>
           <div className="rank-actions">
             <section className="found-words" aria-label="Found words">
-              <button
-                className="found-words-button"
-                type="button"
-                aria-label={foundCount
-                  ? `View ${foundCount} found ${foundCount === 1 ? "word" : "words"}`
-                  : canRevealAnswers
-                    ? "View words and reveal answers"
+              {answersHref !== null ? (
+                // A real link to the answers page, so search engines can follow
+                // it; in the game it opens the same panel without leaving.
+                <a
+                  className="found-words-button"
+                  href={answersHref}
+                  aria-label={foundCount
+                    ? `View ${foundCount} found ${foundCount === 1 ? "word" : "words"} and the answers`
+                    : "View the answers"}
+                  onClick={(event) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                    event.preventDefault();
+                    onOpenFoundWords();
+                  }}
+                  ref={foundWordsButtonRef}
+                >
+                  {openerContent}
+                </a>
+              ) : (
+                <button
+                  className="found-words-button"
+                  type="button"
+                  aria-label={foundCount
+                    ? `View ${foundCount} found ${foundCount === 1 ? "word" : "words"}`
                     : "No words found yet"}
-                aria-haspopup="dialog"
-                aria-expanded={foundWordsOpen}
-                disabled={foundCount === 0 && !canRevealAnswers}
-                onClick={onOpenFoundWords}
-                ref={foundWordsButtonRef}
-              >
-                <span>{foundCount} {foundCount === 1 ? "word" : "words"} found</span>
-                <svg className="found-words-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
-                  <path d="m9 5 7 7-7 7" />
-                </svg>
-              </button>
+                  aria-haspopup="dialog"
+                  aria-expanded={foundWordsOpen}
+                  disabled={foundCount === 0}
+                  onClick={onOpenFoundWords}
+                  ref={foundWordsButtonRef}
+                >
+                  {openerContent}
+                </button>
+              )}
             </section>
             <button
               className="score-share-button"

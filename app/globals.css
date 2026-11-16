@@ -516,6 +516,7 @@ h1 {
   line-height: 20px;
   font-weight: 650;
   cursor: pointer;
+  text-decoration: none;
   touch-action: manipulation;
 }
 
