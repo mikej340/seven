@@ -148,10 +148,8 @@ export default function PuzzlesPage() {
                         </div>
 
                         <div className={styles.progress}>
-                          <div className={styles.stats}>
-                            <span><small>Rank</small><strong>{currentRank}</strong></span>
-                            <span><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
-                          </div>
+                          <span className={styles.rank}><small>Rank</small><strong>{currentRank}</strong></span>
+                          <span className={styles.found}><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
                           {answersAvailable ? (
                             <a
                               className={styles.answersPill}
