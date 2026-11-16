@@ -133,7 +133,7 @@ export default function PuzzlesPage() {
                               <strong>{formatPuzzleDate(entry.date)}</strong>
                             </a>
                           </div>
-                          <span className={styles.chevron} aria-hidden="true">›</span>
+                          <span className={styles.chevron} aria-hidden="true">Play <i>›</i></span>
                         </div>
 
                         <div className={styles.letters} aria-label={`Letters ${entry.letters}, required ${entry.centre}`}>
@@ -156,10 +156,9 @@ export default function PuzzlesPage() {
                           <a
                             className={styles.answersFooter}
                             href={answersPageHref(entry.date)}
-                            aria-label={`See the answers for ${formatPuzzleDate(entry.date, false)}`}
+                            aria-label={`View answers for ${formatPuzzleDate(entry.date, false)}`}
                           >
-                            <span>See the answers</span>
-                            <span aria-hidden="true">›</span>
+                            View answers <i aria-hidden="true">›</i>
                           </a>
                         ) : null}
                       </div>

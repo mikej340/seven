@@ -115,8 +115,18 @@
 }
 
 .chevron {
-  color: #8a927e;
-  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666e5b;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.chevron i,
+.answersFooter i {
+  font-size: 1.1rem;
+  font-style: normal;
   line-height: 1;
 }
 
@@ -229,25 +239,20 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 2px -17px -17px;
-  padding: 11px 17px;
-  border-top: 1px solid rgba(91, 101, 75, 0.16);
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 0 -17px -17px;
+  padding: 9px 17px 10px;
+  border-top: 1px solid rgba(91, 101, 75, 0.14);
   border-radius: 0 0 21px 21px;
-  background: rgba(103, 40, 61, 0.045);
   color: var(--plum);
-  font-size: 0.74rem;
-  font-weight: 750;
+  font-size: 0.72rem;
+  font-weight: 650;
   text-decoration: none;
 }
 
-.answersFooter span:last-child {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
 .answersFooter:hover {
-  background: rgba(103, 40, 61, 0.09);
+  background: rgba(103, 40, 61, 0.05);
 }
 
 .answersFooter:focus-visible {
