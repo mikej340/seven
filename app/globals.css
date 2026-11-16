@@ -6,6 +6,11 @@
   --paper: #f7f2e7;
   --plum: #67283d;
   --terracotta: #c96f4d;
+  /* Buttons come in two styles. Primary (plum, one per screen) is the action
+     that moves you on: Enter, Play, Play again. Secondary is everything else. */
+  --button-bg: rgba(255, 252, 245, 0.78);
+  --button-border: rgba(69, 82, 55, 0.34);
+  --button-primary-ink: #fffaf1;
 
   /* Seasonal layer: default (spring/summer green). Override per season below. */
   --ink: #283520;
@@ -470,9 +475,9 @@ h1 {
 .game-controls button {
   min-height: clamp(44px, 6dvh, 49px);
   padding: 8px 10px;
-  border: 1px solid rgba(69, 82, 55, 0.34);
+  border: 1px solid var(--button-border);
   border-radius: 16px;
-  background: rgba(255, 252, 245, 0.78);
+  background: var(--button-bg);
   color: var(--ink);
   font-size: 0.9rem;
   font-weight: 700;
@@ -496,10 +501,11 @@ h1 {
   opacity: 0.42;
 }
 
-.game-controls .submit-button {
+.game-controls .submit-button,
+.found-words-dialog-header button.is-primary {
   border-color: var(--plum);
   background: var(--plum);
-  color: #fffaf1;
+  color: var(--button-primary-ink);
 }
 
 .found-words-button {
@@ -668,9 +674,9 @@ h1 {
 .found-words-dialog-header button {
   min-height: 42px;
   padding: 7px 14px;
-  border: 1px solid rgba(69, 82, 55, 0.34);
+  border: 1px solid var(--button-border);
   border-radius: 14px;
-  background: #f1ecdf;
+  background: var(--button-bg);
   color: var(--ink);
   font-size: 0.82rem;
   font-weight: 750;
@@ -699,10 +705,10 @@ h1 {
 .found-words-reveal-control button {
   min-height: 42px;
   padding: 7px 13px;
-  border: 1px solid rgba(103, 40, 61, 0.3);
+  border: 1px solid var(--button-border);
   border-radius: 14px;
-  background: #fffaf1;
-  color: var(--plum);
+  background: var(--button-bg);
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 750;
   cursor: pointer;
@@ -860,10 +866,10 @@ h1 {
 .score-share-summary {
   width: 100%;
   min-height: 48px;
-  border: 1px solid rgba(103, 40, 61, 0.48);
+  border: 1px solid var(--button-border);
   border-radius: 17px;
-  background: rgba(255, 252, 245, 0.72);
-  color: var(--plum);
+  background: var(--button-bg);
+  color: var(--ink);
   font-weight: 750;
   cursor: pointer;
   touch-action: manipulation;

@@ -103,6 +103,7 @@ export function FoundWordsDialog({
           </div>
           <button
             type="button"
+            className={invitesPlay ? "is-primary" : undefined}
             onClick={onClose}
             ref={closeFoundWordsButtonRef}
             aria-label={invitesPlay ? "Play this puzzle" : undefined}
