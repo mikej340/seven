@@ -120,7 +120,7 @@ export default function PuzzlesPage() {
 
                     // The card is not itself a link, so it can hold two: the date link
                     // stretches over the whole card (tap anywhere to play) and the
-                    // Answers pill sits above it as its own target.
+                    // answers footer sits above it as its own target.
                     return (
                       <div
                         className={`${styles.card} ${entry.date === today ? styles.today : ""}`}
@@ -150,16 +150,18 @@ export default function PuzzlesPage() {
                         <div className={styles.progress}>
                           <span className={styles.rank}><small>Rank</small><strong>{currentRank}</strong></span>
                           <span className={styles.found}><small>Found</small><strong>{foundCount} / {entry.wordCount}</strong></span>
-                          {answersAvailable ? (
-                            <a
-                              className={styles.answersPill}
-                              href={answersPageHref(entry.date)}
-                              aria-label={`Answers for ${formatPuzzleDate(entry.date, false)}`}
-                            >
-                              Answers
-                            </a>
-                          ) : null}
                         </div>
+
+                        {answersAvailable ? (
+                          <a
+                            className={styles.answersFooter}
+                            href={answersPageHref(entry.date)}
+                            aria-label={`See the answers for ${formatPuzzleDate(entry.date, false)}`}
+                          >
+                            <span>See the answers</span>
+                            <span aria-hidden="true">›</span>
+                          </a>
+                        ) : null}
                       </div>
                     );
                   })}
