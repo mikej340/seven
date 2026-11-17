@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "build": "npm run build:pages",
-    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/seven NEXT_PUBLIC_SITE_URL=https://mikej340.github.io/seven/ CANONICAL_SITE_URL=https://playseven.uk/ NEXT_PUBLIC_UMAMI_DOMAIN=mikej340.github.io next build",
-    "build:root": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_SITE_URL=https://playseven.uk/ NEXT_PUBLIC_UMAMI_DOMAIN=playseven.uk next build",
+    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/seven NEXT_PUBLIC_SITE_URL=https://mikej340.github.io/seven/ CANONICAL_SITE_URL=https://playseven.uk/ NEXT_PUBLIC_UMAMI_DOMAIN=mikej340.github.io NEXT_PUBLIC_COLLECTOR_URL=https://collect.playseven.uk/e next build",
+    "build:root": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH= NEXT_PUBLIC_SITE_URL=https://playseven.uk/ NEXT_PUBLIC_UMAMI_DOMAIN=playseven.uk NEXT_PUBLIC_COLLECTOR_URL=https://collect.playseven.uk/e next build",
     "test": "npm run test:pages",
     "test:pages": "npm run test:unit && npm run build:pages && node --experimental-strip-types --test tests/static-export.test.mjs tests/daily-puzzle-export.test.mjs",
     "test:root": "npm run test:unit && npm run build:root && node --experimental-strip-types --test tests/static-export-root.test.mjs tests/daily-puzzle-export.test.mjs",

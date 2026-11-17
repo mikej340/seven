@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CANONICAL_SITE_URL, SITE_URL, siteAssetUrl } from "@/lib/site";
 import { CURRENT_SEASON } from "@/lib/season";
+import { PageViewTracker } from "./page-view-tracker";
 import "./globals.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -81,6 +82,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <PageViewTracker />
         {children}
         <section
           className="portrait-only-guard"
