@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   type CollectorEvent,
   createCollectorSender,
+  randomUuid,
   GAME_EVENTS,
   trackGameEvent,
   trackGameEventAsync,
@@ -72,7 +73,7 @@ const collectorEnvironment = (respond: () => Promise<{ ok: boolean }>) => {
         return respond();
       }) as unknown as typeof fetch,
       randomUUID: () => "0f8fad5b-d9cb-469f-a165-70867728950e",
-      pathname: () => "/seven/daily/2026-11-17",
+      location: () => "/seven/daily/2026-11-17",
     },
   };
 };
@@ -190,4 +191,47 @@ test("page views go only to the collector, with the referrer", () => {
   assert.equal(trackPageView(undefined, {}), false);
   assert.deepEqual(umamiCalls, []);
   assert.deepEqual(collectorCalls, [{ name: null, referrer: "https://news.example/" }]);
+});
+
+test("the collector sender includes the query string and device context", () => {
+  const { requests, environment } = collectorEnvironment(async () => ({ ok: true }));
+  const send = createCollectorSender("https://collect.example/e", {
+    ...environment,
+    location: () => "/seven/?date=2026-11-11",
+    context: () => ({ language: "en-GB", screen: "390x844", viewport: "390x664", touch: true }),
+  });
+  send({ name: null });
+  assert.deepEqual(JSON.parse(requests[0].init.body as string), {
+    v: 1,
+    id: "0f8fad5b-d9cb-469f-a165-70867728950e",
+    path: "/seven/?date=2026-11-11",
+    language: "en-GB",
+    screen: "390x844",
+    viewport: "390x664",
+    touch: true,
+  });
+});
+
+test("a failing device context does not stop the event", () => {
+  const { requests, environment } = collectorEnvironment(async () => ({ ok: true }));
+  const send = createCollectorSender("https://collect.example/e", {
+    ...environment,
+    context: () => {
+      throw new Error("no screen");
+    },
+  });
+  assert.notEqual(send({ name: null }), false);
+  assert.equal(requests.length, 1);
+});
+
+test("randomUuid falls back to a version 4 UUID without crypto.randomUUID", () => {
+  assert.equal(randomUuid({ randomUUID: () => "native", getRandomValues: (a: Uint8Array) => a } as unknown as Crypto), "native");
+  const fallback = randomUuid({
+    getRandomValues: <T extends ArrayBufferView | null>(array: T) => {
+      (array as unknown as Uint8Array).fill(0xff);
+      return array;
+    },
+  });
+  assert.equal(fallback, "ffffffff-ffff-4fff-bfff-ffffffffffff");
+  assert.match(randomUuid(globalThis.crypto), /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
 });
