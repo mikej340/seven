@@ -82,3 +82,10 @@ Both targets retain the same Umami website ID. `NEXT_PUBLIC_UMAMI_DOMAIN`
 sets the script's domain filter to the build's public hostname
 (`mikej340.github.io` or `playseven.uk`), allowing both deployments to report
 without changing the existing tracker identity.
+
+Both builds also set `NEXT_PUBLIC_COLLECTOR_URL` to the first-party collector
+(`https://collect.playseven.uk/e`, source in the `seven-analytics` repository).
+`lib/analytics.ts` sends every named event to Umami and the collector, and
+`app/page-view-tracker.tsx` sends collector page views (Umami records its own).
+When the variable is unset, as in `npm run dev`, nothing is sent to the
+collector. The collector accepts only the two production origins.

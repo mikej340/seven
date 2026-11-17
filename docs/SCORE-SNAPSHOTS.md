@@ -51,8 +51,9 @@ Subsequent accepted words in today's puzzle retry pending events without another
 daily scan. Reloading retains the daily collection date and pending data. Later
 days' engagement also retries pending events. There is no timer or polling.
 Unavailable trackers, thrown/rejected tracker calls and explicit failure results
-retain pending data. A tracker call that returns or resolves without a reported
-failure marks the puzzle reported. This handoff is not a server delivery receipt.
+retain pending data. A snapshot is marked reported when the Umami tracker returns or resolves without
+a reported failure, or when the first-party collector confirms receipt; it is
+retried only when both fail. The Umami handoff is not a server delivery receipt.
 
 Within a tab, overlapping runs share one operation. Web Locks serialize collection
 and delivery across tabs where supported. Otherwise the game re-reads and merges
