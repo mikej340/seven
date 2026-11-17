@@ -44,7 +44,29 @@ declare global {
 type CollectorEnvironment = {
   fetch: typeof fetch;
   randomUUID: () => string;
-  pathname: () => string;
+  /** Current path and query string, without the fragment. */
+  location: () => string;
+  /** Device context the collector uses for language, screen and device type. */
+  context?: () => CollectorContext;
+};
+
+export type CollectorContext = {
+  language?: string;
+  screen?: string;
+  viewport?: string;
+  touch?: boolean;
+};
+
+const hex = (bytes: Uint8Array) => [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+
+/** crypto.randomUUID, with a fallback for browsers that lack it (iOS before 15.4). */
+export const randomUuid = (source: Pick<Crypto, "getRandomValues"> & Partial<Pick<Crypto, "randomUUID">>) => {
+  if (typeof source.randomUUID === "function") return source.randomUUID();
+  const bytes = source.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const value = hex(bytes);
+  return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`;
 };
 
 export const createCollectorSender = (
@@ -52,13 +74,20 @@ export const createCollectorSender = (
   environment: CollectorEnvironment,
 ): CollectorSender => (event) => {
   try {
+    let context: CollectorContext = {};
+    try {
+      context = environment.context?.() ?? {};
+    } catch {
+      // Context is optional; send the event without it.
+    }
     const body = JSON.stringify({
       v: 1,
       id: environment.randomUUID(),
       name: event.name ?? undefined,
-      path: environment.pathname(),
+      path: environment.location(),
       referrer: event.referrer || undefined,
       props: event.props && Object.keys(event.props).length > 0 ? event.props : undefined,
+      ...context,
     });
     // A string body is sent as text/plain, so the browser needs no CORS preflight.
     // keepalive lets the request finish if the page is closing.
@@ -72,13 +101,22 @@ export const createCollectorSender = (
 
 const COLLECTOR_URL = process.env.NEXT_PUBLIC_COLLECTOR_URL ?? "";
 
+const browserContext = (): CollectorContext => ({
+  language: navigator.language || undefined,
+  screen: `${window.screen.width}x${window.screen.height}`,
+  viewport: `${window.innerWidth}x${window.innerHeight}`,
+  // iPadOS reports itself as a Mac; touch support tells the collector it is a tablet.
+  touch: navigator.maxTouchPoints > 0,
+});
+
 const browserCollector: CollectorSender | undefined =
   COLLECTOR_URL && typeof window !== "undefined" && typeof window.fetch === "function" &&
-  typeof window.crypto?.randomUUID === "function"
+  typeof window.crypto?.getRandomValues === "function"
     ? createCollectorSender(COLLECTOR_URL, {
       fetch: (...args) => window.fetch(...args),
-      randomUUID: () => window.crypto.randomUUID(),
-      pathname: () => window.location.pathname,
+      randomUUID: () => randomUuid(window.crypto),
+      location: () => window.location.pathname + window.location.search,
+      context: browserContext,
     })
     : undefined;
 
