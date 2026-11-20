@@ -55,6 +55,7 @@ test("explains reviewed suggestions without offering the suggestion link again",
   const reviewed = new Map([
     ["MOTHBOAT", "accepted"],
     ["ARMOR", "american-english"],
+    ["MORT", "proper-noun"],
     ["MAMMA", "rejected"],
     ["MOTOR", "rejected"],
   ] as const);
@@ -69,6 +70,12 @@ test("explains reviewed suggestions without offering the suggestion link again",
     kind: "rejected",
     message: "Not accepted · American English",
     word: "ARMOR",
+  });
+
+  assert.deepEqual(evaluateWord("mort", [], rules, reviewed).feedback, {
+    kind: "rejected",
+    message: "Not accepted · Proper noun",
+    word: "MORT",
   });
 
   // Plain rejections keep the link; the feedback form explains them.

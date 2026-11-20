@@ -25,8 +25,9 @@ worker or server is required.
 `public/puzzles/reviewed-words.json`, also exported by the generator, lists
 player-suggested words the editor has reviewed with their current outcome. A
 word accepted after a puzzle was set still scores nothing there, but the game
-explains it in a popup; American English words show "Not accepted · American
-English" without the suggestion link; and the feedback form explains any
+explains it in a popup; American English words and proper nouns show "Not
+accepted · American English" or "Not accepted · Proper noun" without the
+suggestion link; and the feedback form explains any
 reviewed word instead of sending it again. The file is optional: if it is
 missing, every unknown word keeps the usual message and link.
 
