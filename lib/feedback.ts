@@ -1,4 +1,5 @@
 import type { PuzzleManifestEntry } from "./puzzles";
+import type { ReviewedWords } from "./reviewed-words";
 
 export type FeedbackKind = "general" | "word";
 
@@ -40,9 +41,26 @@ export function parseFeedbackPrefill(
   };
 }
 
+// Words the editor has already reviewed are explained instead of being sent
+// again. Plain rejections reach this form through the game's suggestion link.
+export function reviewedWordMessage(value: string, reviewedWords: ReviewedWords) {
+  const word = normalizeSuggestedWord(value);
+  switch (reviewedWords.get(word)) {
+    case "accepted":
+      return `${word} is already in the word list. It was added after some puzzles were set, so it doesn’t score in those.`;
+    case "american-english":
+      return `Seven uses British English, so we don’t include American spellings or words mainly used in the US. ${word} has been reviewed and isn’t accepted.`;
+    case "rejected":
+      return `We’ve already reviewed ${word} and decided not to include it.`;
+    default:
+      return null;
+  }
+}
+
 export function validateSuggestedWord(
   value: string,
   puzzle: PuzzleManifestEntry | undefined,
+  reviewedWords: ReviewedWords = new Map(),
 ) {
   const word = normalizeSuggestedWord(value);
   if (!puzzle) return "Choose the puzzle this word is for.";
@@ -57,12 +75,13 @@ export function validateSuggestedWord(
   if (!word.includes(puzzle.centre.toUpperCase())) {
     return `The word must include ${puzzle.centre.toUpperCase()}, the centre letter.`;
   }
-  return null;
+  return reviewedWordMessage(word, reviewedWords);
 }
 
 export function validateFeedback(
   draft: FeedbackDraft,
   entries: PuzzleManifestEntry[],
+  reviewedWords: ReviewedWords = new Map(),
 ): FeedbackErrors {
   const errors: FeedbackErrors = {};
   const email = draft.email.trim();
@@ -76,7 +95,7 @@ export function validateFeedback(
   } else {
     const puzzle = entries.find((entry) => entry.date === draft.puzzleDate);
     if (!puzzle) errors.puzzleDate = "Choose the puzzle this word is for.";
-    const wordError = validateSuggestedWord(draft.suggestedWord, puzzle);
+    const wordError = validateSuggestedWord(draft.suggestedWord, puzzle, reviewedWords);
     if (wordError) errors.suggestedWord = wordError;
   }
 

@@ -5,6 +5,7 @@ import {
   NO_PUZZLE,
   normalizeSuggestedWord,
   parseFeedbackPrefill,
+  reviewedWordMessage,
   validateFeedback,
   validateSuggestedWord,
   type FeedbackDraft,
@@ -87,4 +88,31 @@ test("requires only the fields relevant to the selected feedback type", () => {
     {},
   );
   assert.ok(validateFeedback(draft({ email: "not-an-email" }), entries).email);
+});
+
+test("explains words that have already been reviewed instead of sending them", () => {
+  const reviewed = new Map([
+    ["MOTHBOAT", "accepted"],
+    ["ARMOR", "american-english"],
+    ["MAMMA", "rejected"],
+  ] as const);
+
+  assert.match(reviewedWordMessage(" mothboat ", reviewed) ?? "", /^MOTHBOAT is already in the word list/);
+  assert.match(reviewedWordMessage("armor", reviewed) ?? "", /^Seven uses British English/);
+  assert.equal(reviewedWordMessage("mamma", reviewed), "We’ve already reviewed MAMMA and decided not to include it.");
+  assert.equal(reviewedWordMessage("moth", reviewed), null);
+
+  assert.match(validateSuggestedWord("mamma", entries[0], reviewed) ?? "", /already reviewed MAMMA/);
+  // Puzzle rules are explained first.
+  assert.match(validateSuggestedWord("mamma", entries[1], reviewed) ?? "", /selected puzzle/);
+  assert.equal(validateSuggestedWord("moth", entries[0], reviewed), null);
+  assert.ok(
+    validateFeedback(
+      draft({ kind: "word", puzzleDate: "2026-08-08", message: "", suggestedWord: "armor" }),
+      entries,
+      reviewed,
+    ).suggestedWord,
+  );
+  // General feedback is never blocked by the reviewed list.
+  assert.deepEqual(validateFeedback(draft({ message: "Please add ARMOR" }), entries, reviewed), {});
 });
