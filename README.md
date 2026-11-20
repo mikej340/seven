@@ -22,6 +22,14 @@ UTC, while `/?date=YYYY-MM-DD` opens a released historic puzzle. Returning to a
 foregrounded root page after midnight refreshes the selected puzzle; no service
 worker or server is required.
 
+`public/puzzles/reviewed-words.json`, also exported by the generator, lists
+player-suggested words the editor has reviewed with their current outcome. A
+word accepted after a puzzle was set still scores nothing there, but the game
+explains it in a popup; American English words show "Not accepted · American
+English" without the suggestion link; and the feedback form explains any
+reviewed word instead of sending it again. The file is optional: if it is
+missing, every unknown word keeps the usual message and link.
+
 Every scheduled puzzle has a dated share URL such as `/daily/2026-11-03/`
 and its own botanical social card. Cards are generated with the puzzle release
 using the game's actual letter wheel; each release PR includes a card preview

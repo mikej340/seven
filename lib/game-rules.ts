@@ -1,4 +1,5 @@
 import { rankForScore, RANKS, type DailyPuzzle } from "./puzzles.ts";
+import type { ReviewedWords } from "./reviewed-words.ts";
 
 export const MAX_WORD_LENGTH = 18;
 
@@ -16,13 +17,22 @@ export type SubmissionFeedback = {
   message: string;
   word?: string;
   points?: number;
+  /** Offer the word-suggestion link: an unknown word that has not been reviewed. */
+  canSuggest?: boolean;
 };
 
 export type GameFeedback = SubmissionFeedback & { id: number };
 
 export type WordEvaluation =
   | {
-      outcome: "empty" | "too-short" | "missing-centre" | "duplicate" | "unrecognised";
+      outcome:
+        | "empty"
+        | "too-short"
+        | "missing-centre"
+        | "duplicate"
+        | "unrecognised"
+        // Accepted by the editor after this puzzle's answers were fixed.
+        | "added-later";
       feedback: SubmissionFeedback;
     }
   | {
@@ -55,6 +65,7 @@ export function evaluateWord(
   currentWord: string,
   foundWords: readonly string[],
   puzzle: PreparedPuzzle,
+  reviewedWords: ReviewedWords = new Map(),
 ): WordEvaluation {
   if (!currentWord) {
     return { outcome: "empty", feedback: { kind: "prompt", message: "Build a word first" } };
@@ -74,7 +85,21 @@ export function evaluateWord(
     return { outcome: "duplicate", feedback: { kind: "prompt", message: "Already found", word } };
   }
   if (!puzzle.solutionWordSet.has(word)) {
-    return { outcome: "unrecognised", feedback: { kind: "rejected", message: "Not accepted", word } };
+    switch (reviewedWords.get(word)) {
+      case "accepted":
+        return { outcome: "added-later", feedback: { kind: "rejected", message: "Not accepted", word } };
+      case "american-english":
+        return {
+          outcome: "unrecognised",
+          feedback: { kind: "rejected", message: "Not accepted · American English", word },
+        };
+      default:
+        // Rejected suggestions keep the link; the feedback form explains them.
+        return {
+          outcome: "unrecognised",
+          feedback: { kind: "rejected", message: "Not accepted", word, canSuggest: true },
+        };
+    }
   }
 
   const points = scoreWord(word, puzzle);

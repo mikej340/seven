@@ -111,6 +111,25 @@ test("past puzzles can reveal answers without adding them to found words", () =>
 test("rejected unknown words offer a puzzle-aware suggestion link", () => {
   assert.match(feedbackSource, /Suggest this word/);
   assert.match(feedbackSource, /type=word&puzzle=\$\{puzzleDate\}&word=/);
+  // Reviewed words leave the flag unset, so they never show the link.
+  assert.match(feedbackSource, /feedback\.canSuggest && feedback\.word/);
+});
+
+test("words added after a puzzle was set get a modal, reduced-motion-safe explanation", async () => {
+  const addedLaterSource = await readFile(
+    new URL("../app/_game/added-later-dialog.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(addedLaterSource, /role="dialog"/);
+  assert.match(addedLaterSource, /aria-modal="true"/);
+  assert.match(addedLaterSource, /event\.key === "Escape"/);
+  assert.match(addedLaterSource, /Good find!/);
+  assert.match(gameViewSource, /<AddedLaterDialog word=\{addedLaterWord\}/);
+  assert.match(gameViewSource, /const modalOpen = foundWordsOpen \|\| addedLaterWord !== null;/);
+  assert.match(
+    stylesheet,
+    /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.added-later-dialog\s*\{\s*animation: none;/,
+  );
 });
 
 test("the fixed-height word panel always reserves a divided feedback strip", () => {

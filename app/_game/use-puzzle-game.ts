@@ -24,12 +24,14 @@ import {
   type DailyPuzzle,
   type PuzzleSelection,
 } from "@/lib/puzzles";
+import { loadReviewedWords, type ReviewedWords } from "@/lib/reviewed-words";
 import { useScoreSharing } from "./use-score-sharing";
 
 type LoadedGame = {
   puzzle: DailyPuzzle;
   selection: PuzzleSelection;
   rules: PreparedPuzzle;
+  reviewedWords: ReviewedWords;
   viewSession: number;
 };
 
@@ -45,6 +47,9 @@ export function usePuzzleGame(puzzleDate?: string) {
   const [currentWord, setCurrentWord] = useState("");
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<GameFeedback | null>(null);
+  // A word the editor accepted after this puzzle was set; shown in a popup.
+  const [addedLaterWord, setAddedLaterWord] = useState<string | null>(null);
+  const dismissAddedLaterWord = useCallback(() => setAddedLaterWord(null), []);
   const [saveLoaded, setSaveLoaded] = useState(false);
   const [currentUtcDate, setCurrentUtcDate] = useState(utcDateString);
   const loadedUtcDateRef = useRef<string | null>(null);
@@ -58,6 +63,8 @@ export function usePuzzleGame(puzzleDate?: string) {
     setSaveLoaded(false);
 
     try {
+      // Fetched alongside the puzzle; never rejects.
+      const reviewedWordsLoading = loadReviewedWords();
       const manifest = await loadPuzzleManifest();
       const requestedDate = puzzleDate ?? new URLSearchParams(window.location.search).get("date");
       const selection = resolvePuzzleSelection(manifest, requestedDate);
@@ -65,6 +72,7 @@ export function usePuzzleGame(puzzleDate?: string) {
       if (entry === undefined) throw new Error("Selected puzzle is missing from the manifest");
       const puzzle = await loadDailyPuzzle(entry);
       const rules = preparePuzzle(puzzle);
+      const reviewedWords = await reviewedWordsLoading;
       const progress = loadGameProgress(
         localStorage,
         puzzle.id,
@@ -74,11 +82,12 @@ export function usePuzzleGame(puzzleDate?: string) {
 
       // A fresh view session resets dialog state on every successful load.
       viewSessionRef.current += 1;
-      setGame({ puzzle, selection, rules, viewSession: viewSessionRef.current });
+      setGame({ puzzle, selection, rules, reviewedWords, viewSession: viewSessionRef.current });
       setOuterLetters(puzzleWheelLetters(puzzle).outerLetters);
       setCurrentWord("");
       setFoundWords(progress.foundWords);
       setFeedback(null);
+      setAddedLaterWord(null);
       resetShareStatus();
       setSaveLoaded(true);
       if (requestedDate === null) loadedUtcDateRef.current = utcDateString();
@@ -150,7 +159,7 @@ export function usePuzzleGame(puzzleDate?: string) {
 
   const submitWord = () => {
     if (game === null || stats === null) return;
-    const result = evaluateWord(currentWord, foundWords, game.rules);
+    const result = evaluateWord(currentWord, foundWords, game.rules, game.reviewedWords);
     if (result.outcome === "accepted") {
       const nextFoundWords = [result.word, ...foundWords];
       const nextStats = deriveGameStats(nextFoundWords, game.rules);
@@ -189,6 +198,10 @@ export function usePuzzleGame(puzzleDate?: string) {
         case "missing-centre": vibrate(45); break;
         case "duplicate": vibrate([10, 30, 10]); break;
         case "unrecognised": vibrate(70); break;
+        case "added-later":
+          setAddedLaterWord(result.feedback.word ?? null);
+          vibrate([12, 30, 12]);
+          break;
       }
     }
     if (result.outcome !== "empty") setCurrentWord("");
@@ -200,6 +213,7 @@ export function usePuzzleGame(puzzleDate?: string) {
     setCurrentWord("");
     setFoundWords([]);
     setFeedback(null);
+    setAddedLaterWord(null);
     resetShareStatus();
     clearGameProgress(localStorage, game.puzzle.id);
     vibrate(14);
@@ -207,6 +221,7 @@ export function usePuzzleGame(puzzleDate?: string) {
 
   return {
     game, loading, loadError, stats, outerLetters, currentWord, foundWords, feedback,
+    addedLaterWord, dismissAddedLaterWord,
     isPastPuzzle: game !== null && game.puzzle.date < currentUtcDate,
     canRevealAnswers, shareStatus, shareButtonLabel,
     loadSelectedGame, addLetter, deleteLetter, shuffleLetters, submitWord, retryGame,

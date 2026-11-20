@@ -171,6 +171,16 @@
   line-height: 1.4;
 }
 
+.notice {
+  padding: 9px 11px;
+  border: 1px solid rgba(91, 101, 75, 0.26);
+  border-radius: 12px;
+  background: rgba(230, 229, 207, 0.4);
+  color: var(--ink);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
 .formError {
   padding: 10px 12px;
   border: 1px solid rgba(140, 48, 69, 0.35);

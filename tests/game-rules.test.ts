@@ -46,8 +46,43 @@ test("evaluates each rejection and prompt with the existing validation order and
       kind,
       message,
       ...(word ? { word: word.toUpperCase() } : {}),
+      ...(outcome === "unrecognised" ? { canSuggest: true } : {}),
     });
   }
+});
+
+test("explains reviewed suggestions without offering the suggestion link again", () => {
+  const reviewed = new Map([
+    ["MOTHBOAT", "accepted"],
+    ["ARMOR", "american-english"],
+    ["MAMMA", "rejected"],
+    ["MOTOR", "rejected"],
+  ] as const);
+
+  const addedLater = evaluateWord("mothboat", [], rules, reviewed);
+  assert.equal(addedLater.outcome, "added-later");
+  assert.deepEqual(addedLater.feedback, { kind: "rejected", message: "Not accepted", word: "MOTHBOAT" });
+
+  const american = evaluateWord("armor", [], rules, reviewed);
+  assert.equal(american.outcome, "unrecognised");
+  assert.deepEqual(american.feedback, {
+    kind: "rejected",
+    message: "Not accepted · American English",
+    word: "ARMOR",
+  });
+
+  // Plain rejections keep the link; the feedback form explains them.
+  assert.deepEqual(evaluateWord("mamma", [], rules, reviewed).feedback, {
+    kind: "rejected",
+    message: "Not accepted",
+    word: "MAMMA",
+    canSuggest: true,
+  });
+
+  // A puzzle's own answers always win over the reviewed list.
+  assert.equal(evaluateWord("motor", [], rules, reviewed).outcome, "accepted");
+  // Earlier checks still come first.
+  assert.equal(evaluateWord("mothboat", ["MOTHBOAT"], rules, reviewed).outcome, "duplicate");
 });
 
 test("scores four-letter words, longer words and pangrams consistently", () => {

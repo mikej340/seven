@@ -2,6 +2,7 @@ import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { GameStats } from "@/lib/game-rules";
 import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
+import { AddedLaterDialog } from "./added-later-dialog";
 import { FoundWordsDialog } from "./found-words-dialog";
 import { GameSummary } from "./game-summary";
 import { LetterWheel } from "./letter-wheel";
@@ -58,12 +59,13 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
   const {
     outerLetters, currentWord, foundWords, feedback, canRevealAnswers,
     shareStatus, shareButtonLabel, shareScore, addLetter, deleteLetter,
-    shuffleLetters, submitWord, retryGame,
+    shuffleLetters, submitWord, retryGame, addedLaterWord, dismissAddedLaterWord,
   } = controller;
+  const modalOpen = foundWordsOpen || addedLaterWord !== null;
   const onShare = () => void shareScore();
 
   return (
-    <main className={`page-shell${foundWordsOpen ? " has-modal" : ""}`}>
+    <main className={`page-shell${modalOpen ? " has-modal" : ""}`}>
       <div className="ambient-leaves ambient-leaves-left" aria-hidden="true">
         <i /><i /><i />
       </div>
@@ -146,6 +148,10 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
           canRevealAnswers={canRevealAnswers}
           onClose={closeFoundWords}
         />
+      ) : null}
+
+      {addedLaterWord !== null ? (
+        <AddedLaterDialog word={addedLaterWord} onClose={dismissAddedLaterWord} />
       ) : null}
     </main>
   );

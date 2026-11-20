@@ -44,7 +44,7 @@ export function WordFeedback({ currentWord, feedback, puzzleDate }: WordFeedback
               {feedback.kind === "rejected" || feedback.kind === "prompt" ? (
                 <>
                   {feedback.message}
-                  {feedback.kind === "rejected" && feedback.message === "Not accepted" && feedback.word ? (
+                  {feedback.canSuggest && feedback.word ? (
                     <a
                       className="suggest-word-link"
                       href={`${PUZZLE_BASE_PATH}/feedback/?type=word&puzzle=${puzzleDate}&word=${encodeURIComponent(feedback.word)}`}

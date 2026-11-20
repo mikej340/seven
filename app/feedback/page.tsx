@@ -6,6 +6,7 @@ import {
   NO_PUZZLE,
   normalizeSuggestedWord,
   parseFeedbackPrefill,
+  reviewedWordMessage,
   validateFeedback,
   type FeedbackDraft,
   type FeedbackErrors,
@@ -18,6 +19,7 @@ import {
   utcDateString,
   type PuzzleManifestEntry,
 } from "@/lib/puzzles";
+import { loadReviewedWords, NO_REVIEWED_WORDS, type ReviewedWords } from "@/lib/reviewed-words";
 import NavigationMenu from "../navigation-menu";
 import styles from "./feedback.module.css";
 
@@ -47,6 +49,7 @@ const emptyDraft: FeedbackDraft = {
 
 export default function FeedbackPage() {
   const [entries, setEntries] = useState<PuzzleManifestEntry[]>([]);
+  const [reviewedWords, setReviewedWords] = useState<ReviewedWords>(NO_REVIEWED_WORDS);
   const [draft, setDraft] = useState(emptyDraft);
   const [errors, setErrors] = useState<FeedbackErrors>({});
   const [loading, setLoading] = useState(true);
@@ -64,13 +67,14 @@ export default function FeedbackPage() {
     setLoading(true);
     setLoadError(null);
     try {
-      const manifest = await loadPuzzleManifest();
+      const [manifest, reviewed] = await Promise.all([loadPuzzleManifest(), loadReviewedWords()]);
       const released = manifest.entries.filter((entry) => entry.date <= utcDateString());
       const selectable = released.length > 0 ? released : manifest.entries.slice(0, 1);
       const fallback = selectable.at(-1);
       if (!fallback) throw new Error("No puzzles are available for feedback");
       const prefill = parseFeedbackPrefill(window.location.search, selectable, fallback.date);
       setEntries(selectable);
+      setReviewedWords(reviewed);
       setDraft((current) => ({ ...current, ...prefill }));
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : "Could not load the feedback form");
@@ -91,6 +95,11 @@ export default function FeedbackPage() {
     () => entries.find((entry) => entry.date === draft.puzzleDate),
     [draft.puzzleDate, entries],
   );
+  // Explain an already-reviewed word as soon as it is entered or prefilled.
+  const reviewedNotice = draft.kind === "word"
+    ? reviewedWordMessage(draft.suggestedWord, reviewedWords)
+    : null;
+  const showReviewedNotice = reviewedNotice !== null && errors.suggestedWord !== reviewedNotice;
   const backHref = selectedPuzzle
     ? selectedPuzzle.date === utcDateString()
       ? `${PUZZLE_BASE_PATH}/`
@@ -124,7 +133,7 @@ export default function FeedbackPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const nextErrors = validateFeedback(draft, entries);
+    const nextErrors = validateFeedback(draft, entries, reviewedWords);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
       queueMicrotask(() => focusFirstError(nextErrors));
@@ -257,13 +266,18 @@ export default function FeedbackPage() {
                   autoComplete="off"
                   spellCheck={false}
                   aria-invalid={Boolean(errors.suggestedWord)}
-                  aria-describedby={errors.suggestedWord ? "word-error" : "word-help"}
+                  aria-describedby={errors.suggestedWord
+                    ? "word-error"
+                    : showReviewedNotice ? "word-help word-notice" : "word-help"}
                   onChange={(event) => updateField("suggestedWord", event.target.value.toUpperCase())}
                   ref={wordRef}
                 />
                 <span className={styles.help} id="word-help">
                   Use 4–18 puzzle letters and include the centre letter.
                 </span>
+                {showReviewedNotice ? (
+                  <span className={styles.notice} id="word-notice" role="status">{reviewedNotice}</span>
+                ) : null}
                 {errors.suggestedWord ? <span className={styles.error} id="word-error">{errors.suggestedWord}</span> : null}
                 <ValidationError field="suggested_word" errors={formState.errors} className={styles.error} />
               </div>
