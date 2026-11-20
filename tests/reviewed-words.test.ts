@@ -6,9 +6,10 @@ import { NO_REVIEWED_WORDS, parseReviewedWords } from "../lib/reviewed-words.ts"
 test("reads reviewed words as uppercase lookups", () => {
   const reviewed = parseReviewedWords({
     schemaVersion: 1,
-    words: { donut: "american-english", gonk: "accepted", kenk: "rejected" },
+    words: { apache: "proper-noun", donut: "american-english", gonk: "accepted", kenk: "rejected" },
   });
   assert.deepEqual([...reviewed], [
+    ["APACHE", "proper-noun"],
     ["DONUT", "american-english"],
     ["GONK", "accepted"],
     ["KENK", "rejected"],

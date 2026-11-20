@@ -50,6 +50,8 @@ export function reviewedWordMessage(value: string, reviewedWords: ReviewedWords)
       return `${word} is already in the word list. It was added after some puzzles were set, so it doesn’t score in those.`;
     case "american-english":
       return `Seven uses British English, so we don’t include American spellings or words mainly used in the US. ${word} has been reviewed and isn’t accepted.`;
+    case "proper-noun":
+      return `Seven doesn’t include proper nouns, such as names of people, places or brands. ${word} has been reviewed and isn’t accepted.`;
     case "rejected":
       return `We’ve already reviewed ${word} and decided not to include it.`;
     default:

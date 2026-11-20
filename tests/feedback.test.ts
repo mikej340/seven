@@ -94,11 +94,13 @@ test("explains words that have already been reviewed instead of sending them", (
   const reviewed = new Map([
     ["MOTHBOAT", "accepted"],
     ["ARMOR", "american-english"],
+    ["MORT", "proper-noun"],
     ["MAMMA", "rejected"],
   ] as const);
 
   assert.match(reviewedWordMessage(" mothboat ", reviewed) ?? "", /^MOTHBOAT is already in the word list/);
   assert.match(reviewedWordMessage("armor", reviewed) ?? "", /^Seven uses British English/);
+  assert.match(reviewedWordMessage("mort", reviewed) ?? "", /^Seven doesn’t include proper nouns.*MORT has been reviewed/);
   assert.equal(reviewedWordMessage("mamma", reviewed), "We’ve already reviewed MAMMA and decided not to include it.");
   assert.equal(reviewedWordMessage("moth", reviewed), null);
 

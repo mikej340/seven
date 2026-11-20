@@ -93,6 +93,11 @@ export function evaluateWord(
           outcome: "unrecognised",
           feedback: { kind: "rejected", message: "Not accepted · American English", word },
         };
+      case "proper-noun":
+        return {
+          outcome: "unrecognised",
+          feedback: { kind: "rejected", message: "Not accepted · Proper noun", word },
+        };
       default:
         // Rejected suggestions keep the link; the feedback form explains them.
         return {

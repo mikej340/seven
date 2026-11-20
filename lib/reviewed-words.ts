@@ -4,14 +4,19 @@ import { PUZZLE_BASE_PATH } from "./puzzles.ts";
 // Published by the generator as public/puzzles/reviewed-words.json. Answers
 // are fixed per puzzle, so "accepted" means the word was added after an older
 // puzzle was set.
-export type ReviewedWordOutcome = "accepted" | "rejected" | "american-english";
+export type ReviewedWordOutcome = "accepted" | "rejected" | "american-english" | "proper-noun";
 
 /** Uppercase word → outcome. */
 export type ReviewedWords = ReadonlyMap<string, ReviewedWordOutcome>;
 
 export const NO_REVIEWED_WORDS: ReviewedWords = new Map();
 
-const OUTCOMES: ReadonlySet<unknown> = new Set(["accepted", "rejected", "american-english"]);
+const OUTCOMES: ReadonlySet<unknown> = new Set([
+  "accepted",
+  "rejected",
+  "american-english",
+  "proper-noun",
+]);
 
 export function parseReviewedWords(value: unknown): ReviewedWords {
   const data = value as { schemaVersion?: unknown; words?: unknown } | null;
