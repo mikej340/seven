@@ -111,24 +111,35 @@ test("past puzzles can reveal answers without adding them to found words", () =>
 test("rejected unknown words offer a puzzle-aware suggestion link", () => {
   assert.match(feedbackSource, /Suggest this word/);
   assert.match(feedbackSource, /type=word&puzzle=\$\{puzzleDate\}&word=/);
-  // Reviewed words leave the flag unset, so they never show the link.
-  assert.match(feedbackSource, /feedback\.canSuggest && feedback\.word/);
+  assert.match(feedbackSource, /feedback\.link === "suggest" && feedback\.word/);
 });
 
-test("words added after a puzzle was set get a modal, reduced-motion-safe explanation", async () => {
-  const addedLaterSource = await readFile(
-    new URL("../app/_game/added-later-dialog.tsx", import.meta.url),
+test("reviewed words that were turned down explain themselves in the game on request", () => {
+  assert.match(feedbackSource, /feedback\.link === "why-not" && feedback\.word/);
+  assert.match(feedbackSource, /type="button"[\s\S]*?onClick=\{\(\) => onExplainWord\(/);
+  assert.match(feedbackSource, /Why not\?/);
+  assert.match(gameViewSource, /onExplainWord=\{explainReviewedWord\}/);
+  assert.match(stylesheet, /button\.suggest-word-link\s*\{[\s\S]*?text-decoration: underline;/);
+});
+
+test("reviewed words get a modal, reduced-motion-safe explanation", async () => {
+  const reviewedSource = await readFile(
+    new URL("../app/_game/reviewed-word-dialog.tsx", import.meta.url),
     "utf8",
   );
-  assert.match(addedLaterSource, /role="dialog"/);
-  assert.match(addedLaterSource, /aria-modal="true"/);
-  assert.match(addedLaterSource, /event\.key === "Escape"/);
-  assert.match(addedLaterSource, /Good find!/);
-  assert.match(gameViewSource, /<AddedLaterDialog word=\{addedLaterWord\}/);
-  assert.match(gameViewSource, /const modalOpen = foundWordsOpen \|\| addedLaterWord !== null;/);
+  assert.match(reviewedSource, /role="dialog"/);
+  assert.match(reviewedSource, /aria-modal="true"/);
+  assert.match(reviewedSource, /event\.key === "Escape"/);
+  assert.match(reviewedSource, /Good find!/);
+  assert.match(reviewedSource, /Already reviewed/);
+  // The game and the feedback form give the same reason.
+  assert.match(reviewedSource, /explainReviewedWord\(word, outcome\)/);
+  assert.match(gameViewSource, /<ReviewedWordDialog\s+word=\{reviewedWordNotice\.word\}/);
+  assert.match(gameViewSource, /const modalOpen = foundWordsOpen \|\| reviewedWordNotice !== null;/);
+  assert.match(stylesheet, /\.reviewed-word-dialog\.is-declined h2\s*\{\s*color: var\(--plum\);/);
   assert.match(
     stylesheet,
-    /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.added-later-dialog\s*\{\s*animation: none;/,
+    /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\.reviewed-word-dialog\s*\{\s*animation: none;/,
   );
 });
 

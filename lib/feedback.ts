@@ -1,5 +1,5 @@
 import type { PuzzleManifestEntry } from "./puzzles";
-import type { ReviewedWords } from "./reviewed-words";
+import type { ReviewedWordOutcome, ReviewedWords } from "./reviewed-words";
 
 export type FeedbackKind = "general" | "word";
 
@@ -41,11 +41,10 @@ export function parseFeedbackPrefill(
   };
 }
 
-// Words the editor has already reviewed are explained instead of being sent
-// again. Plain rejections reach this form through the game's suggestion link.
-export function reviewedWordMessage(value: string, reviewedWords: ReviewedWords) {
-  const word = normalizeSuggestedWord(value);
-  switch (reviewedWords.get(word)) {
+// Why a reviewed word has its outcome. The feedback form and the game's
+// "Why not?" popup share this wording; the word appears exactly once.
+export function explainReviewedWord(word: string, outcome: ReviewedWordOutcome): string {
+  switch (outcome) {
     case "accepted":
       return `${word} is already in the word list. It was added after some puzzles were set, so it doesn’t score in those.`;
     case "american-english":
@@ -54,9 +53,15 @@ export function reviewedWordMessage(value: string, reviewedWords: ReviewedWords)
       return `Seven doesn’t include proper nouns, such as names of people, places or brands. ${word} has been reviewed and isn’t accepted.`;
     case "rejected":
       return `We’ve already reviewed ${word} and decided not to include it.`;
-    default:
-      return null;
   }
+}
+
+// Words the editor has already reviewed are explained instead of being sent
+// again, whether typed into the form or prefilled from elsewhere.
+export function reviewedWordMessage(value: string, reviewedWords: ReviewedWords) {
+  const word = normalizeSuggestedWord(value);
+  const outcome = reviewedWords.get(word);
+  return outcome === undefined ? null : explainReviewedWord(word, outcome);
 }
 
 export function validateSuggestedWord(

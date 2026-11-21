@@ -17,8 +17,11 @@ export type SubmissionFeedback = {
   message: string;
   word?: string;
   points?: number;
-  /** Offer the word-suggestion link: an unknown word that has not been reviewed. */
-  canSuggest?: boolean;
+  /**
+   * The link after "Not accepted": suggest a word the editor has not reviewed,
+   * or explain one that was reviewed and turned down.
+   */
+  link?: "suggest" | "why-not";
 };
 
 export type GameFeedback = SubmissionFeedback & { id: number };
@@ -85,26 +88,23 @@ export function evaluateWord(
     return { outcome: "duplicate", feedback: { kind: "prompt", message: "Already found", word } };
   }
   if (!puzzle.solutionWordSet.has(word)) {
-    switch (reviewedWords.get(word)) {
-      case "accepted":
-        return { outcome: "added-later", feedback: { kind: "rejected", message: "Not accepted", word } };
-      case "american-english":
-        return {
-          outcome: "unrecognised",
-          feedback: { kind: "rejected", message: "Not accepted · American English", word },
-        };
-      case "proper-noun":
-        return {
-          outcome: "unrecognised",
-          feedback: { kind: "rejected", message: "Not accepted · Proper noun", word },
-        };
-      default:
-        // Rejected suggestions keep the link; the feedback form explains them.
-        return {
-          outcome: "unrecognised",
-          feedback: { kind: "rejected", message: "Not accepted", word, canSuggest: true },
-        };
+    const reviewed = reviewedWords.get(word);
+    if (reviewed === "accepted") {
+      // The game explains this straight away in the "Good find!" popup.
+      return { outcome: "added-later", feedback: { kind: "rejected", message: "Not accepted", word } };
     }
+    // Every unknown word gets the same message, so the game never implies that
+    // it recognises American English or proper nouns in general. Only words the
+    // editor has reviewed explain themselves, and only when the player asks.
+    return {
+      outcome: "unrecognised",
+      feedback: {
+        kind: "rejected",
+        message: "Not accepted",
+        word,
+        link: reviewed === undefined ? "suggest" : "why-not",
+      },
+    };
   }
 
   const points = scoreWord(word, puzzle);

@@ -395,6 +395,17 @@ h1 {
   outline-offset: 2px;
 }
 
+/* "Why not?" opens a popup, so it is a button styled like the link. */
+button.suggest-word-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
 .game-controls {
   width: min(100%, 410px);
   display: grid;
@@ -722,7 +733,7 @@ h1 {
 }
 
 /* A word accepted after this puzzle was set: friendly, not a rejection. */
-.added-later-dialog {
+.reviewed-word-dialog {
   position: relative;
   width: min(100%, 360px);
   display: grid;
@@ -737,7 +748,7 @@ h1 {
   animation: feedback-pop 190ms ease-out;
 }
 
-.added-later-icon {
+.reviewed-word-icon {
   width: 34px;
   aspect-ratio: 1;
   display: grid;
@@ -749,7 +760,7 @@ h1 {
   font-weight: 800;
 }
 
-.added-later-dialog h2 {
+.reviewed-word-dialog h2 {
   margin: 0;
   color: var(--success-strong);
   font-family: Georgia, "Times New Roman", serif;
@@ -757,18 +768,27 @@ h1 {
   font-weight: 500;
 }
 
-.added-later-dialog p {
+.reviewed-word-dialog p {
   margin: 0;
   color: var(--ink);
   font-size: 0.92rem;
   line-height: 1.45;
 }
 
-.added-later-dialog p strong {
+.reviewed-word-dialog p strong {
   letter-spacing: 0.06em;
 }
 
-.added-later-dialog button {
+/* Reviewed and turned down: an explanation, not a celebration. */
+.reviewed-word-dialog.is-declined {
+  border-color: rgba(103, 40, 61, 0.24);
+}
+
+.reviewed-word-dialog.is-declined h2 {
+  color: var(--plum);
+}
+
+.reviewed-word-dialog button {
   min-width: 120px;
   min-height: 44px;
   margin-top: 6px;
@@ -783,7 +803,7 @@ h1 {
   touch-action: manipulation;
 }
 
-.added-later-dialog button:focus-visible {
+.reviewed-word-dialog button:focus-visible {
   outline: 3px solid var(--plum);
   outline-offset: 2px;
 }
@@ -1101,7 +1121,7 @@ a.retry-button {
   .feedback,
   .feedback.accepted .feedback-icon,
   .feedback.pangram .feedback-icon,
-  .added-later-dialog {
+  .reviewed-word-dialog {
     animation: none;
   }
 }

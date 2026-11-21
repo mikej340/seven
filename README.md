@@ -25,11 +25,14 @@ worker or server is required.
 `public/puzzles/reviewed-words.json`, also exported by the generator, lists
 player-suggested words the editor has reviewed with their current outcome. A
 word accepted after a puzzle was set still scores nothing there, but the game
-explains it in a popup; American English words and proper nouns show "Not
-accepted · American English" or "Not accepted · Proper noun" without the
-suggestion link; and the feedback form explains any
-reviewed word instead of sending it again. The file is optional: if it is
-missing, every unknown word keeps the usual message and link.
+explains it straight away in a "Good find!" popup. Every other unknown word
+shows the same "Not accepted", so the game never implies that it recognises
+American English or proper nouns in general. Words nobody has reviewed offer
+"Suggest this word"; reviewed words that were turned down offer "Why not?",
+which opens a popup with the editor's reason. The feedback form gives the same
+reason for any reviewed word instead of sending it again. The file is
+optional: if it is missing, every unknown word keeps the usual message and
+suggestion link.
 
 Every scheduled puzzle has a dated share URL such as `/daily/2026-11-03/`
 and its own botanical social card. Cards are generated with the puzzle release

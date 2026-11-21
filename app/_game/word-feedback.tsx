@@ -5,9 +5,10 @@ type WordFeedbackProps = {
   currentWord: string;
   feedback: GameFeedback | null;
   puzzleDate: string;
+  onExplainWord: (word: string) => void;
 };
 
-export function WordFeedback({ currentWord, feedback, puzzleDate }: WordFeedbackProps) {
+export function WordFeedback({ currentWord, feedback, puzzleDate, onExplainWord }: WordFeedbackProps) {
   return (
     <div
       className={`word-panel ${feedback ? `is-${feedback.kind}` : ""}`}
@@ -44,13 +45,22 @@ export function WordFeedback({ currentWord, feedback, puzzleDate }: WordFeedback
               {feedback.kind === "rejected" || feedback.kind === "prompt" ? (
                 <>
                   {feedback.message}
-                  {feedback.canSuggest && feedback.word ? (
+                  {feedback.link === "suggest" && feedback.word ? (
                     <a
                       className="suggest-word-link"
                       href={`${PUZZLE_BASE_PATH}/feedback/?type=word&puzzle=${puzzleDate}&word=${encodeURIComponent(feedback.word)}`}
                     >
                       Suggest this word
                     </a>
+                  ) : null}
+                  {feedback.link === "why-not" && feedback.word ? (
+                    <button
+                      className="suggest-word-link"
+                      type="button"
+                      onClick={() => onExplainWord(feedback.word ?? "")}
+                    >
+                      Why not?
+                    </button>
                   ) : null}
                 </>
               ) : null}
