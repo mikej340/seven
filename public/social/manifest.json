@@ -963,6 +963,76 @@
       "height": 630,
       "imageSha256": "f62a8a9f14a729a2a91600b51aa94c90af4479be4244ad2faa535eaefe84df06",
       "templateSha256": "88d851a5f17a711582c9dc106a47aea9f93fb8ea40eca967e23a8d079605e36b"
+    },
+    {
+      "date": "2026-11-23",
+      "letters": "aelntuv",
+      "centre": "v",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "b8becf422e35ddfa9998aa128d9d58f8634baacae9388871785de280e4f572b7",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-24",
+      "letters": "dlnoruy",
+      "centre": "l",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "e99adab374eaf2b29c8cbf44c551b939f033bbd0055c0376dee3b02241f376cb",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-25",
+      "letters": "cegilnx",
+      "centre": "e",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "9bce48b28bc6b737d5a3201fee009911c00034a498f40b25180e61e98d6995f8",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-26",
+      "letters": "cehinty",
+      "centre": "n",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "957465c334365a004e3b48a601669ffb937b9c9ff378ac3c2ad2e4b9d8a8bcee",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-27",
+      "letters": "afinotu",
+      "centre": "i",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "3dc075bfb80d8f68a0fa92b1756b5bcd678bf5a7ce8820fbfbb4df84837569da",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-28",
+      "letters": "aeglrvy",
+      "centre": "y",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "2c7cb14f8d854f4965f56d0191cfa6c4fdcc2f60a33427df51fd1503e8f309d6",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
+    },
+    {
+      "date": "2026-11-29",
+      "letters": "achilnp",
+      "centre": "c",
+      "width": 1200,
+      "height": 630,
+      "imageSha256": "b20e23e96c8dd1456ed747fe69d15e462588e6160717677d9733b39a00496b67",
+      "templateSha256": "7c79842a9448cd9d7beefc308a804e06faaa453096af4a9ceff0469d38a27ab1",
+      "season": "autumn"
     }
   ]
 }
