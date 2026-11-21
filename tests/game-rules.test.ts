@@ -46,12 +46,12 @@ test("evaluates each rejection and prompt with the existing validation order and
       kind,
       message,
       ...(word ? { word: word.toUpperCase() } : {}),
-      ...(outcome === "unrecognised" ? { canSuggest: true } : {}),
+      ...(outcome === "unrecognised" ? { link: "suggest" } : {}),
     });
   }
 });
 
-test("explains reviewed suggestions without offering the suggestion link again", () => {
+test("reviewed suggestions offer Why not? instead of the suggestion link", () => {
   const reviewed = new Map([
     ["MOTHBOAT", "accepted"],
     ["ARMOR", "american-english"],
@@ -60,31 +60,26 @@ test("explains reviewed suggestions without offering the suggestion link again",
     ["MOTOR", "rejected"],
   ] as const);
 
+  // Accepted after the puzzle was set: the game opens "Good find!" itself.
   const addedLater = evaluateWord("mothboat", [], rules, reviewed);
   assert.equal(addedLater.outcome, "added-later");
   assert.deepEqual(addedLater.feedback, { kind: "rejected", message: "Not accepted", word: "MOTHBOAT" });
 
-  const american = evaluateWord("armor", [], rules, reviewed);
-  assert.equal(american.outcome, "unrecognised");
-  assert.deepEqual(american.feedback, {
-    kind: "rejected",
-    message: "Not accepted · American English",
-    word: "ARMOR",
-  });
+  // Every other reviewed outcome reads exactly like an unknown word, so the
+  // message never implies the game recognises a whole category of words.
+  for (const word of ["ARMOR", "MORT", "MAMMA"]) {
+    const result = evaluateWord(word.toLowerCase(), [], rules, reviewed);
+    assert.equal(result.outcome, "unrecognised");
+    assert.deepEqual(result.feedback, {
+      kind: "rejected",
+      message: "Not accepted",
+      word,
+      link: "why-not",
+    });
+  }
 
-  assert.deepEqual(evaluateWord("mort", [], rules, reviewed).feedback, {
-    kind: "rejected",
-    message: "Not accepted · Proper noun",
-    word: "MORT",
-  });
-
-  // Plain rejections keep the link; the feedback form explains them.
-  assert.deepEqual(evaluateWord("mamma", [], rules, reviewed).feedback, {
-    kind: "rejected",
-    message: "Not accepted",
-    word: "MAMMA",
-    canSuggest: true,
-  });
+  // Words nobody has reviewed can still be suggested.
+  assert.equal(evaluateWord("mammam", [], rules, reviewed).feedback.link, "suggest");
 
   // A puzzle's own answers always win over the reviewed list.
   assert.equal(evaluateWord("motor", [], rules, reviewed).outcome, "accepted");

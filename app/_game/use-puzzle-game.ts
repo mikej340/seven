@@ -24,8 +24,15 @@ import {
   type DailyPuzzle,
   type PuzzleSelection,
 } from "@/lib/puzzles";
-import { loadReviewedWords, type ReviewedWords } from "@/lib/reviewed-words";
+import {
+  loadReviewedWords,
+  type ReviewedWordOutcome,
+  type ReviewedWords,
+} from "@/lib/reviewed-words";
 import { useScoreSharing } from "./use-score-sharing";
+
+/** A reviewed word explained in a popup. */
+export type ReviewedWordNotice = { word: string; outcome: ReviewedWordOutcome };
 
 type LoadedGame = {
   puzzle: DailyPuzzle;
@@ -47,9 +54,10 @@ export function usePuzzleGame(puzzleDate?: string) {
   const [currentWord, setCurrentWord] = useState("");
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<GameFeedback | null>(null);
-  // A word the editor accepted after this puzzle was set; shown in a popup.
-  const [addedLaterWord, setAddedLaterWord] = useState<string | null>(null);
-  const dismissAddedLaterWord = useCallback(() => setAddedLaterWord(null), []);
+  // A reviewed word shown in a popup: straight away when the editor accepted it
+  // after this puzzle was set, or when the player taps "Why not?" otherwise.
+  const [reviewedWordNotice, setReviewedWordNotice] = useState<ReviewedWordNotice | null>(null);
+  const dismissReviewedWordNotice = useCallback(() => setReviewedWordNotice(null), []);
   const [saveLoaded, setSaveLoaded] = useState(false);
   const [currentUtcDate, setCurrentUtcDate] = useState(utcDateString);
   const loadedUtcDateRef = useRef<string | null>(null);
@@ -87,7 +95,7 @@ export function usePuzzleGame(puzzleDate?: string) {
       setCurrentWord("");
       setFoundWords(progress.foundWords);
       setFeedback(null);
-      setAddedLaterWord(null);
+      setReviewedWordNotice(null);
       resetShareStatus();
       setSaveLoaded(true);
       if (requestedDate === null) loadedUtcDateRef.current = utcDateString();
@@ -199,12 +207,20 @@ export function usePuzzleGame(puzzleDate?: string) {
         case "duplicate": vibrate([10, 30, 10]); break;
         case "unrecognised": vibrate(70); break;
         case "added-later":
-          setAddedLaterWord(result.feedback.word ?? null);
+          if (result.feedback.word) {
+            setReviewedWordNotice({ word: result.feedback.word, outcome: "accepted" });
+          }
           vibrate([12, 30, 12]);
           break;
       }
     }
     if (result.outcome !== "empty") setCurrentWord("");
+  };
+
+  // "Why not?" after a reviewed word was turned down.
+  const explainReviewedWord = (word: string) => {
+    const outcome = game?.reviewedWords.get(word);
+    if (outcome !== undefined) setReviewedWordNotice({ word, outcome });
   };
 
   const retryGame = () => {
@@ -213,7 +229,7 @@ export function usePuzzleGame(puzzleDate?: string) {
     setCurrentWord("");
     setFoundWords([]);
     setFeedback(null);
-    setAddedLaterWord(null);
+    setReviewedWordNotice(null);
     resetShareStatus();
     clearGameProgress(localStorage, game.puzzle.id);
     vibrate(14);
@@ -221,7 +237,7 @@ export function usePuzzleGame(puzzleDate?: string) {
 
   return {
     game, loading, loadError, stats, outerLetters, currentWord, foundWords, feedback,
-    addedLaterWord, dismissAddedLaterWord,
+    reviewedWordNotice, dismissReviewedWordNotice, explainReviewedWord,
     isPastPuzzle: game !== null && game.puzzle.date < currentUtcDate,
     canRevealAnswers, shareStatus, shareButtonLabel,
     loadSelectedGame, addLetter, deleteLetter, shuffleLetters, submitWord, retryGame,

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  explainReviewedWord,
   NO_PUZZLE,
   normalizeSuggestedWord,
   parseFeedbackPrefill,
@@ -88,6 +89,13 @@ test("requires only the fields relevant to the selected feedback type", () => {
     {},
   );
   assert.ok(validateFeedback(draft({ email: "not-an-email" }), entries).email);
+});
+
+test("each reviewed explanation names the word exactly once", () => {
+  // The game's popup emphasises the word by finding it in this text.
+  for (const outcome of ["accepted", "american-english", "proper-noun", "rejected"] as const) {
+    assert.equal(explainReviewedWord("ARMOR", outcome).split("ARMOR").length, 2, outcome);
+  }
 });
 
 test("explains words that have already been reviewed instead of sending them", () => {

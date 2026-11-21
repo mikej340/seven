@@ -2,12 +2,12 @@ import { useCallback, useRef, useState, type ReactNode } from "react";
 import type { GameStats } from "@/lib/game-rules";
 import { PUZZLE_BASE_PATH } from "@/lib/puzzles";
 import NavigationMenu from "../navigation-menu";
-import { AddedLaterDialog } from "./added-later-dialog";
 import { FoundWordsDialog } from "./found-words-dialog";
 import { GameSummary } from "./game-summary";
 import { LetterWheel } from "./letter-wheel";
 import { ScoreCard } from "./score-card";
 import { PuzzleDate } from "./puzzle-date";
+import { ReviewedWordDialog } from "./reviewed-word-dialog";
 import type { PuzzleGameController } from "./use-puzzle-game";
 import { WordFeedback } from "./word-feedback";
 
@@ -59,9 +59,10 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
   const {
     outerLetters, currentWord, foundWords, feedback, canRevealAnswers,
     shareStatus, shareButtonLabel, shareScore, addLetter, deleteLetter,
-    shuffleLetters, submitWord, retryGame, addedLaterWord, dismissAddedLaterWord,
+    shuffleLetters, submitWord, retryGame,
+    reviewedWordNotice, dismissReviewedWordNotice, explainReviewedWord,
   } = controller;
-  const modalOpen = foundWordsOpen || addedLaterWord !== null;
+  const modalOpen = foundWordsOpen || reviewedWordNotice !== null;
   const onShare = () => void shareScore();
 
   return (
@@ -122,7 +123,12 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
               shareButtonLabel={shareButtonLabel}
               onShare={onShare}
             />
-            <WordFeedback currentWord={currentWord} feedback={feedback} puzzleDate={puzzle.date} />
+            <WordFeedback
+              currentWord={currentWord}
+              feedback={feedback}
+              puzzleDate={puzzle.date}
+              onExplainWord={explainReviewedWord}
+            />
             <LetterWheel outerLetters={outerLetters} centreLetter={rules.centreLetter} onAddLetter={addLetter} />
             <div className="game-controls" aria-label="Word controls">
               <button type="button" onClick={deleteLetter} disabled={!currentWord}>
@@ -150,8 +156,12 @@ function ReadyGame({ controller, game, stats, answersView }: ReadyGameProps) {
         />
       ) : null}
 
-      {addedLaterWord !== null ? (
-        <AddedLaterDialog word={addedLaterWord} onClose={dismissAddedLaterWord} />
+      {reviewedWordNotice !== null ? (
+        <ReviewedWordDialog
+          word={reviewedWordNotice.word}
+          outcome={reviewedWordNotice.outcome}
+          onClose={dismissReviewedWordNotice}
+        />
       ) : null}
     </main>
   );
